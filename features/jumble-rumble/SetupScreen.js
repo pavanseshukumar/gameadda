@@ -8,7 +8,6 @@ import {
   HINT_COST,
   TURN_SECONDS_OPTIONS,
 } from "@/lib/games/jumble-rumble/engine";
-import { MOVIES } from "@/lib/games/jumble-rumble/movies";
 
 const RULES = [
   { title: "Unscramble", body: "A Telugu movie title is jumbled into letter tiles. Tap them into the slots in order." },
@@ -16,12 +15,16 @@ const RULES = [
   { title: "Steal it", body: "Wrong or out of time? The next team gets one steal: half the time, half the points." },
 ];
 
-export function SetupScreen({ initialTeams, initialSeconds, onStart }) {
+/** @param {{ pool: import("@/lib/games/jumble-rumble/moviePool").MoviePool | null }} props */
+export function SetupScreen({ initialTeams, initialSeconds, pool, onStart }) {
   const [turnSeconds, setTurnSeconds] = useState(initialSeconds ?? DEFAULT_TURN_SECONDS);
+  const poolLabel = !pool
+    ? "loading movies…"
+    : `${pool.movies.length.toLocaleString()} movies${pool.source === "offline" ? " (offline list)" : ""}`;
 
   return (
     <TeamSetup
-      eyebrow={`Word game · ${MOVIES.length} movies`}
+      eyebrow={`Word game · ${poolLabel}`}
       title={
         <>
           Jumble

@@ -10,7 +10,7 @@ import { ArrowRightIcon, FlagIcon } from "@/components/ui/icons";
 import { ACTIONS, BASE_POINTS, selectMovie, selectTeam } from "@/lib/games/jumble-rumble/engine";
 import { answerWords } from "@/lib/games/jumble-rumble/movies";
 
-export function RoundCompleteScreen({ state, dispatch }) {
+export function RoundCompleteScreen({ state, dispatch, onNextRound }) {
   const [confirmEnd, setConfirmEnd] = useState(false);
   const movie = selectMovie(state);
   const result = state.roundResult;
@@ -79,7 +79,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
           type="button"
           autoFocus
           className="btn btn-primary h-14 text-base sm:h-16 sm:flex-1 sm:text-lg"
-          onClick={() => dispatch({ type: ACTIONS.NEXT_ROUND, seed: Math.random() })}
+          onClick={onNextRound}
         >
           Next round <ArrowRightIcon size={20} />
         </button>
