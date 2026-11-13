@@ -22,9 +22,11 @@ function initialDrafts(teams) {
  *   initialTeams?: { name: string }[],
  *   onStart: (drafts: { id: number, name: string }[]) => void,
  *   children?: React.ReactNode,
+ *   startDisabled?: boolean,   e.g. while an async start is in flight
+ *   startLabel?: string,
  * }} props
  */
-export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart, children }) {
+export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart, children, startDisabled = false, startLabel }) {
   const [drafts, setDrafts] = useState(() => initialDrafts(initialTeams));
 
   const addTeam = () =>
@@ -155,8 +157,8 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
         </ol>
 
         <div className="sticky bottom-4 z-10 mt-2">
-          <button type="submit" className="btn btn-primary h-16 w-full text-lg">
-            Start game <ArrowRightIcon size={20} />
+          <button type="submit" className="btn btn-primary h-16 w-full text-lg" disabled={startDisabled}>
+            {startLabel ?? "Start game"} <ArrowRightIcon size={20} />
           </button>
         </div>
       </form>

@@ -5,6 +5,9 @@ import { ArrowRightIcon, SparkleIcon } from "@/components/ui/icons";
 const TILT = [-6, 4, -3, 7, -5, 3, -4];
 
 function previewStyle(game, char, i) {
+  if (game.preview.style === "pixel") {
+    return { background: char, aspectRatio: "1 / 1", borderRadius: "0.2rem", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / 0.08)" };
+  }
   if (game.preview.style === "jumble") {
     return {
       background: "linear-gradient(180deg, var(--key-top), var(--key-bottom))",
@@ -51,7 +54,7 @@ export default function Home() {
                       className="grid aspect-[3/4] min-w-0 place-items-center rounded-lg font-display text-[clamp(0.95rem,4.5vw,1.25rem)] font-bold"
                       style={previewStyle(game, char, i)}
                     >
-                      {char}
+                      {game.preview.style === "pixel" ? null : char}
                     </span>
                   ))}
                 </div>
