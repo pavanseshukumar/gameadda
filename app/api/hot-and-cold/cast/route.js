@@ -7,7 +7,10 @@ export async function GET(request) {
 
   try {
     const cast = await fetchCastOrder(id);
-    return Response.json({ cast }, { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800" } });
+    return Response.json({ cast }, {
+      // Netlify's CDN leaves the query string out of its cache key unless told otherwise.
+      headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800", "Netlify-Vary": "query=id" },
+    });
   } catch (error) {
     console.error("[hot-and-cold] cast order lookup failed:", error);
     return Response.json({ cast: [] }, { status: 502 });

@@ -7,7 +7,10 @@ export async function GET(request) {
 
   try {
     const poster = await fetchPoster(article);
-    return Response.json({ poster }, { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800" } });
+    return Response.json({ poster }, {
+      // Netlify's CDN leaves the query string out of its cache key unless told otherwise.
+      headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800", "Netlify-Vary": "query=article" },
+    });
   } catch (error) {
     console.error("[pixel-poster] Wikipedia poster lookup failed:", error);
     return Response.json({ poster: null, error: "unavailable" }, { status: 502 });

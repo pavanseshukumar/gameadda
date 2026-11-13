@@ -10,7 +10,9 @@ export async function GET(request) {
     if (!details) return Response.json({ error: "Unknown song" }, { status: 404 });
     return Response.json(
       { source: "itunes", details },
-      { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800" } },
+      // Netlify's CDN leaves the query string out of its cache key unless told otherwise,
+      // which would serve the first song's details for every id.
+      { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800", "Netlify-Vary": "query=id" } },
     );
   } catch (error) {
     console.error("[guess-the-song] iTunes lookup failed:", error);
