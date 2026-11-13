@@ -5,6 +5,7 @@ import { Keyboard } from "@/components/game/Keyboard";
 import { LyricsDisplay } from "@/components/game/LyricsDisplay";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
+import { TurnTimer } from "@/components/game/TurnTimer";
 import { SongGuessDialog } from "@/components/game/SongGuessDialog";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -12,6 +13,7 @@ import { EyeIcon, FlagIcon, MusicIcon } from "@/components/ui/icons";
 import {
   ACTIONS,
   SONG_COMPLETION_MULTIPLIER,
+  TURN_SECONDS,
   completionBonusFor,
   selectActiveTeam,
   selectLetterStates,
@@ -79,6 +81,13 @@ export function PlayScreen({ state, dispatch }) {
       <div className="min-w-0">
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
         <TurnIndicator team={team} hint="Call a letter or guess the song." />
+        {/* Restarts on every event (hit, miss, timeout); paused while a dialog is open. */}
+        <TurnTimer
+          key={event?.seq ?? 0}
+          seconds={TURN_SECONDS}
+          paused={dialog !== null}
+          onExpire={() => dispatch({ type: ACTIONS.TURN_TIMEOUT, eventSeq: event?.seq ?? 0 })}
+        />
         <button
           type="button"
           onClick={() => setDialog("guess")}

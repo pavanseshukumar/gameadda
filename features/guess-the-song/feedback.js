@@ -23,6 +23,8 @@ export function feedbackFromEvent(state, event) {
         title: `“${event.guess}” isn’t it`,
         detail: `Over to ${team(event.nextTeamId)}`,
       };
+    case "turn-timeout":
+      return { id: event.seq, tone: "miss", title: "Time’s up!", detail: `Over to ${team(event.nextTeamId)}` };
     case "songs-recycled":
       return { id: event.seq, tone: "info", title: "All songs played", detail: "Reshuffling the playlist" };
     default:

@@ -1,14 +1,14 @@
 "use client";
 
 import { TeamSetup } from "@/components/game/TeamSetup";
-import { POINTS_PER_LETTER, SONG_COMPLETION_MULTIPLIER } from "@/lib/games/guess-the-song/engine";
+import { POINTS_PER_LETTER, POINTS_PER_VOWEL, SONG_COMPLETION_MULTIPLIER, TURN_SECONDS } from "@/lib/games/guess-the-song/engine";
 import { SONGS } from "@/lib/games/guess-the-song/songs";
 
 const RULES = [
   { title: "Read the lyric", body: "Two lines of a Telugu song, written in English letters, start fully hidden." },
   {
     title: "Call a letter",
-    body: `Each hit scores ${POINTS_PER_LETTER} points per occurrence and you keep the turn. A miss passes it on.`,
+    body: `Each hit scores ${POINTS_PER_LETTER} points per occurrence (vowels ${POINTS_PER_VOWEL}) and you keep the turn. A miss, or ${TURN_SECONDS}s without a call, passes it on.`,
   },
   {
     title: "Win the song",
