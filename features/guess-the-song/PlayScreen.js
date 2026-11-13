@@ -19,7 +19,7 @@ import {
   selectLetterStates,
   selectSong,
 } from "@/lib/games/guess-the-song/engine";
-import { getLyricLines } from "@/lib/games/guess-the-song/songs";
+import { getClues, getPuzzleLines } from "@/lib/games/guess-the-song/songs";
 import { lettersIn } from "@/lib/games/guess-the-song/lyrics";
 import { GameShell } from "@/components/game/GameShell";
 import { feedbackFromEvent } from "./feedback";
@@ -28,7 +28,8 @@ export function PlayScreen({ state, dispatch }) {
   const [dialog, setDialog] = useState(null); // "guess" | "reveal" | "end" | null
 
   const song = selectSong(state);
-  const lines = getLyricLines(song);
+  const lines = getPuzzleLines(song);
+  const clues = getClues(song);
   const team = selectActiveTeam(state);
   const letterStates = selectLetterStates(state);
   const event = state.lastEvent;
@@ -76,7 +77,7 @@ export function PlayScreen({ state, dispatch }) {
 
       <Scoreboard teams={state.teams} activeTeamId={team.id} roundPoints={state.roundPoints} />
 
-      {/* Wide screens: lyrics left, keyboard right, so everything fits without scrolling. */}
+      {/* Wide screens: title puzzle left, keyboard right, so everything fits without scrolling. */}
       <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
       <div className="min-w-0">
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
@@ -103,23 +104,24 @@ export function PlayScreen({ state, dispatch }) {
       </div>
 
       <section
-        aria-label="Lyrics"
+        aria-label="Song title"
         className={`card relative mt-3 overflow-hidden rounded-[1.5rem] px-2.5 pb-4 pt-3.5 sm:mt-5 sm:rounded-[2rem] sm:px-8 sm:py-8 lg:px-6 ${songMissed ? "anim-shake" : ""}`}
-        key={songMissed ? `miss-${event.seq}` : "lyrics"}
+        key={songMissed ? `miss-${event.seq}` : "title"}
       >
-        <div className="mb-3 flex items-center justify-between gap-3 px-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-subtle sm:mb-6 sm:text-xs">
-          <span>Lyrics</span>
+        <div className="mb-3 flex items-center justify-between gap-3 px-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-subtle sm:mb-4 sm:text-xs">
+          <span>Song title</span>
           <span className="tabular-nums">
             {foundLetters}/{totalLetters} letters
           </span>
         </div>
+        <ClueChips clues={clues} />
         <LyricsDisplay
           lines={lines}
           guessedLetters={state.guessedLetters}
           freshLetter={event?.type === "letter-hit" ? event.letter : null}
         />
         <p className="mt-3 text-center text-xs text-subtle sm:mt-7 sm:text-sm">
-          <span className="sm:hidden">Finish the lyrics or name the song: </span>
+          <span className="sm:hidden">Finish the title or name the song: </span>
           <span className="hidden sm:inline">
             Reveal every letter <span className="text-muted">or</span> name the song to win{" "}
           </span>
@@ -180,5 +182,30 @@ export function PlayScreen({ state, dispatch }) {
         }}
       />
     </GameShell>
+  );
+}
+
+/** Movie / year / composer hints above the hidden title. The movie is omitted when it would give the title away. */
+function ClueChips({ clues }) {
+  const items = [
+    clues.movie ? { label: "Movie", value: clues.movie } : { label: "Movie", value: "Hidden: it gives the title away" },
+    clues.year ? { label: "Year", value: clues.year } : null,
+    clues.composer ? { label: "Music", value: clues.composer } : null,
+  ].filter(Boolean);
+
+  return (
+    <ul className="mb-4 flex flex-wrap justify-center gap-1.5 sm:mb-7 sm:gap-2" aria-label="Clues">
+      {items.map(({ label, value }) => (
+        <li
+          key={label}
+          className="flex items-baseline gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-xs sm:text-sm"
+        >
+          <span className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">{label}</span>
+          <span className={`font-semibold ${label === "Movie" && !clues.movie ? "font-normal italic text-subtle" : ""}`}>
+            {value}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }

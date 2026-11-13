@@ -14,7 +14,7 @@ import {
   selectSong,
   selectTeam,
 } from "@/lib/games/guess-the-song/engine";
-import { getLyricLines } from "@/lib/games/guess-the-song/songs";
+import { getPuzzleLines } from "@/lib/games/guess-the-song/songs";
 import { GameShell } from "@/components/game/GameShell";
 
 
@@ -47,7 +47,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
               {winner.name} <span style={{ color: winner.color }}>got it!</span>
             </h1>
             <p className="anim-rise mt-3 text-muted">
-              {byLyrics ? "Revealed the final letter and completed the lyrics." : "Named the song."}
+              {byLyrics ? "Revealed the final letter of the title." : "Named the song."}
             </p>
             <BonusBurst alphabetPoints={result.alphabetPoints ?? 0} multiplier={multiplier} bonus={result.bonus ?? 0} />
           </>
@@ -70,10 +70,11 @@ export function RoundCompleteScreen({ state, dispatch }) {
           <p className="text-muted">
             {song.movie}
             {song.year ? <span className="text-subtle"> · {song.year}</span> : null}
+            {song.composer ? <span className="text-subtle"> · {song.composer}</span> : null}
           </p>
         </div>
         <div className="mt-7 border-t border-line pt-7">
-          <LyricsDisplay lines={getLyricLines(song)} guessedLetters={state.guessedLetters} revealAll complete={byLyrics} size="sm" />
+          <LyricsDisplay lines={getPuzzleLines(song)} guessedLetters={state.guessedLetters} revealAll complete={byLyrics} size="sm" />
         </div>
       </section>
 

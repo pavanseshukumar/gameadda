@@ -2,7 +2,7 @@ import { GuessTheSongGame } from "@/features/guess-the-song/GuessTheSongGame";
 
 export const metadata = {
   title: "Guess the Telugu Song",
-  description: "Crack transliterated Telugu lyrics letter by letter, then name that song.",
+  description: "Uncover a Telugu song title letter by letter, using the movie, year and composer as clues.",
 };
 
 export default function GuessTheSongPage() {
