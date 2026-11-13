@@ -17,7 +17,6 @@ import {
 } from "@/lib/games/guess-the-song/engine";
 import { getPuzzleLines } from "@/lib/games/guess-the-song/songs";
 import { GameShell } from "@/components/game/GameShell";
-import Image from "next/image";
 import { useSongDetails } from "./useSongDetails";
 
 
@@ -173,7 +172,10 @@ function SongMedia({ songId, title }) {
   return (
     <div className="anim-rise mt-7 flex flex-col items-center gap-4 border-t border-line pt-7 sm:flex-row sm:items-center sm:gap-6">
       {details.artworkUrl ? (
-        <Image
+        // Plain <img>: iTunes serves browsers directly; Netlify's image CDN would proxy (and cache) it.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={details.artworkUrl}
           src={details.artworkUrl}
           alt={details.album ? `Cover art: ${details.album}` : `Cover art for ${title}`}
           width={112}

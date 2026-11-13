@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { Confetti } from "@/components/game/Confetti";
 import { GameShell } from "@/components/game/GameShell";
@@ -55,7 +54,10 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
         style={{ animationDelay: "120ms" }}
       >
         {song.artwork ? (
-          <Image
+          // Plain <img>: iTunes serves browsers directly; Netlify's image CDN would proxy (and cache) it.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={song.artwork}
             src={song.artwork}
             alt={`Cover art for ${song.songTitle || song.title}`}
             width={160}
