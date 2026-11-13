@@ -15,9 +15,10 @@ export function GuessTheSongGame() {
   if (!state) return <LoadingStage />;
 
   switch (state.phase) {
+    case PHASES.READY:
     case PHASES.PLAYING:
       return <PlayScreen state={state} dispatch={dispatch} />;
-    case PHASES.ROUND_OVER:
+    case PHASES.SONG_OVER:
       return <RoundCompleteScreen state={state} dispatch={dispatch} />;
     case PHASES.FINISHED:
       return <FinalResultsScreen state={state} dispatch={dispatch} />;

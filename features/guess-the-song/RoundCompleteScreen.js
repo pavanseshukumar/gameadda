@@ -10,6 +10,7 @@ import { ArrowRightIcon, FlagIcon } from "@/components/ui/icons";
 import {
   ACTIONS,
   SONG_COMPLETION_MULTIPLIER,
+  selectNextTeam,
   selectRoundBreakdown,
   selectSong,
   selectTeam,
@@ -23,48 +24,58 @@ import { useSongDetails } from "./useSongDetails";
 export function RoundCompleteScreen({ state, dispatch }) {
   const [confirmEnd, setConfirmEnd] = useState(false);
   const song = selectSong(state);
-  const result = state.roundResult;
-  const winner = selectTeam(state, result?.winnerTeamId);
-  const solved = result?.outcome === "solved" && winner;
-  const byLyrics = solved && result.method === "lyrics";
-  const multiplier = result?.multiplier ?? SONG_COMPLETION_MULTIPLIER;
+  const result = state.songResult;
+  const team = selectTeam(state, result?.teamId);
+  const nextTeam = selectNextTeam(state);
+  const solved = result?.outcome === "solved";
+  const byLetters = solved && result.method === "letters";
+  const multiplier = result?.multiplier || SONG_COMPLETION_MULTIPLIER;
   const breakdown = selectRoundBreakdown(state);
   const roundTotals = Object.fromEntries(breakdown.map((row) => [row.team.id, row.total]));
+  const roundDone = nextTeam === null;
 
   return (
-    <GameShell teamColor={winner?.color ?? "#64748b"}>
+    <GameShell teamColor={team?.color ?? "#64748b"}>
       {solved ? <Confetti /> : null}
 
       <section className="relative pt-6 text-center sm:pt-10">
-        <p className="anim-rise text-xs font-semibold uppercase tracking-[0.2em] text-subtle">Round {state.round} complete</p>
-        {solved ? (
-          <>
-            <div
-              className="anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold text-white"
-              style={{ background: winner.color, boxShadow: `0 24px 60px -18px ${winner.color}` }}
-            >
-              {winner.name.replace(/^team\s+/i, "").charAt(0).toUpperCase()}
-            </div>
-            <h1 className="anim-rise mt-5 font-display text-[clamp(2.2rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
-              {winner.name} <span style={{ color: winner.color }}>got it!</span>
-            </h1>
-            <p className="anim-rise mt-3 text-muted">
-              {byLyrics
-                ? `Revealed the final letter of the title. Letter points only: the ${SONG_COMPLETION_MULTIPLIER}× bonus is for naming the song.`
-                : "Named the song."}
-            </p>
-            {byLyrics ? null : (
-              <BonusBurst alphabetPoints={result.alphabetPoints ?? 0} multiplier={multiplier} bonus={result.bonus ?? 0} />
-            )}
-          </>
-        ) : (
-          <>
-            <h1 className="anim-rise mt-5 font-display text-[clamp(2.2rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
-              Nobody guessed it!
-            </h1>
-            <p className="anim-rise mx-auto mt-3 max-w-md text-muted">The host revealed the song. Letter points still count.</p>
-          </>
-        )}
+        <p className="anim-rise text-xs font-semibold uppercase tracking-[0.2em] text-subtle">
+          Round {state.round} · Team {state.turnInRound + 1} of {state.teams.length}
+        </p>
+        {team ? (
+          <div
+            className="anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold text-white"
+            style={{
+              background: solved ? team.color : "var(--surface-strong)",
+              color: solved ? undefined : team.color,
+              boxShadow: solved ? `0 24px 60px -18px ${team.color}` : "none",
+            }}
+          >
+            {team.name.replace(/^teams+/i, "").charAt(0).toUpperCase()}
+          </div>
+        ) : null}
+        <h1 className="anim-rise mt-5 font-display text-[clamp(2.2rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
+          {team?.name}{" "}
+          {solved ? (
+            <span style={{ color: team?.color }}>got it!</span>
+          ) : (
+            <span className="text-miss">{result?.outcome === "failed" ? "is out of lives" : "skipped it"}</span>
+          )}
+        </h1>
+        <p className="anim-rise mx-auto mt-3 max-w-md text-muted">
+          {solved
+            ? byLetters
+              ? `Revealed every letter: ${result.letterPoints} letter points. The ${SONG_COMPLETION_MULTIPLIER}× bonus is for naming the song.`
+              : state.lives === 0
+                ? "Named it on the last chance!"
+                : `Named the song with ${state.lives} ${state.lives === 1 ? "life" : "lives"} to spare.`
+            : result?.outcome === "failed"
+              ? "The last-chance guess missed. No points for this song."
+              : "The host revealed the song. No points for this song."}
+        </p>
+        {solved && !byLetters ? (
+          <BonusBurst alphabetPoints={result.letterPoints} multiplier={multiplier} bonus={result.bonus} />
+        ) : null}
       </section>
 
       <section className="card anim-rise relative mt-8 rounded-[2rem] p-5 sm:p-8" style={{ animationDelay: "120ms" }}>
@@ -80,16 +91,16 @@ export function RoundCompleteScreen({ state, dispatch }) {
           </p>
         </div>
         <div className="mt-7 border-t border-line pt-7">
-          <LyricsDisplay lines={getPuzzleLines(song)} guessedLetters={state.guessedLetters} revealAll complete={byLyrics} size="sm" />
+          <LyricsDisplay lines={getPuzzleLines(song)} guessedLetters={state.guessedLetters} revealAll complete={byLetters} size="sm" />
         </div>
         <SongMedia songId={song.id} title={song.title} />
       </section>
 
       <section className="relative mt-8" aria-labelledby="round-points-heading">
         <h2 id="round-points-heading" className="mb-3 px-1 font-display text-xl font-bold tracking-tight">
-          This round
+          {roundDone ? `Round ${state.round} results` : "This round so far"}
         </h2>
-        <RoundBreakdown rows={breakdown} multiplier={multiplier} />
+        <RoundBreakdown rows={breakdown} multiplier={SONG_COMPLETION_MULTIPLIER} />
       </section>
 
       <section className="relative mt-8" aria-labelledby="standings-heading">
@@ -104,9 +115,9 @@ export function RoundCompleteScreen({ state, dispatch }) {
           type="button"
           autoFocus
           className="btn btn-primary h-14 text-base sm:h-16 sm:flex-1 sm:text-lg"
-          onClick={() => dispatch({ type: ACTIONS.NEXT_ROUND, random: Math.random() })}
+          onClick={() => dispatch({ type: ACTIONS.NEXT_TURN, random: Math.random() })}
         >
-          Next round <ArrowRightIcon size={20} />
+          {roundDone ? `Start round ${state.round + 1}` : `Next: ${nextTeam.name}`} <ArrowRightIcon size={20} />
         </button>
         <button type="button" className="btn btn-secondary h-14 px-8 text-base sm:h-16" onClick={() => setConfirmEnd(true)}>
           <FlagIcon size={18} /> Finish game
@@ -116,7 +127,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
       <ConfirmDialog
         open={confirmEnd}
         title="Finish the game?"
-        body="See the final standings and crown the champion."
+        body={roundDone ? "See the final standings and crown the champion." : "Teams that haven’t played this round won’t get their turn. See the final standings now?"}
         confirmLabel="Show results"
         onCancel={() => setConfirmEnd(false)}
         onConfirm={() => {
@@ -148,7 +159,7 @@ function BonusBurst({ alphabetPoints, multiplier, bonus }) {
         </span>
       </div>
       <p className="anim-rise text-sm text-muted" style={{ animationDelay: "900ms" }}>
-        Song completion bonus{alphabetPoints === 0 ? ". No letter points this round, so nothing to multiply" : ""}
+        Song completion bonus{alphabetPoints === 0 ? ". No letter points yet, so nothing to multiply" : ""}
       </p>
     </div>
   );

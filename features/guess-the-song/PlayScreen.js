@@ -6,13 +6,16 @@ import { LyricsDisplay } from "@/components/game/LyricsDisplay";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { TurnTimer } from "@/components/game/TurnTimer";
+import { TurnHandoff } from "@/components/game/TurnHandoff";
 import { SongGuessDialog } from "@/components/game/SongGuessDialog";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { EyeIcon, FlagIcon, MusicIcon } from "@/components/ui/icons";
 import {
   ACTIONS,
+  PHASES,
   SONG_COMPLETION_MULTIPLIER,
+  STARTING_LIVES,
   TURN_SECONDS,
   completionBonusFor,
   selectActiveTeam,
@@ -40,14 +43,16 @@ export function PlayScreen({ state, dispatch }) {
 
   const totalLetters = lettersIn(lines).size;
   const foundLetters = Object.values(letterStates).filter((s) => s === "hit").length;
-  const bonus = completionBonusFor(state, team.id);
-  const songMissed = event?.type === "song-miss";
+  const bonus = completionBonusFor(state);
+  const ready = state.phase === PHASES.READY;
+  const lastChance = state.lastChance;
+  const lostLife = event?.type === "song-miss" || event?.type === "turn-timeout";
 
   const guessLetter = (letter) => dispatch({ type: ACTIONS.GUESS_LETTER, letter });
 
   // Physical keyboard support for the host's laptop.
   const onKeyDown = useEffectEvent((e) => {
-    if (dialog || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+    if (ready || lastChance || dialog || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
     if (e.target instanceof HTMLElement && e.target.closest("input, textarea, [contenteditable]")) return;
     if (/^[a-z]$/i.test(e.key)) guessLetter(e.key);
   });
@@ -79,13 +84,27 @@ export function PlayScreen({ state, dispatch }) {
     >
       <FeedbackToast message={feedbackFromEvent(state, event)} />
 
-      <Scoreboard teams={state.teams} activeTeamId={team.id} roundPoints={state.roundPoints} />
+      <Scoreboard teams={state.teams} activeTeamId={team.id} roundPoints={{ [team.id]: state.songPoints }} />
 
+      {ready ? (
+        <div className="grid place-items-center py-10 sm:py-16">
+          <TurnHandoff
+            team={team}
+            seconds={TURN_SECONDS}
+            detail={`Your own song · ${STARTING_LIVES} lives · ${totalLetters} different letters`}
+            onStart={() => dispatch({ type: ACTIONS.START_TURN })}
+          />
+        </div>
+      ) : (
+      <>
       {/* Wide screens: title puzzle left, keyboard right, so everything fits without scrolling. */}
       <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
       <div className="min-w-0">
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
-        <TurnIndicator team={team} hint="Call a letter or guess the song." />
+        <TurnIndicator
+          team={team}
+          hint={lastChance ? "No lives left. One guess at the song decides it." : "Call letters or guess the song. Each miss costs a life."}
+        />
         {/* Restarts on every event (hit, miss, timeout); paused while a dialog is open. */}
         <TurnTimer
           key={event?.seq ?? 0}
@@ -109,13 +128,16 @@ export function PlayScreen({ state, dispatch }) {
 
       <section
         aria-label="Song title"
-        className={`card relative mt-3 overflow-hidden rounded-[1.5rem] px-2.5 pb-4 pt-3.5 sm:mt-5 sm:rounded-[2rem] sm:px-8 sm:py-8 lg:px-6 ${songMissed ? "anim-shake" : ""}`}
-        key={songMissed ? `miss-${event.seq}` : "title"}
+        className={`card relative mt-3 overflow-hidden rounded-[1.5rem] px-2.5 pb-4 pt-3.5 sm:mt-5 sm:rounded-[2rem] sm:px-8 sm:py-8 lg:px-6 ${lostLife ? "anim-shake" : ""}`}
+        key={lostLife ? `miss-${event.seq}` : "title"}
       >
         <div className="mb-3 flex items-center justify-between gap-3 px-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-subtle sm:mb-4 sm:text-xs">
           <span>Song title</span>
-          <span className="tabular-nums">
-            {foundLetters}/{totalLetters} letters
+          <span className="flex items-center gap-3 tabular-nums">
+            <Lives lives={state.lives} max={STARTING_LIVES} />
+            <span>
+              {foundLetters}/{totalLetters} letters
+            </span>
           </span>
         </div>
         <ClueChips clues={clues} />
@@ -142,20 +164,38 @@ export function PlayScreen({ state, dispatch }) {
       </section>
       </div>
 
+      {lastChance ? (
+        <p role="status" className="anim-pop mt-3 rounded-2xl border border-miss/40 bg-miss/10 px-4 py-3 text-center text-sm font-semibold sm:text-base lg:hidden">
+          Last chance! Letters are locked. Name the song to save it.
+        </p>
+      ) : null}
       <section aria-label="Guess a letter" className="mx-auto mt-3 w-full max-w-3xl sm:mt-6 lg:mt-0">
         <Keyboard
           letterStates={letterStates}
           onKey={guessLetter}
+          disabled={lastChance}
           lastMiss={event?.type === "letter-miss" ? { letter: event.letter, seq: event.seq } : null}
         />
-        <p className="mt-3 hidden text-center text-xs text-subtle lg:block">Tip: you can type letters on a physical keyboard too.</p>
+        {lastChance ? (
+          <p role="status" className="mt-3 hidden rounded-2xl border border-miss/40 bg-miss/10 px-4 py-3 text-center font-semibold lg:block">
+            Last chance! Letters are locked. Name the song to save it.
+          </p>
+        ) : (
+          <p className="mt-3 hidden text-center text-xs text-subtle lg:block">Tip: you can type letters on a physical keyboard too.</p>
+        )}
       </section>
       </div>
+      </>
+      )}
 
       <SongGuessDialog
         open={dialog === "guess"}
         team={team}
-        hint={`Correct earns ${SONG_COMPLETION_MULTIPLIER}× your letter points this round (+${bonus}). Wrong passes the turn.`}
+        hint={
+          lastChance
+            ? `Last chance. Correct still earns the ${SONG_COMPLETION_MULTIPLIER}× bonus (+${bonus}). Wrong ends the song with 0.`
+            : `Correct adds a ${SONG_COMPLETION_MULTIPLIER}× bonus on your letter points (+${bonus}). Wrong costs a life.`
+        }
         onClose={() => setDialog(null)}
         onSubmit={(title) => {
           setDialog(null);
@@ -165,7 +205,7 @@ export function PlayScreen({ state, dispatch }) {
       <ConfirmDialog
         open={dialog === "reveal"}
         title="Reveal the song?"
-        body="This ends the round with no winner. Points scored so far are kept."
+        body={`This ends ${team.name}’s song with 0 points.`}
         confirmLabel="Reveal song"
         onCancel={() => setDialog(null)}
         onConfirm={() => {
@@ -176,7 +216,7 @@ export function PlayScreen({ state, dispatch }) {
       <ConfirmDialog
         open={dialog === "end"}
         title="End the game?"
-        body="We’ll skip to the final standings. This round won’t be finished."
+        body="We’ll skip to the final standings. Points at stake on this song are lost."
         confirmLabel="End game"
         tone="danger"
         onCancel={() => setDialog(null)}
@@ -212,5 +252,32 @@ function ClueChips({ clues }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Hearts for the lives left on this song. Re-keys on change so a lost life animates. */
+function Lives({ lives, max }) {
+  return (
+    <span className="flex items-center gap-0.5" role="img" aria-label={`${lives} of ${max} lives left`}>
+      {Array.from({ length: max }, (_, i) => {
+        const alive = i < lives;
+        return (
+          <svg
+            key={`${i}-${alive}`}
+            viewBox="0 0 24 24"
+            className={`size-4 sm:size-5 ${alive ? "" : "anim-pop opacity-30"}`}
+            aria-hidden="true"
+          >
+            <path
+              d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.5 1.1 5.2 3 1.7-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21Z"
+              fill={alive ? "var(--miss)" : "none"}
+              stroke={alive ? "var(--miss)" : "currentColor"}
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      })}
+    </span>
   );
 }

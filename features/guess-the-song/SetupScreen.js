@@ -1,18 +1,21 @@
 "use client";
 
 import { TeamSetup } from "@/components/game/TeamSetup";
-import { POINTS_PER_LETTER, POINTS_PER_VOWEL, SONG_COMPLETION_MULTIPLIER, TURN_SECONDS } from "@/lib/games/guess-the-song/engine";
+import { POINTS_PER_LETTER, POINTS_PER_VOWEL, SONG_COMPLETION_MULTIPLIER, STARTING_LIVES, TURN_SECONDS } from "@/lib/games/guess-the-song/engine";
 import { SONGS } from "@/lib/games/guess-the-song/songs";
 
 const RULES = [
-  { title: "Crack the title", body: "A Telugu song title, written in English letters, starts fully hidden. The movie, year and composer are your clues." },
   {
-    title: "Call a letter",
-    body: `Each hit scores ${POINTS_PER_LETTER} points per occurrence (vowels ${POINTS_PER_VOWEL}) and you keep the turn. A miss, or ${TURN_SECONDS}s without a call, passes it on.`,
+    title: "Your own song",
+    body: `Each round, every team gets its own hidden Telugu song title and ${STARTING_LIVES} lives. The movie, year and music are your clues.`,
+  },
+  {
+    title: "Call letters",
+    body: `Each hit scores ${POINTS_PER_LETTER} points per occurrence (vowels ${POINTS_PER_VOWEL}). A miss, a wrong song guess or ${TURN_SECONDS}s without a call costs a life.`,
   },
   {
     title: "Win the song",
-    body: `Name the song to earn ${SONG_COMPLETION_MULTIPLIER}× your letter points this round. Revealing the final letter wins the round too, but with no multiplier.`,
+    body: `Name the song to add a ${SONG_COMPLETION_MULTIPLIER}× bonus to your letter points; revealing every letter keeps just the letter points. Lose all ${STARTING_LIVES} lives and you get one last guess at the song; miss it and you score 0.`,
   },
 ];
 

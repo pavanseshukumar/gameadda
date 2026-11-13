@@ -2,7 +2,7 @@
  * Per-team scoring for one round: alphabet points, completion bonus and total.
  *
  * @param {{
- *   rows: { team: { id: string, name: string, color: string }, alphabet: number, bonus: number, total: number, isWinner: boolean }[],
+ *   rows: { team: { id: string, name: string, color: string }, alphabet: number, bonus: number, total: number, isWinner: boolean, note?: string }[],
  *   multiplier: number,
  * }} props
  */
@@ -29,7 +29,7 @@ export function RoundBreakdown({ rows, multiplier }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ team, alphabet, bonus, total, isWinner }) => (
+          {rows.map(({ team, alphabet, bonus, total, isWinner, note }) => (
             <tr
               key={team.id}
               className="border-t border-line"
@@ -40,6 +40,7 @@ export function RoundBreakdown({ rows, multiplier }) {
                   <span className="size-2.5 shrink-0 rounded-full" style={{ background: team.color }} />
                   <span className="truncate">{team.name}</span>
                 </span>
+                {note ? <span className="mt-0.5 ml-5 block text-xs font-normal text-miss">{note}</span> : null}
                 {isWinner ? (
                   <span className="mt-1 ml-5 inline-flex items-center gap-1 text-sm whitespace-nowrap sm:hidden">
                     <span className="rounded-md bg-accent-3 px-1.5 py-0.5 text-xs font-extrabold text-[#1a1205]">
