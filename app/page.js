@@ -4,9 +4,43 @@ import { ArrowRightIcon, SparkleIcon } from "@/components/ui/icons";
 
 const TILT = [-6, 4, -3, 7, -5, 3, -4];
 
-function previewStyle(game, char, i) {
-  if (game.preview.style === "pixel") {
-    return { background: char, aspectRatio: "1 / 1", borderRadius: "0.2rem", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / 0.08)" };
+/** A made-up poster (warm sky, dark ground) the "scramble" preview cuts into strips. */
+const POSTER_ART = "linear-gradient(165deg, #1e1b4b 0%, #7c2d12 30%, #f59e0b 48%, #fde68a 56%, #ea580c 68%, #4c1d95 84%, #0f172a 100%)";
+
+/** Thermometer colours, freezing → burning (matches Hot & Cold's bands). */
+function heatColor(degrees) {
+  if (degrees >= 100) return "var(--hit)";
+  if (degrees >= 70) return "#ef4444";
+  if (degrees >= 45) return "#f97316";
+  if (degrees >= 25) return "#fbbf24";
+  if (degrees >= 10) return "#22d3ee";
+  return "#60a5fa";
+}
+
+/** Text shown on a preview tile: letters for the word games, nothing for the picture ones. */
+function previewText(game, tile) {
+  return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
+}
+
+function previewStyle(game, tile, i) {
+  if (game.preview.style === "scramble") {
+    // `tile` is which vertical strip of the poster sits in this slot.
+    const strips = game.preview.tiles.length;
+    return {
+      backgroundImage: POSTER_ART,
+      backgroundSize: `${strips * 100}% 100%`,
+      backgroundPosition: `${(tile / (strips - 1)) * 100}% 0`,
+      filter: "blur(1.5px)",
+      borderRadius: "0.3rem",
+    };
+  }
+  if (game.preview.style === "thermo") {
+    // `tile` is a temperature reading in degrees, drawn as a filled bar.
+    const color = heatColor(tile);
+    return {
+      background: `linear-gradient(to top, ${color} ${Math.max(8, tile)}%, var(--tile-hidden) ${Math.max(8, tile)}%)`,
+      boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${color} 45%, transparent)`,
+    };
   }
   if (game.preview.style === "jumble") {
     return {
@@ -16,7 +50,7 @@ function previewStyle(game, char, i) {
       transform: `rotate(${TILT[i % TILT.length]}deg) translateY(${i % 2 ? 3 : -2}px)`,
     };
   }
-  return char
+  return tile
     ? { background: "var(--tile-revealed)", color: "var(--tile-revealed-fg)" }
     : { background: "var(--tile-hidden)", boxShadow: `inset 0 -3px 0 ${game.accent[0]}` };
 }
@@ -54,7 +88,7 @@ export default function Home() {
                       className="grid aspect-[3/4] min-w-0 place-items-center rounded-lg font-display text-[clamp(0.95rem,4.5vw,1.25rem)] font-bold"
                       style={previewStyle(game, char, i)}
                     >
-                      {game.preview.style === "pixel" ? null : char}
+                      {previewText(game, char)}
                     </span>
                   ))}
                 </div>

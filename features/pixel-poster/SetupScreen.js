@@ -38,9 +38,9 @@ export function SetupScreen({ initialTeams, initialSeconds, pool, starting, erro
       eyebrow={`Picture game · ${poolLabel}`}
       title={
         <>
-          Pixel
+          Poster
           <br />
-          <span className="text-accent-2">Poster</span>
+          <span className="text-accent-2">Puzzle</span>
         </>
       }
       intro="Name the Telugu movie from a poster you can barely make out. The longer you stare, the less it’s worth."
