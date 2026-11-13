@@ -42,6 +42,13 @@ function previewStyle(game, tile, i) {
       boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${color} 45%, transparent)`,
     };
   }
+  if (game.preview.style === "wave") {
+    // `tile` is an equaliser bar height in %.
+    return {
+      background: `linear-gradient(to top, ${game.accent[0]} ${tile}%, var(--tile-hidden) ${tile}%)`,
+      borderRadius: "999px",
+    };
+  }
   if (game.preview.style === "jumble") {
     return {
       background: "linear-gradient(180deg, var(--key-top), var(--key-bottom))",

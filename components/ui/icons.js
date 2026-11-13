@@ -96,3 +96,8 @@ export const BulbIcon = (p) => (
     <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2Z" />
   </Icon>
 );
+export const PlayIcon = (p) => (
+  <Icon {...p}>
+    <path d="M7 4.5v15l12-7.5z" fill="currentColor" />
+  </Icon>
+);

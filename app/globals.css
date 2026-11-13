@@ -435,6 +435,13 @@ dialog.sheet[open]::backdrop {
   animation: confetti-fall var(--dur) cubic-bezier(0.3, 0.6, 0.5, 1) var(--delay) both;
 }
 
+/* Tune In: equaliser bars that bounce while the clip plays. */
+@keyframes eq-bounce {
+  0%, 100% { height: 18%; }
+  50% { height: 100%; }
+}
+.eq-bar { height: 18%; animation: eq-bounce 640ms ease-in-out infinite; }
+
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
