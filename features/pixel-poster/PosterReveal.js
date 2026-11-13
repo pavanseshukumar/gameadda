@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
  *  - BLUR_CQW:       blur radius, as a % of the poster's displayed width (cqw)
  *  - SCRAMBLE_FIXED: share of tiles back in their home spot (the rest are swapped around)
  */
-const BLUR_CQW = [2.4, 1];
+const BLUR_CQW = [1.4, 1];
 const SCRAMBLE_FIXED = [0, 0.5];
 const SCRAMBLE_COLS = 4;
 const SCRAMBLE_ROWS = 5;
