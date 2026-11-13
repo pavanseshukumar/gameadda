@@ -16,6 +16,8 @@ import {
 } from "@/lib/games/guess-the-song/engine";
 import { getPuzzleLines } from "@/lib/games/guess-the-song/songs";
 import { GameShell } from "@/components/game/GameShell";
+import Image from "next/image";
+import { useSongDetails } from "./useSongDetails";
 
 
 export function RoundCompleteScreen({ state, dispatch }) {
@@ -47,9 +49,13 @@ export function RoundCompleteScreen({ state, dispatch }) {
               {winner.name} <span style={{ color: winner.color }}>got it!</span>
             </h1>
             <p className="anim-rise mt-3 text-muted">
-              {byLyrics ? "Revealed the final letter of the title." : "Named the song."}
+              {byLyrics
+                ? `Revealed the final letter of the title. Letter points only: the ${SONG_COMPLETION_MULTIPLIER}× bonus is for naming the song.`
+                : "Named the song."}
             </p>
-            <BonusBurst alphabetPoints={result.alphabetPoints ?? 0} multiplier={multiplier} bonus={result.bonus ?? 0} />
+            {byLyrics ? null : (
+              <BonusBurst alphabetPoints={result.alphabetPoints ?? 0} multiplier={multiplier} bonus={result.bonus ?? 0} />
+            )}
           </>
         ) : (
           <>
@@ -76,6 +82,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
         <div className="mt-7 border-t border-line pt-7">
           <LyricsDisplay lines={getPuzzleLines(song)} guessedLetters={state.guessedLetters} revealAll complete={byLyrics} size="sm" />
         </div>
+        <SongMedia songId={song.id} title={song.title} />
       </section>
 
       <section className="relative mt-8" aria-labelledby="round-points-heading">
@@ -143,6 +150,47 @@ function BonusBurst({ alphabetPoints, multiplier, bonus }) {
       <p className="anim-rise text-sm text-muted" style={{ animationDelay: "900ms" }}>
         Song completion bonus{alphabetPoints === 0 ? ". No letter points this round, so nothing to multiply" : ""}
       </p>
+    </div>
+  );
+}
+
+/** Cover art, 30-second preview and store link from iTunes. Renders nothing until (and unless) a match is found. */
+function SongMedia({ songId, title }) {
+  const details = useSongDetails(songId);
+  if (!details?.found || (!details.artworkUrl && !details.previewUrl)) return null;
+
+  return (
+    <div className="anim-rise mt-7 flex flex-col items-center gap-4 border-t border-line pt-7 sm:flex-row sm:items-center sm:gap-6">
+      {details.artworkUrl ? (
+        <Image
+          src={details.artworkUrl}
+          alt={details.album ? `Cover art: ${details.album}` : `Cover art for ${title}`}
+          width={112}
+          height={112}
+          className="size-28 shrink-0 rounded-2xl object-cover shadow-lg"
+        />
+      ) : null}
+      <div className="flex w-full min-w-0 flex-col gap-3 text-center sm:text-left">
+        <div className="min-w-0">
+          {details.artist ? <p className="font-semibold">{details.artist}</p> : null}
+          {details.album ? <p className="truncate text-sm text-muted">{details.album}</p> : null}
+        </div>
+        {details.previewUrl ? (
+          <audio controls preload="none" src={details.previewUrl} className="w-full max-w-md">
+            Your browser can’t play this preview.
+          </audio>
+        ) : null}
+        {details.trackUrl ? (
+          <a
+            href={details.trackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-semibold text-accent underline-offset-4 hover:underline"
+          >
+            Listen on Apple Music ↗
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ const RULES = [
   },
   {
     title: "Win the song",
-    body: `Name the song, or reveal its final letter, to earn ${SONG_COMPLETION_MULTIPLIER}× your letter points this round.`,
+    body: `Name the song to earn ${SONG_COMPLETION_MULTIPLIER}× your letter points this round. Revealing the final letter wins the round too, but with no multiplier.`,
   },
 ];
 

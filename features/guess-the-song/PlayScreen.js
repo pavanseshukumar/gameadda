@@ -19,7 +19,8 @@ import {
   selectLetterStates,
   selectSong,
 } from "@/lib/games/guess-the-song/engine";
-import { getClues, getPuzzleLines } from "@/lib/games/guess-the-song/songs";
+import { getClues, getPuzzleLines, revealsTitle } from "@/lib/games/guess-the-song/songs";
+import { useSongDetails } from "./useSongDetails";
 import { lettersIn } from "@/lib/games/guess-the-song/lyrics";
 import { GameShell } from "@/components/game/GameShell";
 import { feedbackFromEvent } from "./feedback";
@@ -29,7 +30,10 @@ export function PlayScreen({ state, dispatch }) {
 
   const song = selectSong(state);
   const lines = getPuzzleLines(song);
-  const clues = getClues(song);
+  const details = useSongDetails(song?.id);
+  // Singers from iTunes, unless the credit line happens to contain part of the title.
+  const singers = details?.found && details.artist && !revealsTitle(song, details.artist) ? details.artist : null;
+  const clues = { ...getClues(song), singers };
   const team = selectActiveTeam(state);
   const letterStates = selectLetterStates(state);
   const event = state.lastEvent;
@@ -121,9 +125,9 @@ export function PlayScreen({ state, dispatch }) {
           freshLetter={event?.type === "letter-hit" ? event.letter : null}
         />
         <p className="mt-3 text-center text-xs text-subtle sm:mt-7 sm:text-sm">
-          <span className="sm:hidden">Finish the title or name the song: </span>
+          <span className="sm:hidden">Name the song early: </span>
           <span className="hidden sm:inline">
-            Reveal every letter <span className="text-muted">or</span> name the song to win{" "}
+            Name the song before the letters run out to win{" "}
           </span>
           <span className="font-semibold text-accent-3 tabular-nums">
             {SONG_COMPLETION_MULTIPLIER}×<span className="hidden sm:inline"> your letter points</span> (+{bonus})
@@ -191,6 +195,7 @@ function ClueChips({ clues }) {
     clues.movie ? { label: "Movie", value: clues.movie } : { label: "Movie", value: "Hidden: it gives the title away" },
     clues.year ? { label: "Year", value: clues.year } : null,
     clues.composer ? { label: "Music", value: clues.composer } : null,
+    clues.singers ? { label: "Artists", value: clues.singers } : null,
   ].filter(Boolean);
 
   return (
