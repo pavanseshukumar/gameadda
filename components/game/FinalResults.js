@@ -13,9 +13,15 @@ import { leadingTeams } from "@/lib/games/core/teams";
  * @param {{ teams: { id: string, name: string, color: string, score: number }[], rounds: number, onPlayAgain: () => void }} props
  */
 export function FinalResults({ teams, rounds, onPlayAgain }) {
+  const solo = teams.length === 1;
   const leaders = leadingTeams(teams);
   const champion = leaders.length === 1 ? leaders[0] : null;
-  const headline = champion
+  // Solo: no winner to crown, just the score.
+  const headline = solo
+    ? teams[0].score > 0
+      ? `${teams[0].score} points in ${rounds} ${rounds === 1 ? "round" : "rounds"}!`
+      : "No points this time"
+    : champion
     ? `${champion.name} wins!`
     : leaders.length > 1
       ? `It’s a tie between ${leaders.map((t) => t.name).join(" & ")}`

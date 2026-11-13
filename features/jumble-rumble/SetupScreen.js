@@ -12,7 +12,7 @@ import {
 const RULES = [
   { title: "Unscramble", body: "A Telugu movie title is jumbled into letter tiles. Tap them into the slots in order." },
   { title: "Beat the clock", body: `Solve it for ${BASE_POINTS} points plus 1 per second left. Hints cost ${HINT_COST} each.` },
-  { title: "Steal it", body: "Wrong or out of time? The next team gets one steal: half the time, half the points." },
+  { title: "Steal it", body: "Playing in teams? Wrong or out of time, and the next team gets one steal: half the time, half the points." },
 ];
 
 /** @param {{ pool: import("@/lib/games/jumble-rumble/moviePool").MoviePool | null }} props */

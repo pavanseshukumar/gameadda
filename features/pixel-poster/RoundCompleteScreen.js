@@ -31,7 +31,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
               {winner.name} <span style={{ color: winner.color }}>{result.steal ? "stole it!" : "spotted it!"}</span>
             </>
           ) : (
-            result?.outcome === "revealed" ? "Round given up" : "Nobody spotted it"
+            result?.outcome === "revealed" ? "Round given up" : state.teams.length === 1 ? "So close!" : "Nobody spotted it"
           )}
         </h1>
         <p className="anim-rise mx-auto mt-3 max-w-md text-muted">
@@ -41,7 +41,9 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
               : `Named at reveal ${result.stage + 1} of ${STAGE_COUNT}.`
             : result?.outcome === "revealed"
               ? "You gave up on this one, so no points this round."
-              : "The first try and the steal both ran out of time. No points this round."}
+              : state.teams.length === 1
+                ? "Time ran out. No points this round."
+                : "The first try and the steal both ran out of time. No points this round."}
         </p>
       </section>
 

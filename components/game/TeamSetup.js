@@ -5,14 +5,17 @@ import { MAX_TEAMS, MIN_TEAMS, defaultTeamName, teamColor } from "@/lib/games/co
 import { ArrowRightIcon, PlusIcon, XIcon } from "@/components/ui/icons";
 import { GameShell } from "./GameShell";
 
+const SOLO_NAME = "You";
+
 function initialDrafts(teams) {
   if (teams?.length >= MIN_TEAMS) return teams.map((team, i) => ({ id: i + 1, name: team.name }));
   return Array.from({ length: MIN_TEAMS }, (_, i) => ({ id: i + 1, name: defaultTeamName(i) }));
 }
 
 /**
- * Shared setup screen for team games: hero, 2–6 editable teams, rules and an
- * optional game-specific settings section (`children`).
+ * Shared setup screen: hero, a Solo / Teams switch, 2–6 editable teams (or one
+ * player name in solo), rules and an optional game-specific settings section (`children`).
+ * In solo, `onStart` gets a single draft.
  *
  * @param {{
  *   eyebrow: string,
@@ -28,6 +31,8 @@ function initialDrafts(teams) {
  */
 export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart, children, startDisabled = false, startLabel }) {
   const [drafts, setDrafts] = useState(() => initialDrafts(initialTeams));
+  const [solo, setSolo] = useState(initialTeams?.length === 1);
+  const [soloName, setSoloName] = useState(initialTeams?.length === 1 ? initialTeams[0].name : SOLO_NAME);
 
   const addTeam = () =>
     setDrafts((current) => {
@@ -57,90 +62,139 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
         className="mt-10 flex flex-col gap-6"
         onSubmit={(event) => {
           event.preventDefault();
-          onStart(drafts);
+          onStart(solo ? [{ id: 1, name: soloName.trim() || SOLO_NAME }] : drafts);
         }}
       >
         <section className="card rounded-[1.75rem] p-4 sm:p-6" aria-labelledby="teams-heading">
-          <div className="flex items-center justify-between gap-4 px-1">
-            <h2 id="teams-heading" className="font-display text-xl font-bold tracking-tight">
-              Teams
-            </h2>
-            <div className="flex items-center gap-1 rounded-full border border-line bg-surface p-1" role="group" aria-label="Number of teams">
+          <div role="radiogroup" aria-label="Who's playing" className="mb-5 grid grid-cols-2 gap-1 rounded-full border border-line bg-surface p-1">
+            {[
+              [true, "Solo"],
+              [false, "Teams"],
+            ].map(([value, label]) => (
               <button
+                key={label}
                 type="button"
-                className="btn btn-ghost size-9 p-0"
-                onClick={() => removeTeam(drafts[drafts.length - 1].id)}
-                disabled={drafts.length <= MIN_TEAMS}
-                aria-label="Remove last team"
+                role="radio"
+                aria-checked={solo === value}
+                onClick={() => setSolo(value)}
+                className={`btn h-11 text-base ${solo === value ? "btn-primary" : "btn-ghost"}`}
               >
-                <span className="text-lg leading-none">−</span>
+                {label}
               </button>
-              <span className="w-7 text-center font-display text-lg font-bold tabular-nums" aria-live="polite">
-                {drafts.length}
-              </span>
-              <button
-                type="button"
-                className="btn btn-ghost size-9 p-0"
-                onClick={addTeam}
-                disabled={drafts.length >= MAX_TEAMS}
-                aria-label="Add a team"
-              >
-                <PlusIcon size={18} />
-              </button>
-            </div>
+            ))}
           </div>
 
-          <ul className="mt-5 flex flex-col gap-2.5">
-            {drafts.map((draft, index) => {
-              const color = teamColor(index);
-              return (
-                <li
-                  key={draft.id}
-                  className="anim-rise group flex items-center gap-3 rounded-2xl border border-line bg-surface-strong p-2 pl-3 transition focus-within:border-[color:var(--c)]"
-                  style={{ "--c": color }}
-                >
-                  <span
-                    className="grid size-9 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white"
-                    style={{ background: color }}
-                  >
-                    {index + 1}
-                  </span>
-                  <label className="sr-only" htmlFor={`team-${draft.id}`}>
-                    Team {index + 1} name
-                  </label>
-                  <input
-                    id={`team-${draft.id}`}
-                    value={draft.name}
-                    maxLength={24}
-                    autoComplete="off"
-                    placeholder={defaultTeamName(index)}
-                    onChange={(event) => rename(draft.id, event.target.value)}
-                    className="h-11 min-w-0 flex-1 bg-transparent text-lg font-medium outline-none placeholder:text-subtle"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-ghost size-10 shrink-0 p-0"
-                    onClick={() => removeTeam(draft.id)}
-                    disabled={drafts.length <= MIN_TEAMS}
-                    aria-label={`Remove ${draft.name || defaultTeamName(index)}`}
-                  >
-                    <XIcon size={18} />
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-
-          {drafts.length < MAX_TEAMS ? (
-            <button
-              type="button"
-              onClick={addTeam}
-              className="mt-2.5 flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong text-muted transition hover:border-accent hover:text-foreground"
-            >
-              <PlusIcon size={18} /> Add team
-            </button>
+          {solo ? (
+            <>
+              <h2 id="teams-heading" className="px-1 font-display text-xl font-bold tracking-tight">
+                Player
+              </h2>
+              <p className="px-1 text-sm text-muted">Just you against the clock. No steals, no passing the turn.</p>
+              <div
+                className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-surface-strong p-2 pl-3 transition focus-within:border-[color:var(--c)]"
+                style={{ "--c": teamColor(0) }}
+              >
+                <span className="grid size-9 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white" style={{ background: teamColor(0) }}>
+                  1
+                </span>
+                <label className="sr-only" htmlFor="solo-name">
+                  Your name
+                </label>
+                <input
+                  id="solo-name"
+                  value={soloName}
+                  maxLength={24}
+                  autoComplete="off"
+                  placeholder={SOLO_NAME}
+                  onChange={(event) => setSoloName(event.target.value)}
+                  className="h-11 min-w-0 flex-1 bg-transparent text-lg font-medium outline-none placeholder:text-subtle"
+                />
+              </div>
+            </>
           ) : (
-            <p className="mt-3 text-center text-sm text-subtle">Six teams max. That’s a full house.</p>
+            <>
+            <div className="flex items-center justify-between gap-4 px-1">
+              <h2 id="teams-heading" className="font-display text-xl font-bold tracking-tight">
+                Teams
+              </h2>
+              <div className="flex items-center gap-1 rounded-full border border-line bg-surface p-1" role="group" aria-label="Number of teams">
+                <button
+                  type="button"
+                  className="btn btn-ghost size-9 p-0"
+                  onClick={() => removeTeam(drafts[drafts.length - 1].id)}
+                  disabled={drafts.length <= MIN_TEAMS}
+                  aria-label="Remove last team"
+                >
+                  <span className="text-lg leading-none">−</span>
+                </button>
+                <span className="w-7 text-center font-display text-lg font-bold tabular-nums" aria-live="polite">
+                  {drafts.length}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost size-9 p-0"
+                  onClick={addTeam}
+                  disabled={drafts.length >= MAX_TEAMS}
+                  aria-label="Add a team"
+                >
+                  <PlusIcon size={18} />
+                </button>
+              </div>
+            </div>
+
+            <ul className="mt-5 flex flex-col gap-2.5">
+              {drafts.map((draft, index) => {
+                const color = teamColor(index);
+                return (
+                  <li
+                    key={draft.id}
+                    className="anim-rise group flex items-center gap-3 rounded-2xl border border-line bg-surface-strong p-2 pl-3 transition focus-within:border-[color:var(--c)]"
+                    style={{ "--c": color }}
+                  >
+                    <span
+                      className="grid size-9 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white"
+                      style={{ background: color }}
+                    >
+                      {index + 1}
+                    </span>
+                    <label className="sr-only" htmlFor={`team-${draft.id}`}>
+                      Team {index + 1} name
+                    </label>
+                    <input
+                      id={`team-${draft.id}`}
+                      value={draft.name}
+                      maxLength={24}
+                      autoComplete="off"
+                      placeholder={defaultTeamName(index)}
+                      onChange={(event) => rename(draft.id, event.target.value)}
+                      className="h-11 min-w-0 flex-1 bg-transparent text-lg font-medium outline-none placeholder:text-subtle"
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-ghost size-10 shrink-0 p-0"
+                      onClick={() => removeTeam(draft.id)}
+                      disabled={drafts.length <= MIN_TEAMS}
+                      aria-label={`Remove ${draft.name || defaultTeamName(index)}`}
+                    >
+                      <XIcon size={18} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {drafts.length < MAX_TEAMS ? (
+              <button
+                type="button"
+                onClick={addTeam}
+                className="mt-2.5 flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong text-muted transition hover:border-accent hover:text-foreground"
+              >
+                <PlusIcon size={18} /> Add team
+              </button>
+            ) : (
+              <p className="mt-3 text-center text-sm text-subtle">Six teams max. That’s a full house.</p>
+            )}
+            </>
           )}
         </section>
 

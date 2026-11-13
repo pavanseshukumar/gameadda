@@ -19,7 +19,7 @@ export function feedbackFromEvent(state, event) {
     case "repeat":
       return { id: event.seq, tone: "info", title: `${event.title} is already on the board`, detail: "Pick another movie" };
     case "timeout":
-      return { id: event.seq, tone: "miss", title: "Time’s up!", detail: `Over to ${team(event.nextTeamId)}` };
+      return { id: event.seq, tone: "miss", title: "Time’s up!", detail: event.nextTeamId === event.teamId ? "Fresh clock, keep going" : `Over to ${team(event.nextTeamId)}` };
     case "movies-recycled":
       return { id: event.seq, tone: "info", title: "All movies played", detail: "Reshuffling the list" };
     default:

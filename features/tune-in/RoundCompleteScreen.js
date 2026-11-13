@@ -34,7 +34,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
           ) : result?.outcome === "revealed" ? (
             "Round given up"
           ) : (
-            "Nobody got it"
+            state.teams.length === 1 ? "So close!" : "Nobody got it"
           )}
         </h1>
         <p className="anim-rise mx-auto mt-3 max-w-md text-muted">
@@ -44,7 +44,9 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
               : `Named it after hearing ${heard}s of the clip.`
             : result?.outcome === "revealed"
               ? "You gave up on this one, so no points this round."
-              : "The first try and the steal both ran out of time. No points this round."}
+              : state.teams.length === 1
+                ? "Time ran out. No points this round."
+                : "The first try and the steal both ran out of time. No points this round."}
         </p>
       </section>
 

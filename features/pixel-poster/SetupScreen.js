@@ -15,7 +15,7 @@ const RULES = [
     title: "Guess early",
     body: `Type as many guesses as you like. Naming it is worth ${STAGE_POINTS[0]} at first, dropping to ${STAGE_POINTS.at(-1)} when it’s clearest. A clue costs ${CLUE_COST}.`,
   },
-  { title: "Steal it", body: "Out of time? The next team gets one steal on the clearest poster: half the time, half the points." },
+  { title: "Steal it", body: "Playing in teams? Out of time, and the next team gets one steal on the clearest poster: half the time, half the points." },
 ];
 
 /**

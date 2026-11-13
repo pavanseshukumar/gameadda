@@ -11,7 +11,7 @@ const RULES = [
     title: "Name the movie",
     body: `Type the movie the song is from. Within the first ${first[0]}s of the clip it’s worth ${first[1]}, by ${second[0]}s it’s ${second[1]}, then less. A clue costs ${CLUE_COST}.`,
   },
-  { title: "Steal it", body: "Out of time? The next team gets one steal: half the time, half the points." },
+  { title: "Steal it", body: "Playing in teams? Out of time, and the next team gets one steal: half the time, half the points." },
 ];
 
 /**

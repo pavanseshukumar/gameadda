@@ -7,9 +7,9 @@ export function feedbackFromEvent(state, event) {
 
   switch (event.type) {
     case "wrong":
-      return { id: event.seq, tone: "miss", title: `${event.guess} isn’t it`, detail: `${team(event.nextTeamId)} can steal` };
+      return { id: event.seq, tone: "miss", title: `${event.guess} isn’t it`, detail: event.steal ? `${team(event.nextTeamId)} can steal` : "Round over" };
     case "timeout":
-      return { id: event.seq, tone: "miss", title: "Time’s up!", detail: `${team(event.nextTeamId)} can steal` };
+      return { id: event.seq, tone: "miss", title: "Time’s up!", detail: event.steal ? `${team(event.nextTeamId)} can steal` : "Round over" };
     case "movies-recycled":
       return { id: event.seq, tone: "info", title: "All movies played", detail: "Reshuffling the list" };
     default:

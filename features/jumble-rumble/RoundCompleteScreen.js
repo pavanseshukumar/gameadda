@@ -30,12 +30,12 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound }) {
               {winner.name} <span style={{ color: winner.color }}>{result.steal ? "stole it!" : "cracked it!"}</span>
             </>
           ) : (
-            "Nobody cracked it"
+            state.teams.length === 1 ? "So close!" : "Nobody cracked it"
           )}
         </h1>
         {!solved ? (
           <p className="anim-rise mx-auto mt-3 max-w-md text-muted">
-            {result?.outcome === "revealed" ? "The host revealed the movie." : "The first try and the steal both missed. No points this round."}
+            {result?.outcome === "revealed" ? "The host revealed the movie." : state.teams.length === 1 ? "Not this time. No points this round." : "The first try and the steal both missed. No points this round."}
           </p>
         ) : null}
       </section>
