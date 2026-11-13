@@ -110,9 +110,9 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Reveal the movie">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Give up this round">
             <EyeIcon size={18} />
-            <span className="hidden md:inline">Reveal</span>
+            <span className="hidden md:inline">Give up</span>
           </button>
           <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("end"); }} aria-label="End game">
             <FlagIcon size={18} />
@@ -148,15 +148,29 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
                     <p className="font-display text-3xl font-extrabold tabular-nums text-accent-3 sm:text-4xl">{pointsAt(state, stage)}</p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="btn btn-secondary h-9 shrink-0 px-3 text-xs sm:text-sm"
-                  onClick={() => act(ACTIONS.USE_CLUE)}
-                  disabled={!running || state.clueShown}
-                  aria-label={`Show clue, costs ${CLUE_COST} points`}
-                >
-                  <BulbIcon size={15} /> Clue <span className="text-miss">−{CLUE_COST}</span>
-                </button>
+                <div className="flex shrink-0 flex-col items-stretch gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+                  <button
+                    type="button"
+                    className="btn btn-secondary h-9 px-3 text-xs sm:text-sm"
+                    onClick={() => act(ACTIONS.USE_CLUE)}
+                    disabled={!running || state.clueShown}
+                    aria-label={`Show clue, costs ${CLUE_COST} points`}
+                  >
+                    <BulbIcon size={15} /> Clue <span className="text-miss">−{CLUE_COST}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary h-9 px-3 text-xs hover:border-miss/60 hover:text-miss sm:text-sm"
+                    onClick={() => {
+                      pause();
+                      setDialog("reveal");
+                    }}
+                    disabled={!running}
+                    aria-label="Give up this round and reveal the movie"
+                  >
+                    <EyeIcon size={15} /> Give up
+                  </button>
+                </div>
               </div>
 
               <StageMeter stage={stage} nextInMs={nextIn} color={team.color} />
@@ -213,7 +227,8 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
           </div>
         </div>
 
-        {!running ? (
+        {/* Hidden while a confirm dialog is open, so the paused card doesn't stack behind it. */}
+        {!running && !dialog ? (
           <div className="z-10 col-start-1 row-start-1 grid place-items-center py-1 sm:py-2">
             <TurnHandoff
               team={team}
@@ -247,9 +262,9 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
 
       <ConfirmDialog
         open={dialog === "reveal"}
-        title="Reveal the movie?"
-        body="This ends the round with no winner."
-        confirmLabel="Reveal movie"
+        title="Give up this round?"
+        body="The movie is revealed and nobody scores. The next round starts fresh."
+        confirmLabel="Give up & reveal"
         onCancel={() => setDialog(null)}
         onConfirm={() => {
           setDialog(null);
