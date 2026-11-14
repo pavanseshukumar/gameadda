@@ -111,3 +111,26 @@ export const ChevronLeftIcon = (p) => (
     <path d="m15 18-6-6 6-6" />
   </Icon>
 );
+export const MaskIcon = (p) => (
+  <Icon {...p}>
+    <path d="M2 9.5C2 7.5 4 6.5 7 6.5c2 0 3.2 1 5 1s3-1 5-1c3 0 5 1 5 3 0 4-2.2 7-5 7-2 0-3.2-2-5-2s-3 2-5 2c-2.8 0-5-3-5-7Z" />
+    <path d="M6.5 11.2c.8-.7 2-.7 2.8 0M14.7 11.2c.8-.7 2-.7 2.8 0" />
+  </Icon>
+);
+export const UsersIcon = (p) => (
+  <Icon {...p}>
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+  </Icon>
+);
+export const ChevronUpIcon = (p) => (
+  <Icon {...p}>
+    <path d="m18 15-6-6-6 6" />
+  </Icon>
+);
+export const ChevronDownIcon = (p) => (
+  <Icon {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </Icon>
+);

@@ -260,6 +260,50 @@
   letter-spacing: -0.02em;
 }
 
+/* ── Imposter · "Hideout": a dim back room, acid lime and signal red ──────── */
+.theme-hideout {
+  color-scheme: dark;
+  --background: #120f1d;
+  --foreground: #f1eefc;
+  --panel: #1d1830;
+  --well: #161227;
+  --edge: #43396a;
+  --depth: #05030b;
+  --surface: rgb(220 210 255 / 0.04);
+  --surface-strong: rgb(220 210 255 / 0.09);
+  --line: rgb(210 200 255 / 0.12);
+  --line-strong: rgb(210 200 255 / 0.24);
+  --fg-muted: #c3bce0;
+  --fg-subtle: #9a92bd;
+
+  --accent: #c6f432;
+  --accent-2: #ff4d6d;
+  --accent-2-ink: #1d0610;
+  --accent-3: #c6f432;
+  --accent-3-ink: #14170a;
+  --hit: #3ddc84;
+  --hit-deep: #168a4e;
+  --miss: #ff4d6d;
+  --miss-deep: #a3203a;
+
+  --select-bg: #f1eefc;
+  --select-fg: #120f1d;
+  --select-mark: #c6f432;
+  --btn-primary-bg: #c6f432;
+  --btn-primary-fg: #14170a;
+  --btn-primary-depth: #5f7a10;
+  --key-bg: #2a2342;
+  --key-fg: #f1eefc;
+
+  --tile-hidden: rgb(220 210 255 / 0.08);
+  --tile-revealed: #f1eefc;
+  --tile-revealed-fg: #120f1d;
+  --dot: rgb(210 200 255 / 0.06);
+  --stage-glow: 22%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-hideout), system-ui, sans-serif;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -299,3 +343,5 @@ html[data-page="thermal"],
 html[data-page="thermal"] body { background: #06131f; }
 html[data-page="dial"],
 html[data-page="dial"] body { background: #e8edf3; }
+html[data-page="hideout"],
+html[data-page="hideout"] body { background: #120f1d; }

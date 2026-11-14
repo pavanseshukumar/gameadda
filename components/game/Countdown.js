@@ -1,15 +1,19 @@
 /**
  * Circular countdown. Turns red and pulses in the last `urgentAt` seconds.
  *
- * @param {{ remainingMs: number, totalMs: number, color?: string, urgentAt?: number, paused?: boolean }} props
+ * `format="clock"` shows m:ss instead of seconds (for minute-long timers).
+ *
+ * @param {{ remainingMs: number, totalMs: number, color?: string, urgentAt?: number, paused?: boolean, format?: "seconds" | "clock" }} props
  */
-export function Countdown({ remainingMs, totalMs, color = "var(--team)", urgentAt = 10, paused = false }) {
+export function Countdown({ remainingMs, totalMs, color = "var(--team)", urgentAt = 10, paused = false, format = "seconds" }) {
   const seconds = Math.ceil(remainingMs / 1000);
   const progress = totalMs > 0 ? Math.max(0, Math.min(1, remainingMs / totalMs)) : 0;
   const urgent = !paused && seconds <= urgentAt && seconds > 0;
   const radius = 26;
   const circumference = 2 * Math.PI * radius;
   const stroke = urgent ? "var(--miss)" : color;
+  const clock = format === "clock";
+  const text = clock ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` : seconds;
 
   return (
     <div
@@ -35,10 +39,10 @@ export function Countdown({ remainingMs, totalMs, color = "var(--team)", urgentA
         />
       </svg>
       <span
-        className={`font-display text-xl font-extrabold tabular-nums sm:text-2xl ${urgent ? "text-miss" : ""}`}
+        className={`font-display font-extrabold tabular-nums ${clock ? "text-base sm:text-lg" : "text-xl sm:text-2xl"} ${urgent ? "text-miss" : ""}`}
         aria-hidden="true"
       >
-        {paused ? "❚❚" : seconds}
+        {paused ? "❚❚" : text}
       </span>
     </div>
   );

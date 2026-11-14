@@ -38,6 +38,7 @@
   --accent-2: #f472b6;
   --accent-3: #fbbf24;
   --accent-3-ink: #1a1205;
+  --accent-2-ink: #1a0610;
   --hit: #22c55e;
   --hit-deep: #15803d;
   --miss: #ef4444;
@@ -285,6 +286,44 @@ body {
 .seg:focus-visible {
   outline: 3px solid var(--select-mark);
   outline-offset: 2px;
+}
+
+.seg:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* On/off switch (Toggle in components/ui/Controls.js). */
+.switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 2px solid var(--edge);
+  background: var(--well);
+  transition: background-color 150ms ease;
+}
+.switch[aria-checked="true"] {
+  background: var(--hit);
+}
+.switch:focus-visible {
+  outline: 3px solid var(--select-mark);
+  outline-offset: 2px;
+}
+.switch-knob {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  border: 2px solid var(--edge);
+  background: var(--panel);
+  transition: transform 200ms ease;
+}
+.switch[aria-checked="true"] .switch-knob {
+  transform: translateX(1.5rem);
 }
 
 /* Square outlined button for steppers (− 2 +). */

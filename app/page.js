@@ -20,6 +20,7 @@ function heatColor(degrees) {
 /** Text shown on a preview tile: letters for the word games, nothing for the picture ones. */
 function previewText(game, tile) {
   if (game.preview.style === "board") return tile === "★" ? tile : null;
+  if (game.preview.style === "lineup") return tile || null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -62,6 +63,17 @@ function previewStyle(game, tile, i) {
       transform: `translateY(${[3, -1, -4, -3, 1, 4, 2][i % 7]}px)`,
     };
   }
+  if (game.preview.style === "lineup") {
+    // A line-up of player silhouettes (head + shoulders); "?" is the imposter, in red.
+    const imposter = tile === "?";
+    const ink = imposter ? "var(--accent-2)" : "var(--fg-subtle)";
+    return imposter
+      ? { background: "var(--accent-2)", color: "var(--accent-2-ink)", border: "1.5px solid var(--edge)", boxShadow: "0 2px 0 var(--depth)" }
+      : {
+          background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
+          boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
+        };
+  }
   if (game.preview.style === "jumble") {
     return {
       background: "var(--key-bg)",
@@ -87,7 +99,7 @@ export default function Home() {
               One screen. <span className="text-accent-2">Everyone</span> plays.
             </h1>
           </div>
-          <p className="max-w-sm text-sm text-muted sm:text-base">
+          <p className="hidden max-w-sm text-base text-muted sm:block">
             Party games for the living room. Pass the phone, cast to the TV, or crowd round a laptop.
           </p>
         </header>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { MAX_TEAMS, MIN_TEAMS, defaultTeamName, teamColor, teamInk } from "@/lib/games/core/teams";
+import { MAX_TEAMS, MIN_TEAMS, defaultTeamName, teamColor } from "@/lib/games/core/teams";
 import { ArrowRightIcon, PlusIcon, XIcon } from "@/components/ui/icons";
 import { Segmented, Stepper } from "@/components/ui/Controls";
 import { GameShell } from "./GameShell";
+import { TeamBadge } from "./TeamBadge";
 
 const SOLO_NAME = "You";
 
@@ -177,14 +178,3 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
   );
 }
 
-/** Numbered team-colour badge, outlined like Pictionary's team number. */
-function TeamBadge({ color, children }) {
-  return (
-    <span
-      className="grid size-9 shrink-0 place-items-center rounded-full border-2 border-edge font-display text-sm font-extrabold"
-      style={{ background: color, color: teamInk(color) }}
-    >
-      {children}
-    </span>
-  );
-}
