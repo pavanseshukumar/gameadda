@@ -101,3 +101,13 @@ export const PlayIcon = (p) => (
     <path d="M7 4.5v15l12-7.5z" fill="currentColor" />
   </Icon>
 );
+export const MinusIcon = (p) => (
+  <Icon {...p}>
+    <path d="M5 12h14" />
+  </Icon>
+);
+export const ChevronLeftIcon = (p) => (
+  <Icon {...p}>
+    <path d="m15 18-6-6 6-6" />
+  </Icon>
+);

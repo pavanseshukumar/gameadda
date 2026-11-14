@@ -88,7 +88,7 @@ export function PlayScreen({ state, dispatch, pool }) {
       teamColor={team.color}
       right={
         <>
-          <span className="mr-0.5 whitespace-nowrap rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold tabular-nums">
+          <span className="mr-0.5 whitespace-nowrap chip px-3 py-1.5 text-sm font-semibold tabular-nums">
             <span className="hidden min-[360px]:inline">Round </span>
             <span className="min-[360px]:hidden" aria-hidden="true">R</span>
             {state.round}

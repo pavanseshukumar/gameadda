@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TeamSetup } from "@/components/game/TeamSetup";
+import { Segmented } from "@/components/ui/Controls";
 import {
   CLUE_COST,
   DEFAULT_TURN_SECONDS,
@@ -80,23 +81,13 @@ function Choice({ id, title, description, options, value, onChange, label }) {
         </h2>
         <p className="text-sm text-muted">{description}</p>
       </div>
-      <div role="radiogroup" aria-labelledby={headingId} className="flex flex-wrap gap-1 rounded-full border border-line bg-surface p-1">
-        {options.map((option) => {
-          const selected = option === value;
-          return (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              onClick={() => onChange(option)}
-              className={`btn h-10 min-w-14 px-3 text-sm tabular-nums ${selected ? "btn-primary" : "btn-ghost"}`}
-            >
-              {label(option)}
-            </button>
-          );
-        })}
-      </div>
+      <Segmented
+        labelledBy={headingId}
+        value={value}
+        onChange={onChange}
+        options={options.map((option) => ({ value: option, label: label(option) }))}
+        className="w-full sm:w-auto sm:min-w-64"
+      />
     </div>
   );
 }

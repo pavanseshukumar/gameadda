@@ -68,7 +68,7 @@ export function PlayScreen({ state, dispatch }) {
       teamColor={team.color}
       right={
         <>
-          <span className="mr-0.5 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold tabular-nums whitespace-nowrap">
+          <span className="mr-0.5 chip px-3 py-1.5 text-sm font-semibold tabular-nums whitespace-nowrap">
             Round {state.round}
           </span>
           <button type="button" className="btn btn-ghost h-10 px-2.5 text-sm sm:px-3" onClick={() => setDialog("reveal")} aria-label="Reveal the song">
@@ -243,7 +243,7 @@ function ClueChips({ clues }) {
       {items.map(({ label, value }) => (
         <li
           key={label}
-          className="flex items-baseline gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-xs sm:text-sm"
+          className="flex items-baseline gap-1.5 chip px-3 py-1 text-xs sm:text-sm"
         >
           <span className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">{label}</span>
           <span className={`font-semibold ${label === "Movie" && !clues.movie ? "font-normal italic text-subtle" : ""}`}>

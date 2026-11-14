@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog } from "@/components/ui/Dialog";
 import { MusicIcon } from "@/components/ui/icons";
+import { teamInk } from "@/lib/games/core/teams";
 
 /**
  * Modal where the active team types the full song title.
@@ -41,8 +42,8 @@ function SongGuessForm({ team, onSubmit, onClose, hint }) {
     >
       <div className="flex items-center gap-3">
         <span
-          className="grid size-11 place-items-center rounded-2xl text-white"
-          style={{ background: team?.color ?? "var(--accent)" }}
+          className="grid size-11 place-items-center rounded-2xl"
+          style={{ background: team?.color ?? "var(--accent)", color: team ? teamInk(team.color) : "var(--btn-primary-fg, #fff)" }}
         >
           <MusicIcon size={22} />
         </span>
@@ -67,7 +68,7 @@ function SongGuessForm({ team, onSubmit, onClose, hint }) {
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         placeholder="e.g. Vennela Vaana"
-        className="mt-2 h-14 w-full rounded-2xl border border-line-strong bg-surface-strong px-4 text-lg font-medium outline-none transition placeholder:text-subtle focus:border-[var(--team)] focus:shadow-[0_0_0_4px_color-mix(in_oklab,var(--team)_25%,transparent)]"
+        className="mt-2 h-14 w-full field px-4 text-lg font-medium"
       />
       <p className="mt-2.5 text-sm text-subtle">{hint}</p>
 

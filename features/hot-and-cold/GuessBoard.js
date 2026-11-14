@@ -43,8 +43,8 @@ function GuessRow({ guess, team, latest }) {
 
   return (
     <li
-      className={`relative overflow-hidden rounded-2xl border bg-surface px-3 py-2.5 sm:px-4 ${latest ? "anim-pop border-line-strong" : "border-line"}`}
-      style={latest ? { boxShadow: `0 0 0 2px ${color}` } : undefined}
+      className={`relative overflow-hidden rounded-2xl border-2 bg-panel px-3 py-2.5 sm:px-4 ${latest ? "anim-pop" : ""}`}
+      style={{ borderColor: latest ? color : "var(--edge)", boxShadow: `0 4px 0 0 ${latest ? color : "var(--depth)"}` }}
     >
       {/* Thermometer fill behind the row. */}
       <span
@@ -72,7 +72,7 @@ function GuessRow({ guess, team, latest }) {
       {chips.length || year ? (
         <ul className="relative mt-2 flex flex-wrap gap-1.5 pl-[4.25rem]" aria-label="Shared with the secret">
           {chips.map((chip) => (
-            <li key={`${chip.icon}${chip.text}`} className="rounded-full border border-line bg-surface-strong px-2 py-0.5 text-xs">
+            <li key={`${chip.icon}${chip.text}`} className="chip px-2 py-0.5 text-xs">
               <span aria-hidden="true">{chip.icon}</span> {chip.text}
             </li>
           ))}

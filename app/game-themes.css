@@ -1,0 +1,301 @@
+/*
+ * Per-game themes. Every game uses the same components (app/globals.css); a theme
+ * changes only colours and the display face, by redefining the tokens on a wrapper
+ * class set in the game's route layout (app/games/<slug>/layout.js). The hub shows
+ * each game card in its theme too.
+ *
+ * Each theme picks one fixed scheme, like Pictionary's paper look, so a game's
+ * identity is the same on every device. Text tokens are ≥ 4.5:1 on the background.
+ *
+ * Token guide:
+ *   --panel / --well      raised surface / recessed input fill
+ *   --edge / --depth      2px outline / solid shadow under raised things
+ *   --select-*            selected segmented option (inverted, with an underline)
+ *   --btn-primary-*       main action fill, text and press-down shadow
+ *   --key-bg / --key-fg   keyboard keys and letter tiles
+ */
+
+.game-theme {
+  color: var(--foreground);
+  background-color: var(--background);
+}
+
+/* ── Guess the Telugu Song · "Songbook": late-night wine and gold ─────────── */
+.theme-songbook {
+  color-scheme: dark;
+  --background: #1a0b14;
+  --foreground: #fcf2e6;
+  --panel: #2a1420;
+  --well: #1f0e18;
+  --edge: #5c3748;
+  --depth: #080205;
+  --surface: rgb(255 232 210 / 0.05);
+  --surface-strong: rgb(255 232 210 / 0.1);
+  --line: rgb(255 226 200 / 0.13);
+  --line-strong: rgb(255 226 200 / 0.24);
+  --fg-muted: #dcc6bb;
+  --fg-subtle: #b0968c;
+
+  --accent: #f6bd4a;
+  --accent-2: #ff8aa1;
+  --accent-3: #ffcb52;
+  --accent-3-ink: #2a1205;
+  --hit: #2fbf68;
+  --hit-deep: #17803f;
+  --miss: #f2545b;
+  --miss-deep: #a81f27;
+
+  --select-bg: #fcf2e6;
+  --select-fg: #1a0b14;
+  --select-mark: #f6bd4a;
+  --btn-primary-bg: #f6bd4a;
+  --btn-primary-fg: #2a1205;
+  --btn-primary-depth: #9c6a12;
+  --key-bg: #3a1e2b;
+  --key-fg: #fcf2e6;
+
+  --tile-hidden: rgb(255 232 210 / 0.1);
+  --tile-revealed: #fff3dc;
+  --tile-revealed-fg: #2a1205;
+  --dot: rgb(255 226 200 / 0.06);
+  --stage-glow: 24%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-songbook), Georgia, serif;
+}
+
+/* ── Jumble Rumble · "Tabletop": sand table, wooden letter blocks ─────────── */
+.theme-tabletop {
+  color-scheme: light;
+  --background: #f3eadb;
+  --foreground: #2a1d10;
+  --panel: #fffaf1;
+  --well: #f6eee0;
+  --edge: #2a1d10;
+  --depth: #2a1d10;
+  --surface: rgb(90 60 20 / 0.04);
+  --surface-strong: rgb(90 60 20 / 0.08);
+  --line: rgb(90 60 20 / 0.15);
+  --line-strong: rgb(90 60 20 / 0.3);
+  --fg-muted: #574431;
+  --fg-subtle: #715a44;
+
+  --accent: #b9391a;
+  --accent-2: #0d7470;
+  --accent-3: #a85008;
+  --accent-3-ink: #fff;
+  --hit: #1a8a45;
+  --hit-deep: #0f6630;
+  --miss: #d0362a;
+  --miss-deep: #8f1a12;
+
+  --select-bg: #2a1d10;
+  --select-fg: #fff6e6;
+  --select-mark: #ef6448;
+  --btn-primary-bg: #e8553d;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #8e2812;
+  /* Maple blocks. */
+  --key-bg: #f8d9a2;
+  --key-fg: #3a2410;
+
+  --tile-hidden: rgb(90 60 20 / 0.07);
+  --tile-revealed: #2a1d10;
+  --tile-revealed-fg: #fff6e6;
+  --dot: rgb(90 60 20 / 0.1);
+  --stage-glow: 14%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-tabletop), system-ui, sans-serif;
+}
+
+/* ── Poster Puzzle · "Marquee": a cinema at night, gold and velvet red ────── */
+.theme-marquee {
+  color-scheme: dark;
+  --background: #0d0a08;
+  --foreground: #f8f1e5;
+  --panel: #1b1612;
+  --well: #120e0b;
+  --edge: #4d3f2c;
+  --depth: #000;
+  --surface: rgb(255 236 210 / 0.04);
+  --surface-strong: rgb(255 236 210 / 0.09);
+  --line: rgb(255 226 190 / 0.11);
+  --line-strong: rgb(255 226 190 / 0.22);
+  --fg-muted: #cfc2af;
+  --fg-subtle: #a39582;
+
+  --accent: #f5c542;
+  --accent-2: #ff5a4e;
+  --accent-3: #ffd45e;
+  --accent-3-ink: #1c1300;
+  --hit: #2fbf68;
+  --hit-deep: #17803f;
+  --miss: #f04a3f;
+  --miss-deep: #a3221a;
+
+  --select-bg: #f8f1e5;
+  --select-fg: #0d0a08;
+  --select-mark: #ff5a4e;
+  --btn-primary-bg: #f5c542;
+  --btn-primary-fg: #1c1300;
+  --btn-primary-depth: #94700e;
+  --key-bg: #2a231c;
+  --key-fg: #f8f1e5;
+
+  --tile-hidden: rgb(255 236 210 / 0.08);
+  --tile-revealed: #f8f1e5;
+  --tile-revealed-fg: #1c1300;
+  --dot: rgb(255 226 190 / 0.05);
+  --stage-glow: 18%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-marquee), "Arial Narrow", sans-serif;
+}
+/* Bulbs around the poster, like a cinema marquee (Poster Puzzle only). */
+.marquee-frame {
+  padding: 12px;
+  border-radius: 1.4rem;
+  border: 2px solid var(--edge);
+  background:
+    radial-gradient(circle, #ffe7a3 0 2.4px, rgb(255 210 110 / 0.35) 3.2px, transparent 4.6px) 0 0 / 16px 16px,
+    #2a1414;
+  box-shadow: 0 5px 0 0 var(--depth), 0 0 40px -12px rgb(245 197 66 / 0.4);
+}
+
+/* ── Hot & Cold · "Thermal": instrument navy, cold-to-hot spectrum ─────────── */
+.theme-thermal {
+  color-scheme: dark;
+  --background: #06131f;
+  --foreground: #eaf5ff;
+  --panel: #0e2133;
+  --well: #091827;
+  --edge: #2b4964;
+  --depth: #01070d;
+  --surface: rgb(170 215 255 / 0.04);
+  --surface-strong: rgb(170 215 255 / 0.09);
+  --line: rgb(150 205 255 / 0.12);
+  --line-strong: rgb(150 205 255 / 0.24);
+  --fg-muted: #aac3d8;
+  --fg-subtle: #8ba5ba;
+
+  --accent: #4cc9f0;
+  --accent-2: #ff7043;
+  --accent-3: #ffb52e;
+  --accent-3-ink: #1f1200;
+  --hit: #2fcf78;
+  --hit-deep: #148a4c;
+  --miss: #f25050;
+  --miss-deep: #a51f1f;
+
+  --select-bg: #eaf5ff;
+  --select-fg: #06131f;
+  --select-mark: #ff7043;
+  --btn-primary-bg: linear-gradient(110deg, #5ad1f5, #ffd166 55%, #ff8a4c);
+  --btn-primary-fg: #06131f;
+  --btn-primary-depth: #8a3f17;
+  --key-bg: #15304a;
+  --key-fg: #eaf5ff;
+
+  --tile-hidden: rgb(170 215 255 / 0.08);
+  --tile-revealed: #eaf5ff;
+  --tile-revealed-fg: #06131f;
+  --dot: rgb(150 205 255 / 0.06);
+  --stage-glow: 20%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-thermal), system-ui, sans-serif;
+}
+/* A thin cold → hot spectrum across the top of every Hot & Cold screen. */
+.theme-thermal .stage::after {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 50;
+  pointer-events: none;
+  background: linear-gradient(90deg, #60a5fa, #22d3ee 25%, #fbbf24 50%, #f97316 75%, #ef4444);
+}
+
+/* ── Tune In · "FM dial": cool faceplate, electric blue, coral needle ──────── */
+.theme-dial {
+  color-scheme: light;
+  --background: #e8edf3;
+  --foreground: #0d1626;
+  --panel: #ffffff;
+  --well: #eef2f7;
+  --edge: #0d1626;
+  --depth: #0d1626;
+  --surface: rgb(13 22 38 / 0.03);
+  --surface-strong: rgb(13 22 38 / 0.07);
+  --line: rgb(13 22 38 / 0.12);
+  --line-strong: rgb(13 22 38 / 0.26);
+  --fg-muted: #3c4859;
+  --fg-subtle: #566275;
+
+  --accent: #2346e0;
+  --accent-2: #e2432a;
+  --accent-3: #c2410c;
+  --accent-3-ink: #fff;
+  --hit: #15803d;
+  --hit-deep: #0f5f2c;
+  --miss: #d42a2a;
+  --miss-deep: #8c1414;
+
+  --select-bg: #0d1626;
+  --select-fg: #fff;
+  --select-mark: #e2432a;
+  --btn-primary-bg: #2346e0;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #0f2380;
+  --key-bg: #ffffff;
+  --key-fg: #0d1626;
+
+  --tile-hidden: rgb(13 22 38 / 0.06);
+  --tile-revealed: #0d1626;
+  --tile-revealed-fg: #ffffff;
+  --dot: rgb(13 22 38 / 0.09);
+  --stage-glow: 14%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-dial), system-ui, sans-serif;
+}
+/* Unbounded is wide: pull headings in a touch so long team names still fit. */
+.theme-dial .font-display {
+  letter-spacing: -0.02em;
+}
+
+/* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
+.theme-paper {
+  color-scheme: light;
+  --background: #fbf5ea;
+  --foreground: #1b2140;
+  --panel: #fffdf8;
+  --well: #fbf5ea;
+  --edge: #1b2140;
+  --depth: #1b2140;
+  --surface: rgb(27 33 64 / 0.03);
+  --surface-strong: rgb(27 33 64 / 0.07);
+  --line: #e6dbc5;
+  --line-strong: rgb(27 33 64 / 0.24);
+  --fg-muted: #4a5175;
+  --fg-subtle: #5f6482;
+  --select-bg: #1b2140;
+  --select-fg: #fbf5ea;
+  --select-mark: #f2b01e;
+  --btn-primary-bg: #1b2140;
+  --btn-primary-fg: #fbf5ea;
+  --btn-primary-depth: #0b0e1f;
+  --tile-hidden: rgb(27 33 64 / 0.07);
+  --tile-revealed: #1b2140;
+  --tile-revealed-fg: #fbf5ea;
+  --dot: rgb(27 33 64 / 0.09);
+}
+
+/* Page background and overscroll per game. `data-page` is set by <PageTheme> in each
+   game's layout and cleared when the route is hidden, so it never leaks onto the hub. */
+html[data-page="songbook"],
+html[data-page="songbook"] body { background: #1a0b14; }
+html[data-page="tabletop"],
+html[data-page="tabletop"] body { background: #f3eadb; }
+html[data-page="marquee"],
+html[data-page="marquee"] body { background: #0d0a08; }
+html[data-page="thermal"],
+html[data-page="thermal"] body { background: #06131f; }
+html[data-page="dial"],
+html[data-page="dial"] body { background: #e8edf3; }

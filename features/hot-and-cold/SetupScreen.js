@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TeamSetup } from "@/components/game/TeamSetup";
+import { Segmented } from "@/components/ui/Controls";
 import { DEFAULT_TURN_SECONDS, GUESS_COST, HINT_COST, POT_START, TURN_SECONDS_OPTIONS } from "@/lib/games/hot-and-cold/engine";
 
 const RULES = [
@@ -52,23 +53,13 @@ export function SetupScreen({ initialTeams, initialSeconds, pool, starting, erro
             </h2>
             <p className="text-sm text-muted">Seconds each team gets to make its guess.</p>
           </div>
-          <div role="radiogroup" aria-labelledby="timer-heading" className="flex gap-1 rounded-full border border-line bg-surface p-1">
-            {TURN_SECONDS_OPTIONS.map((seconds) => {
-              const selected = seconds === turnSeconds;
-              return (
-                <button
-                  key={seconds}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => setTurnSeconds(seconds)}
-                  className={`btn h-10 min-w-14 px-3 text-sm tabular-nums ${selected ? "btn-primary" : "btn-ghost"}`}
-                >
-                  {seconds}s
-                </button>
-              );
-            })}
-          </div>
+          <Segmented
+            labelledBy="timer-heading"
+            value={turnSeconds}
+            onChange={setTurnSeconds}
+            options={TURN_SECONDS_OPTIONS.map((seconds) => ({ value: seconds, label: `${seconds}s` }))}
+            className="w-full sm:w-auto sm:min-w-64"
+          />
         </div>
         {error ? (
           <p role="alert" className="mt-4 rounded-2xl border border-miss/40 bg-miss/10 px-4 py-3 text-sm">

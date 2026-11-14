@@ -5,7 +5,7 @@ import { Scoreboard } from "./Scoreboard";
 import { Confetti } from "./Confetti";
 import { GameShell } from "./GameShell";
 import { RefreshIcon, TrophyIcon } from "@/components/ui/icons";
-import { leadingTeams } from "@/lib/games/core/teams";
+import { leadingTeams, teamInk } from "@/lib/games/core/teams";
 
 /**
  * Shared end-of-game screen: champion (or tie), final standings, play again.
@@ -33,8 +33,8 @@ export function FinalResults({ teams, rounds, onPlayAgain }) {
 
       <section className="relative pt-8 text-center sm:pt-14">
         <div
-          className="anim-pop mx-auto grid size-24 place-items-center rounded-[2rem] text-white"
-          style={{ background: champion?.color ?? "var(--accent)", boxShadow: `0 30px 70px -20px ${champion?.color ?? "var(--accent)"}` }}
+          className="anim-pop mx-auto grid size-24 place-items-center rounded-[2rem] border-2 border-edge"
+          style={{ color: champion ? teamInk(champion.color) : "var(--btn-primary-fg, #fff)", background: champion?.color ?? "var(--accent)", boxShadow: "0 6px 0 0 var(--depth)" }}
         >
           <TrophyIcon size={44} />
         </div>

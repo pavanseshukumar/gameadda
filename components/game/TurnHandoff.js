@@ -1,3 +1,4 @@
+import { teamInk, teamText } from "@/lib/games/core/teams";
 import { ArrowRightIcon } from "@/components/ui/icons";
 
 /**
@@ -16,17 +17,17 @@ export function TurnHandoff({ team, paused = false, seconds, detail, label, onSt
   return (
     <div
       className="sheet-panel anim-pop w-full max-w-sm rounded-[1.75rem] p-6 text-center sm:p-8"
-      style={{ boxShadow: `0 0 0 1px ${team.color}, 0 30px 70px -30px ${team.color}` }}
+      style={{ borderColor: team.color, boxShadow: `0 6px 0 0 ${team.color}` }}
       role="dialog"
       aria-labelledby="handoff-title"
     >
       <span
-        className="anim-pulse mx-auto grid size-14 place-items-center rounded-full font-display text-2xl font-extrabold text-white"
-        style={{ background: team.color }}
+        className="anim-pulse mx-auto grid size-14 place-items-center rounded-full font-display text-2xl font-extrabold"
+        style={{ background: team.color, color: teamInk(team.color) }}
       >
         {team.name.replace(/^team\s+/i, "").charAt(0).toUpperCase()}
       </span>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: team.color }}>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: teamText(team.color) }}>
         {paused ? "Paused" : (label ?? "Your turn")}
       </p>
       <h2 id="handoff-title" className="mt-1 font-display text-3xl font-bold tracking-tight">

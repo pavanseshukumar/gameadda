@@ -16,7 +16,7 @@ export function FeedbackToast({ message }) {
         <div
           key={message.id}
           className="toast sheet-panel absolute left-1/2 flex w-max max-w-[calc(100vw-2rem)] items-center gap-3 rounded-full py-2.5 pl-3 pr-5"
-          style={{ boxShadow: `0 0 0 1px ${tones[message.tone].ring}, 0 20px 40px -20px rgb(0 0 0 / 0.7)` }}
+          style={{ borderColor: tones[message.tone].dot }}
         >
           <span className="size-2.5 shrink-0 rounded-full" style={{ background: tones[message.tone].dot }} />
           <span className="text-sm font-semibold">{message.title}</span>

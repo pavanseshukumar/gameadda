@@ -1,4 +1,4 @@
-import { rankTeams } from "@/lib/games/core/teams";
+import { rankTeams, teamInk } from "@/lib/games/core/teams";
 
 /**
  * Team scoreboard.
@@ -39,13 +39,11 @@ export function Scoreboard({ teams, activeTeamId = null, roundPoints = {}, varia
           <li
             key={team.id}
             aria-current={active ? "true" : undefined}
-            className="min-w-0 rounded-xl border px-2.5 py-2 transition-[background,border-color,box-shadow] duration-500 sm:rounded-2xl sm:px-3.5 sm:py-3"
+            className="min-w-0 rounded-xl border-2 px-2.5 py-2 transition-[background,border-color,box-shadow] duration-500 sm:rounded-2xl sm:px-3.5 sm:py-3"
             style={{
-              borderColor: active ? team.color : "var(--line)",
-              background: active
-                ? `linear-gradient(160deg, color-mix(in oklab, ${team.color} 30%, transparent), color-mix(in oklab, ${team.color} 8%, transparent))`
-                : "var(--surface)",
-              boxShadow: active ? `0 0 0 1px ${team.color}, 0 12px 30px -16px ${team.color}` : "none",
+              borderColor: active ? team.color : "var(--edge)",
+              background: active ? `color-mix(in oklab, ${team.color} 18%, var(--panel))` : "var(--panel)",
+              boxShadow: `0 4px 0 0 ${active ? team.color : "var(--depth)"}`,
             }}
           >
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
@@ -59,8 +57,8 @@ export function Scoreboard({ teams, activeTeamId = null, roundPoints = {}, varia
               </span>
               {active ? (
                 <span
-                  className="hidden shrink-0 rounded-full px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider text-white sm:inline"
-                  style={{ background: team.color }}
+                  className="hidden shrink-0 rounded-full px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider sm:inline"
+                  style={{ background: team.color, color: teamInk(team.color) }}
                 >
                   Turn
                 </span>
@@ -95,7 +93,7 @@ function RankedScoreboard({ teams, roundPoints }) {
         return (
           <li
             key={team.id}
-            className="anim-rise relative overflow-hidden rounded-2xl border border-line bg-surface px-4 py-3.5"
+            className="anim-rise relative overflow-hidden card rounded-2xl px-4 py-3.5"
             style={{ animationDelay: `${index * 70}ms` }}
           >
             <span

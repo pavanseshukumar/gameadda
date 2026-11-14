@@ -7,6 +7,7 @@ import { RoundBreakdown } from "@/components/game/RoundBreakdown";
 import { Confetti } from "@/components/game/Confetti";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { ArrowRightIcon, FlagIcon } from "@/components/ui/icons";
+import { teamInk, teamText } from "@/lib/games/core/teams";
 import {
   ACTIONS,
   SONG_COMPLETION_MULTIPLIER,
@@ -43,20 +44,21 @@ export function RoundCompleteScreen({ state, dispatch }) {
         </p>
         {team ? (
           <div
-            className="anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold text-white"
+            className="anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold"
             style={{
               background: solved ? team.color : "var(--surface-strong)",
-              color: solved ? undefined : team.color,
-              boxShadow: solved ? `0 24px 60px -18px ${team.color}` : "none",
+              color: solved ? teamInk(team.color) : teamText(team.color),
+              boxShadow: "0 5px 0 0 var(--depth)",
+              border: "2px solid var(--edge)",
             }}
           >
-            {team.name.replace(/^teams+/i, "").charAt(0).toUpperCase()}
+            {team.name.replace(/^team\s+/i, "").charAt(0).toUpperCase()}
           </div>
         ) : null}
         <h1 className="anim-rise mt-5 font-display text-[clamp(2.2rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
           {team?.name}{" "}
           {solved ? (
-            <span style={{ color: team?.color }}>got it!</span>
+            <span style={{ color: teamText(team?.color) }}>got it!</span>
           ) : (
             <span className="text-miss">{result?.outcome === "failed" ? "is out of lives" : "skipped it"}</span>
           )}
@@ -143,13 +145,13 @@ function BonusBurst({ alphabetPoints, multiplier, bonus }) {
   return (
     <div className="mt-7 flex flex-col items-center gap-3" aria-label={`Completion bonus: ${alphabetPoints} times ${multiplier} equals ${bonus}`}>
       <div className="flex items-center gap-3 font-display font-extrabold tabular-nums">
-        <span className="anim-rise rounded-2xl border border-line bg-surface px-4 py-2 text-2xl sm:text-3xl" style={{ animationDelay: "250ms" }}>
+        <span className="anim-rise card rounded-2xl px-4 py-2 text-2xl sm:text-3xl" style={{ animationDelay: "250ms" }}>
           {alphabetPoints}
           <span className="ml-1 text-sm font-semibold text-subtle">pts</span>
         </span>
         <span
-          className="anim-bonus grid size-16 place-items-center rounded-[1.25rem] text-3xl text-[#1a1205] sm:size-20 sm:text-4xl"
-          style={{ background: "var(--accent-3)", boxShadow: "0 18px 50px -14px var(--accent-3)", animationDelay: "450ms" }}
+          className="anim-bonus grid size-16 place-items-center rounded-[1.25rem] text-3xl text-[var(--accent-3-ink)] sm:size-20 sm:text-4xl"
+          style={{ background: "var(--accent-3)", boxShadow: "0 5px 0 0 var(--depth)", border: "2px solid var(--edge)", animationDelay: "450ms" }}
         >
           {multiplier}×
         </span>

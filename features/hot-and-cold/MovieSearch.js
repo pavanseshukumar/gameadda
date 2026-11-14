@@ -77,7 +77,7 @@ export function MovieSearch({ pool, guessedIds, disabled, onPick, ref: inputRef 
         onKeyDown={onKeyDown}
         disabled={disabled || loading}
         placeholder={loading ? "Loading movies…" : "Type a Telugu movie…"}
-        className="h-12 w-full rounded-2xl border border-line-strong bg-surface-strong px-4 text-base font-medium outline-none transition placeholder:text-subtle focus:border-[var(--team)] focus:shadow-[0_0_0_4px_color-mix(in_oklab,var(--team)_25%,transparent)] sm:h-14 sm:text-lg"
+        className="h-12 w-full field px-4 text-base font-medium sm:h-14 sm:text-lg"
       />
       {results.length ? (
         <ul

@@ -22,9 +22,15 @@ export function LyricsDisplay({
   const guessed = new Set(guessedLetters);
   // Running letter index across both lines, used to stagger the "complete" wave.
   let letterIndex = 0;
+  // Characters in the longest word: tiles are sized so it fits on one line.
+  const longest = Math.max(4, ...lines.flatMap((line) => tokenizeLine(line).map((word) => word.chars.length)));
 
   return (
-    <div className={`lyrics ${size === "sm" ? "lyrics-sm" : ""} flex flex-col items-center gap-[calc(var(--tile-w)*0.75)]`}>
+    <div className="lyrics-box w-full">
+    <div
+      className={`lyrics ${size === "sm" ? "lyrics-sm" : ""} flex flex-col items-center gap-[calc(var(--tile-w)*0.75)]`}
+      style={{ "--longest": longest }}
+    >
       {lines.map((line, lineIndex) => (
         <p key={lineIndex} className="w-full">
           <span className="sr-only">{revealAll ? line : maskLine(line, guessedLetters).replace(/_/g, " blank ")}</span>
@@ -77,6 +83,7 @@ export function LyricsDisplay({
           </span>
         </p>
       ))}
+    </div>
     </div>
   );
 }

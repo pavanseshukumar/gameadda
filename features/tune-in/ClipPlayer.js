@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import { CLIP_SECONDS, LISTEN_TIERS } from "@/lib/games/tune-in/engine";
+import { teamInk } from "@/lib/games/core/teams";
 
 const BARS = 24;
 
@@ -73,8 +74,8 @@ export function ClipPlayer({ src, enabled, heardSeconds, color, onHeard }) {
         disabled={!enabled}
         aria-label={playing ? "Pause the song" : "Play the song"}
         aria-pressed={playing}
-        className="relative grid size-28 place-items-center rounded-full text-white transition-transform duration-200 enabled:hover:scale-105 enabled:active:scale-95 disabled:opacity-50 sm:size-36"
-        style={{ background: color, boxShadow: `0 24px 60px -18px ${color}` }}
+        className="press relative grid size-28 place-items-center rounded-full border-2 border-edge disabled:opacity-50 sm:size-36"
+        style={{ background: color, color: teamInk(color) }}
       >
         {playing ? (
           <span aria-hidden="true" className="absolute inset-0 animate-ping rounded-full opacity-20" style={{ background: color }} />

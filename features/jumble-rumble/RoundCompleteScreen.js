@@ -7,6 +7,7 @@ import { Confetti } from "@/components/game/Confetti";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { ArrowRightIcon, FlagIcon } from "@/components/ui/icons";
+import { teamText } from "@/lib/games/core/teams";
 import { ACTIONS, BASE_POINTS, selectMovie, selectTeam } from "@/lib/games/jumble-rumble/engine";
 import { answerWords } from "@/lib/games/jumble-rumble/movies";
 
@@ -27,7 +28,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound }) {
         <h1 className="anim-rise mt-4 font-display text-[clamp(2.1rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
           {solved ? (
             <>
-              {winner.name} <span style={{ color: winner.color }}>{result.steal ? "stole it!" : "cracked it!"}</span>
+              {winner.name} <span style={{ color: teamText(winner.color) }}>{result.steal ? "stole it!" : "cracked it!"}</span>
             </>
           ) : (
             state.teams.length === 1 ? "So close!" : "Nobody cracked it"
@@ -62,7 +63,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound }) {
             {result.steal ? <PointsCell label="Steal" value="×½" tone="accent" /> : null}
           </div>
           <p className="mt-3 text-center font-display text-2xl font-extrabold tabular-nums">
-            <span style={{ color: winner.color }}>{winner.name}</span> +{result.points}
+            <span style={{ color: teamText(winner.color) }}>{winner.name}</span> +{result.points}
           </p>
         </section>
       ) : null}
@@ -105,7 +106,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound }) {
 
 function PointsCell({ label, value, tone }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface px-2 py-3">
+    <div className="card rounded-2xl px-2 py-3">
       <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle">{label}</p>
       <p className={`mt-1 font-display text-2xl font-bold tabular-nums ${tone === "hit" ? "text-hit" : tone === "miss" ? "text-miss" : tone === "accent" ? "text-accent-3" : ""}`}>
         {value}

@@ -1,82 +1,78 @@
 @import "tailwindcss";
+@import "../features/pictionary/pictionary.css";
+@import "./game-themes.css";
 
 /* ------------------------------------------------------------------ */
-/* Theme tokens — dark-first, with a light variant via the existing     */
-/* prefers-color-scheme system.                                         */
+/* Design system                                                        */
+/*                                                                      */
+/* One component style for every game, taken from Pictionary Party:     */
+/* solid panels with a 2px outline, a solid offset "depth" shadow under */
+/* cards and buttons, and buttons that press down into that shadow.     */
+/* Games change only the colours (and display face) by redefining the   */
+/* tokens below on a theme class (app/game-themes.css).                 */
+/* These defaults are GameAdda's own: the hub.                          */
 /* ------------------------------------------------------------------ */
 
 :root {
   color-scheme: dark;
-  --background: #07070c;
+  --background: #0b0a12;
   --foreground: #f5f5f7;
 
-  --bg-elevated: #101018;
-  --surface: rgb(255 255 255 / 0.045);
+  /* Panels: cards, dialogs, secondary buttons, keys. */
+  --panel: #16141f;
+  /* Wells: inputs and recessed areas. */
+  --well: #0f0e17;
+  /* The 2px outline, and the solid shadow under raised things. */
+  --edge: #35314a;
+  --depth: #000;
+
+  --bg-elevated: var(--panel);
+  --surface: rgb(255 255 255 / 0.04);
   --surface-strong: rgb(255 255 255 / 0.08);
-  --line: rgb(255 255 255 / 0.08);
-  --line-strong: rgb(255 255 255 / 0.16);
-  --fg-muted: #a1a1b5;
-  --fg-subtle: #6e6e82;
+  --line: rgb(255 255 255 / 0.1);
+  --line-strong: rgb(255 255 255 / 0.2);
+  --fg-muted: #b3b3c6;
+  --fg-subtle: #8c8ca2;
 
   --accent: #a78bfa;
   --accent-2: #f472b6;
   --accent-3: #fbbf24;
+  --accent-3-ink: #1a1205;
   --hit: #22c55e;
   --hit-deep: #15803d;
   --miss: #ef4444;
   --miss-deep: #b91c1c;
 
-  --key-top: #2a2a38;
-  --key-bottom: #1c1c27;
-  --key-edge: #0b0b12;
+  /* Selected option in a segmented control: inverted, with a coloured underline. */
+  --select-bg: #f5f5f7;
+  --select-fg: #0b0a12;
+  --select-mark: #a78bfa;
+
+  --btn-primary-bg: #8b5cf6;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #4c2a9e;
+
+  --key-bg: #221f2e;
   --key-fg: #f5f5f7;
 
   --tile-hidden: rgb(255 255 255 / 0.06);
   --tile-revealed: #f8f7ff;
   --tile-revealed-fg: #0c0b14;
 
-  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 24px 60px -30px rgb(0 0 0 / 0.8);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --background: #f4f3f8;
-    --foreground: #13121a;
-
-    --bg-elevated: #ffffff;
-    --surface: rgb(255 255 255 / 0.75);
-    --surface-strong: rgb(20 18 40 / 0.06);
-    --line: rgb(20 18 40 / 0.08);
-    --line-strong: rgb(20 18 40 / 0.16);
-    --fg-muted: #5c5a6e;
-    --fg-subtle: #8a889a;
-
-    --accent: #7c3aed;
-    --accent-2: #db2777;
-    --accent-3: #d97706;
-    --hit: #16a34a;
-    --hit-deep: #166534;
-    --miss: #dc2626;
-    --miss-deep: #991b1b;
-
-    --key-top: #ffffff;
-    --key-bottom: #f1f0f6;
-    --key-edge: #cfcde0;
-    --key-fg: #13121a;
-
-    --tile-hidden: rgb(20 18 40 / 0.07);
-    --tile-revealed: #13121a;
-    --tile-revealed-fg: #ffffff;
-
-    --shadow-card: 0 1px 0 rgb(255 255 255 / 0.8) inset, 0 20px 50px -30px rgb(30 20 80 / 0.35);
-  }
+  /* Faint dot grid on the page, like Pictionary's sketchbook. */
+  --dot: rgb(255 255 255 / 0.06);
+  --stage-glow: 22%;
+  --team-text-mix: 100%;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-elevated: var(--bg-elevated);
+  --color-panel: var(--panel);
+  --color-well: var(--well);
+  --color-edge: var(--edge);
+  --color-depth: var(--depth);
   --color-surface: var(--surface);
   --color-surface-strong: var(--surface-strong);
   --color-line: var(--line);
@@ -93,7 +89,7 @@
   --font-display: var(--font-display-face);
 }
 
-/* Animatable team colour, used for the ambient glow and turn accents. */
+/* Animatable team colour, used for turn accents. */
 @property --team {
   syntax: "<color>";
   inherits: true;
@@ -116,7 +112,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Ambient stage                                                        */
+/* Page                                                                 */
 /* ------------------------------------------------------------------ */
 
 .stage {
@@ -125,84 +121,200 @@ body {
   transition: --team 700ms ease;
 }
 
+/* Dot grid plus a soft wash of the current team's colour at the top. */
 .stage::before {
   content: "";
   position: fixed;
-  inset: -20vmax;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(40vmax 30vmax at 15% 0%, color-mix(in oklab, var(--team) 32%, transparent), transparent 70%),
-    radial-gradient(35vmax 30vmax at 95% 10%, color-mix(in oklab, var(--accent-2) 16%, transparent), transparent 70%),
-    radial-gradient(40vmax 35vmax at 50% 110%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%);
+    radial-gradient(60vmax 28vmax at 50% -8%, color-mix(in oklab, var(--team) var(--stage-glow), transparent), transparent 70%),
+    radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 22px 22px;
 }
 
+/* Raised panel: outline + solid depth shadow. */
 .card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-card);
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  box-shadow: 0 5px 0 0 var(--depth);
+}
+
+/* Small outlined pill for badges and chips. */
+.chip {
+  background: var(--panel);
+  border: 2px solid var(--line-strong);
+  border-radius: 999px;
+}
+
+/* Text input. */
+.field {
+  border-radius: 1rem;
+  border: 2px solid var(--line-strong);
+  background: var(--well);
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.field::placeholder {
+  color: var(--fg-subtle);
+}
+.field:focus,
+.field:focus-within {
+  border-color: var(--team, var(--edge));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--team, var(--edge)) 22%, transparent);
+}
+.field:disabled {
+  opacity: 0.6;
 }
 
 /* ------------------------------------------------------------------ */
-/* Buttons                                                              */
+/* Buttons: they sit on a solid shadow and press down into it.          */
 /* ------------------------------------------------------------------ */
 
 .btn {
+  --btn-bg: transparent;
+  --btn-fg: inherit;
+  --btn-depth: transparent;
+  --btn-lift: 0px;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 999px;
-  font-weight: 600;
+  border-radius: 1.25rem;
+  font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
+  font-weight: 700;
   letter-spacing: -0.01em;
-  transition: transform 140ms ease, background-color 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  box-shadow: 0 var(--btn-lift) 0 0 var(--btn-depth);
+  transform: translateY(0);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out, background-color 150ms ease, filter 150ms ease, color 150ms ease;
   user-select: none;
   white-space: nowrap;
+  touch-action: manipulation;
+}
+.btn:hover:not(:disabled) {
+  filter: brightness(1.06);
 }
 .btn:active:not(:disabled) {
-  transform: scale(0.97);
-}
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+  transform: translateY(var(--btn-lift));
+  box-shadow: 0 0 0 0 var(--btn-depth);
 }
 .btn:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--select-mark);
   outline-offset: 3px;
 }
 
 .btn-primary {
-  color: #fff;
-  background: linear-gradient(135deg, #8b5cf6, #ec4899 60%, #f59e0b);
-  background-size: 160% 160%;
-  background-position: 0% 50%;
-  box-shadow: 0 10px 30px -10px rgb(236 72 153 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.25);
-}
-.btn-primary:hover:not(:disabled) {
-  background-position: 100% 50%;
-  box-shadow: 0 14px 36px -10px rgb(236 72 153 / 0.75), inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --btn-bg: var(--btn-primary-bg);
+  --btn-fg: var(--btn-primary-fg);
+  --btn-depth: var(--btn-primary-depth);
+  --btn-lift: 5px;
 }
 .btn-secondary {
-  color: var(--foreground);
+  --btn-bg: var(--panel);
+  --btn-fg: var(--foreground);
+  --btn-depth: var(--depth);
+  --btn-lift: 4px;
+  border: 2px solid var(--edge);
+}
+.btn-danger {
+  --btn-bg: var(--miss);
+  --btn-fg: #fff;
+  --btn-depth: var(--miss-deep);
+  --btn-lift: 5px;
+}
+/* Disabled raised buttons: flat, clearly off, text still readable. */
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-danger:disabled {
+  cursor: not-allowed;
+  color: var(--fg-subtle);
   background: var(--surface-strong);
-  border: 1px solid var(--line);
+  border: 2px dashed var(--line-strong);
+  box-shadow: none;
 }
-.btn-secondary:hover:not(:disabled) {
-  background: color-mix(in oklab, var(--surface-strong) 70%, var(--foreground) 8%);
-}
+
+/* Quiet toolbar buttons (header actions). */
 .btn-ghost {
-  color: var(--fg-muted);
+  --btn-fg: var(--fg-muted);
+  border-radius: 999px;
 }
 .btn-ghost:hover:not(:disabled) {
   color: var(--foreground);
   background: var(--surface-strong);
+  filter: none;
 }
-.btn-danger {
-  color: #fff;
-  background: var(--miss);
-  box-shadow: 0 10px 30px -12px var(--miss);
+.btn-ghost:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.btn-ghost:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Segmented control option (components/ui/Segmented.js). */
+.seg {
+  min-height: 3rem;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 1rem;
+  border: 2px solid var(--line-strong);
+  background: var(--panel);
+  color: var(--foreground);
+  font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
+  font-weight: 700;
+  text-align: center;
+  transition: transform 90ms ease-out, border-color 150ms ease, background-color 150ms ease;
+  touch-action: manipulation;
+}
+.seg:hover {
+  border-color: var(--edge);
+}
+.seg:active {
+  transform: scale(0.97);
+}
+.seg[aria-checked="true"] {
+  border-color: var(--select-bg);
+  background: var(--select-bg);
+  color: var(--select-fg);
+  box-shadow: 0 3px 0 0 var(--select-mark);
+}
+.seg:focus-visible {
+  outline: 3px solid var(--select-mark);
+  outline-offset: 2px;
+}
+
+/* Square outlined button for steppers (− 2 +). */
+.step-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  border: 2px solid var(--edge);
+  background: var(--panel);
+  color: var(--foreground);
+  transition: transform 90ms ease-out;
+}
+.step-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.step-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Any custom-shaped raised control (e.g. Tune In's round play button). */
+.press {
+  box-shadow: 0 6px 0 0 var(--depth);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+  touch-action: manipulation;
+}
+.press:active:not(:disabled) {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 0 var(--depth);
 }
 
 /* ------------------------------------------------------------------ */
@@ -217,33 +329,27 @@ body {
   min-width: 0;
   max-width: 4.4rem;
   height: clamp(2.75rem, min(9vw, 7dvh), 4.1rem);
-  border-radius: clamp(0.6rem, 1.6vw, 1rem);
-  font-weight: 650;
+  border-radius: clamp(0.6rem, 1.6vw, 0.9rem);
+  border: 2px solid var(--edge);
+  font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
+  font-weight: 700;
   font-size: clamp(1rem, 2.8vw, 1.35rem);
   color: var(--key-fg);
-  background: linear-gradient(180deg, var(--key-top), var(--key-bottom));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.08),
-    0 3px 0 var(--key-edge),
-    0 10px 18px -10px rgb(0 0 0 / 0.55);
-  transition: transform 110ms ease, box-shadow 110ms ease, background 220ms ease, color 220ms ease, opacity 220ms ease;
+  background: var(--key-bg);
+  box-shadow: 0 4px 0 0 var(--depth);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out, background 200ms ease, color 200ms ease, opacity 200ms ease;
   touch-action: manipulation;
   user-select: none;
 }
 .key:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
-    0 4px 0 var(--key-edge),
-    0 0 0 1px color-mix(in oklab, var(--team) 55%, transparent),
-    0 12px 22px -10px color-mix(in oklab, var(--team) 60%, transparent);
+  border-color: var(--team);
 }
 .key:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 var(--key-edge);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 0 var(--depth);
 }
 .key:focus-visible {
-  outline: 2px solid var(--team);
+  outline: 3px solid var(--team);
   outline-offset: 2px;
 }
 .key:disabled {
@@ -251,29 +357,36 @@ body {
 }
 .key[data-state="hit"] {
   color: #fff;
-  background: linear-gradient(180deg, #34d058, var(--hit-deep));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 3px 0 #0f5128, 0 0 26px -6px rgb(34 197 94 / 0.7);
+  background: var(--hit);
+  border-color: var(--hit-deep);
+  box-shadow: 0 4px 0 0 var(--hit-deep);
 }
 .key[data-state="miss"] {
-  color: rgb(255 255 255 / 0.92);
-  background: linear-gradient(180deg, #f05252, var(--miss-deep));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 3px 0 #6f1313;
-  opacity: 0.8;
+  color: #fff;
+  background: var(--miss);
+  border-color: var(--miss-deep);
+  box-shadow: 0 4px 0 0 var(--miss-deep);
+  opacity: 0.85;
 }
 .key[data-state="idle"]:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 /* ------------------------------------------------------------------ */
 /* Lyric tiles                                                          */
 /* ------------------------------------------------------------------ */
 
+.lyrics-box {
+  container-type: inline-size;
+}
 .lyrics {
-  /* Scales with width and height so short laptop screens still fit board + keyboard. */
-  --tile-w: clamp(1.1rem, min(4.1vw, 4.4dvh), 2.6rem);
+  /* Biggest tile that still fits the longest word on one line (--longest is set from JS),
+     capped by height so short laptop screens still fit board + keyboard. */
+  --fit: calc(100cqw / (var(--longest, 10) * 1.12 + 0.4));
+  --tile-w: clamp(0.9rem, min(var(--fit), 4.6dvh), 2.6rem);
 }
 .lyrics-sm {
-  --tile-w: clamp(0.95rem, min(3.2vw, 3.6dvh), 1.75rem);
+  --tile-w: clamp(0.85rem, min(var(--fit), 3.6dvh), 1.75rem);
 }
 .tile {
   display: grid;
@@ -289,30 +402,32 @@ body {
 }
 .tile[data-state="hidden"] {
   background: var(--tile-hidden);
-  box-shadow: inset 0 -3px 0 color-mix(in oklab, var(--team) 70%, transparent);
+  box-shadow:
+    inset 0 0 0 1.5px var(--line-strong),
+    inset 0 -3px 0 color-mix(in oklab, var(--team) 85%, transparent);
 }
 .tile[data-state="revealed"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 6px 16px -10px rgb(0 0 0 / 0.6);
+  box-shadow: 0 3px 0 0 var(--depth);
 }
 .tile[data-state="fresh"] {
   color: #fff;
-  background: linear-gradient(180deg, #34d058, var(--hit-deep));
-  box-shadow: 0 0 24px -4px rgb(34 197 94 / 0.75);
+  background: var(--hit);
+  box-shadow: 0 3px 0 0 var(--hit-deep);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 .tile[data-state="unsolved"] {
   color: var(--accent-3);
   background: color-mix(in oklab, var(--accent-3) 14%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent-3) 40%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent-3) 55%, transparent);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 /* Song-completion: every letter out, played as a wave across the lyric. */
 .tile[data-state="complete"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent-3) 55%, transparent), 0 8px 22px -12px var(--accent-3);
+  box-shadow: 0 3px 0 0 var(--accent-3);
   animation: tile-wave 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .tile-punct {
@@ -324,7 +439,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Native dialog                                                        */
+/* Dialogs and floating panels                                          */
 /* ------------------------------------------------------------------ */
 
 dialog.sheet {
@@ -338,9 +453,9 @@ dialog.sheet {
   overflow: visible;
 }
 dialog.sheet::backdrop {
-  background: rgb(4 4 10 / 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgb(4 4 10 / 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 dialog.sheet[open] {
   animation: sheet-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
@@ -349,9 +464,10 @@ dialog.sheet[open]::backdrop {
   animation: fade-in 200ms ease both;
 }
 .sheet-panel {
-  background: var(--bg-elevated);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7);
+  color: var(--foreground);
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  box-shadow: 0 6px 0 0 var(--depth);
 }
 
 /* ------------------------------------------------------------------ */
@@ -404,7 +520,7 @@ dialog.sheet[open]::backdrop {
 
 @keyframes tile-wave {
   0% { transform: translateY(0) scale(1); }
-  35% { transform: translateY(-28%) scale(1.08); background: var(--accent-3); color: #1a1205; }
+  35% { transform: translateY(-28%) scale(1.08); background: var(--accent-3); color: var(--accent-3-ink); }
   100% { transform: translateY(0) scale(1); }
 }
 @keyframes bonus-burst {
@@ -413,9 +529,10 @@ dialog.sheet[open]::backdrop {
   75% { transform: scale(0.96) rotate(-1deg); }
   100% { transform: scale(1) rotate(0); }
 }
+/* Pulses the outline of a solid card (the depth shadow stays put). */
 @keyframes glow-breathe {
-  0%, 100% { box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent-3) 35%, transparent), 0 20px 60px -30px var(--accent-3); }
-  50% { box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent-3) 70%, transparent), 0 24px 70px -24px var(--accent-3); }
+  0%, 100% { border-color: color-mix(in oklab, var(--accent-3) 45%, var(--edge)); }
+  50% { border-color: var(--accent-3); }
 }
 
 .anim-bonus { animation: bonus-burst 760ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
@@ -465,17 +582,17 @@ dialog.sheet[open]::backdrop {
 }
 .jword {
   /* --per-line is set from JS (longest word split into even lines of ≤ 10). */
-  --slot: min(3.1rem, calc((100cqw - 1rem - 2px - (var(--per-line) - 1) * 0.3rem) / var(--per-line)));
+  --slot: min(3.1rem, calc((100cqw - 1rem - 4px - (var(--per-line) - 1) * 0.3rem) / var(--per-line)));
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.3rem;
-  /* Exactly --per-line slots wide (+ padding, border and 1px rounding slack). */
-  max-width: calc(var(--per-line) * var(--slot) + (var(--per-line) - 1) * 0.3rem + 1rem + 3px);
+  /* Exactly --per-line slots wide (+ padding, 2px borders and 1px rounding slack). */
+  max-width: calc(var(--per-line) * var(--slot) + (var(--per-line) - 1) * 0.3rem + 1rem + 5px);
   padding: 0.5rem;
   border-radius: calc(var(--slot) * 0.36);
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: 2px dashed var(--line-strong);
 }
 .jslot {
   display: grid;
@@ -491,31 +608,34 @@ dialog.sheet[open]::backdrop {
 }
 .jslot[data-state="empty"] {
   background: var(--tile-hidden);
-  box-shadow: inset 0 -3px 0 color-mix(in oklab, var(--team) 70%, transparent);
+  box-shadow:
+    inset 0 0 0 1.5px var(--line-strong),
+    inset 0 -3px 0 color-mix(in oklab, var(--team) 85%, transparent);
 }
 .jslot[data-state="filled"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 6px 16px -10px rgb(0 0 0 / 0.6);
+  box-shadow: 0 3px 0 0 var(--depth);
   animation: pop 260ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
   cursor: pointer;
 }
 .jslot[data-state="locked"] {
-  color: #1a1205;
+  color: var(--accent-3-ink);
   background: var(--accent-3);
-  box-shadow: 0 6px 16px -10px var(--accent-3);
+  box-shadow: 0 3px 0 0 var(--depth);
 }
 .jslot[data-state="solved"] {
   color: #fff;
-  background: linear-gradient(180deg, #34d058, var(--hit-deep));
+  background: var(--hit);
+  box-shadow: 0 3px 0 0 var(--hit-deep);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 .jslot:focus-visible {
-  outline: 2px solid var(--team);
+  outline: 3px solid var(--team);
   outline-offset: 2px;
 }
 
-/* Scrambled tile rack. */
+/* Scrambled tile rack: same raised style as the keyboard keys. */
 .jumble-rack {
   container-type: inline-size;
 }
@@ -528,33 +648,26 @@ dialog.sheet[open]::backdrop {
   width: var(--size);
   height: var(--size);
   border-radius: calc(var(--size) * 0.26);
+  border: 2px solid var(--edge);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--size) * 0.5);
   color: var(--key-fg);
-  background: linear-gradient(180deg, var(--key-top), var(--key-bottom));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.08),
-    0 3px 0 var(--key-edge),
-    0 10px 18px -10px rgb(0 0 0 / 0.55);
-  transition: transform 110ms ease, box-shadow 110ms ease, opacity 200ms ease;
+  background: var(--key-bg);
+  box-shadow: 0 4px 0 0 var(--depth);
+  transition: transform 90ms ease-out, box-shadow 90ms ease-out, opacity 200ms ease;
   touch-action: manipulation;
   user-select: none;
 }
 .jtile:hover:not(:disabled) {
-  transform: translateY(-2px) rotate(-2deg);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
-    0 4px 0 var(--key-edge),
-    0 0 0 1px color-mix(in oklab, var(--team) 55%, transparent),
-    0 12px 22px -10px color-mix(in oklab, var(--team) 60%, transparent);
+  border-color: var(--team);
 }
 .jtile:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 0 var(--key-edge);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 0 var(--depth);
 }
 .jtile:focus-visible {
-  outline: 2px solid var(--team);
+  outline: 3px solid var(--team);
   outline-offset: 2px;
 }
 .jtile[data-used="true"] {

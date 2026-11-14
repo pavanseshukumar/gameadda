@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TeamSetup } from "@/components/game/TeamSetup";
+import { Segmented } from "@/components/ui/Controls";
 import {
   BASE_POINTS,
   DEFAULT_TURN_SECONDS,
@@ -45,23 +46,13 @@ export function SetupScreen({ initialTeams, initialSeconds, pool, onStart }) {
             </h2>
             <p className="text-sm text-muted">Seconds each team gets per try.</p>
           </div>
-          <div role="radiogroup" aria-labelledby="timer-heading" className="flex gap-1 rounded-full border border-line bg-surface p-1">
-            {TURN_SECONDS_OPTIONS.map((seconds) => {
-              const selected = seconds === turnSeconds;
-              return (
-                <button
-                  key={seconds}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => setTurnSeconds(seconds)}
-                  className={`btn h-10 min-w-14 px-3 text-sm tabular-nums ${selected ? "btn-primary" : "btn-ghost"}`}
-                >
-                  {seconds}s
-                </button>
-              );
-            })}
-          </div>
+          <Segmented
+            labelledBy="timer-heading"
+            value={turnSeconds}
+            onChange={setTurnSeconds}
+            options={TURN_SECONDS_OPTIONS.map((seconds) => ({ value: seconds, label: `${seconds}s` }))}
+            className="w-full sm:w-auto sm:min-w-64"
+          />
         </div>
       </section>
     </TeamSetup>

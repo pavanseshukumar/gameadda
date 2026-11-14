@@ -6,6 +6,7 @@ import { Confetti } from "@/components/game/Confetti";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { ArrowRightIcon, FlagIcon } from "@/components/ui/icons";
+import { teamText } from "@/lib/games/core/teams";
 import { ACTIONS, selectRankedGuesses, selectTeam } from "@/lib/games/hot-and-cold/engine";
 import { GuessBoard } from "./GuessBoard";
 
@@ -37,7 +38,7 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
         <h1 className="anim-rise mt-4 font-display text-[clamp(2.1rem,7vw,3.75rem)] font-extrabold leading-none tracking-[-0.03em]">
           {solved ? (
             <>
-              {winner.name} <span style={{ color: winner.color }}>found it!</span>
+              {winner.name} <span style={{ color: teamText(winner.color) }}>found it!</span>
             </>
           ) : (
             "The secret is out"

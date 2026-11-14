@@ -8,7 +8,7 @@
  */
 export function RoundBreakdown({ rows, multiplier }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-surface">
+    <div className="overflow-hidden card rounded-2xl">
       <table className="w-full table-fixed text-left">
         <caption className="sr-only">Points earned this round</caption>
         <colgroup>
@@ -43,7 +43,7 @@ export function RoundBreakdown({ rows, multiplier }) {
                 {note ? <span className="mt-0.5 ml-5 block text-xs font-normal text-miss">{note}</span> : null}
                 {isWinner ? (
                   <span className="mt-1 ml-5 inline-flex items-center gap-1 text-sm whitespace-nowrap sm:hidden">
-                    <span className="rounded-md bg-accent-3 px-1.5 py-0.5 text-xs font-extrabold text-[#1a1205]">
+                    <span className="rounded-md bg-accent-3 px-1.5 py-0.5 text-xs font-extrabold text-[var(--accent-3-ink)]">
                       {multiplier}×
                     </span>
                     <span className="font-semibold text-accent-3 tabular-nums">+{bonus} bonus</span>
@@ -54,7 +54,7 @@ export function RoundBreakdown({ rows, multiplier }) {
               <td className="hidden px-2 py-3 text-right tabular-nums sm:table-cell">
                 {isWinner ? (
                   <span className="inline-flex items-center gap-1 whitespace-nowrap sm:gap-1.5">
-                    <span className="rounded-md bg-accent-3 px-1.5 py-0.5 text-xs font-extrabold text-[#1a1205]">
+                    <span className="rounded-md bg-accent-3 px-1.5 py-0.5 text-xs font-extrabold text-[var(--accent-3-ink)]">
                       {multiplier}×
                     </span>
                     <span className="font-semibold text-accent-3">+{bonus}</span>

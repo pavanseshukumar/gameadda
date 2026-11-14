@@ -1,0 +1,353 @@
+/*
+ * Pictionary Party: a light "sketchbook" theme that lives inside dark GameAdda.
+ * Imported from app/globals.css so Tailwind generates its utilities; everything
+ * that would change page-wide styles is scoped to `.pictionary` (the wrapper in
+ * app/games/pictionary/layout.js). Keyframes are prefixed `pic-` so they don't
+ * clash with GameAdda's own `rise`, `pulse-ring` and `confetti-fall`.
+ */
+
+/* `static` so the colours exist as CSS variables even where only var() uses them. */
+@theme static {
+  --color-cream: #fbf5ea;
+  --color-cream-deep: #f3e9d6;
+  --color-paper: #fffdf8;
+  --color-ink: #1b2140;
+  --color-ink-soft: #4a5175;
+  --color-ink-muted: #7d8199;
+
+  --color-coral: #f0603d;
+  --color-coral-deep: #b8381b;
+  --color-ocean: #2e6be6;
+  --color-sun: #f2b01e;
+  --color-sun-soft: #fdf0cc;
+  --color-mint: #1e9e6a;
+  --color-mint-deep: #0e6a45;
+  --color-plum: #8a55e0;
+
+  --radius-blob: 2rem;
+
+  --animate-pop-in: pop-in 420ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  --animate-rise: pic-rise 480ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  --animate-wiggle: wiggle 600ms ease-in-out;
+  --animate-pulse-ring: pic-pulse-ring 1.6s ease-out infinite;
+  --animate-float: float 4s ease-in-out infinite;
+}
+
+/* Tokens GameAdda also defines (`line`, body font) are re-pointed inside the game only.
+   The display face (Bricolage Grotesque) is already GameAdda's, so it is shared. */
+.pictionary {
+  color-scheme: light;
+  --line: #e6dbc5;
+  --font-geist-sans: var(--font-figtree), system-ui, sans-serif;
+
+  background-color: var(--color-cream);
+  /* Faint dot grid, like a sketchbook page. */
+  background-image: radial-gradient(color-mix(in oklab, var(--color-ink) 9%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--color-ink);
+  font-family: var(--font-figtree), system-ui, sans-serif;
+}
+
+/* Keep overscroll and the area behind the wrapper on paper, not GameAdda black.
+   `data-page` is set by <PageTheme> in the layout and cleared when the route is hidden. */
+html[data-page="pictionary"],
+html[data-page="pictionary"] body {
+  color-scheme: light;
+  background: var(--color-cream);
+}
+
+.pictionary ::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+/* ── Chunky press buttons ──────────────────────────────────────────────── */
+@layer components {
+  .btn-3d {
+    --btn-bg: var(--color-ink);
+    --btn-fg: var(--color-cream);
+    --btn-depth: color-mix(in oklab, var(--btn-bg) 62%, black);
+    --btn-lift: 5px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 1.25rem;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-family: var(--font-display-face);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    box-shadow: 0 var(--btn-lift) 0 0 var(--btn-depth);
+    transform: translateY(0);
+    transition:
+      transform 90ms ease-out,
+      box-shadow 90ms ease-out,
+      filter 150ms ease;
+    user-select: none;
+    touch-action: manipulation;
+  }
+  .btn-3d:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+  .btn-3d:active:not(:disabled) {
+    transform: translateY(var(--btn-lift));
+    box-shadow: 0 0 0 0 var(--btn-depth);
+  }
+  .btn-3d:focus-visible {
+    outline: 3px solid var(--color-sun);
+    outline-offset: 3px;
+  }
+  /* Same disabled look as the shared .btn (app/globals.css): flat, dashed, readable. */
+  .btn-3d:disabled {
+    cursor: not-allowed;
+    color: var(--color-ink-muted);
+    background: color-mix(in oklab, var(--color-ink) 7%, transparent);
+    border: 2px dashed color-mix(in oklab, var(--color-ink) 25%, transparent);
+    box-shadow: none;
+  }
+
+  .card-ink {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+    border-radius: 1.75rem;
+    box-shadow: 0 5px 0 0 var(--color-ink);
+  }
+
+  .hand-underline {
+    background-image: linear-gradient(transparent 62%, color-mix(in oklab, var(--color-sun) 75%, transparent) 62%, color-mix(in oklab, var(--color-sun) 75%, transparent) 92%, transparent 92%);
+  }
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────── */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pic-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-9deg);
+  }
+  45% {
+    transform: rotate(7deg);
+  }
+  70% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes pic-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-8px) rotate(var(--r, 0deg));
+  }
+}
+
+@keyframes die-tumble {
+  0% {
+    transform: rotate(0) scale(1);
+  }
+  25% {
+    transform: rotate(-160deg) scale(0.88) translateY(-10px);
+  }
+  50% {
+    transform: rotate(-300deg) scale(1.08);
+  }
+  75% {
+    transform: rotate(-400deg) scale(0.95) translateY(-6px);
+  }
+  100% {
+    transform: rotate(-360deg) scale(1);
+  }
+}
+
+@keyframes pic-confetti-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift), 105vh, 0) rotate(var(--spin));
+    opacity: 1;
+  }
+}
+
+@keyframes score-bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes timer-urgent {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes token-hop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-16px) scale(1.06, 0.96);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes landing-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.board-token-hop {
+  animation: token-hop 240ms ease-out;
+}
+.board-token-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pic-pulse-ring 1.6s ease-out infinite;
+}
+.board-landing {
+  animation: landing-glow 1.2s ease-in-out infinite;
+}
+
+@keyframes stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.8) rotate(-12deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.92) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.animate-stamp {
+  animation: stamp 380ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+
+@keyframes card-flip {
+  0% {
+    opacity: 0;
+    transform: perspective(900px) rotateY(-85deg) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: perspective(900px) rotateY(8deg) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(900px) rotateY(0) scale(1);
+  }
+}
+
+@keyframes challenge-bounce {
+  0%,
+  35% {
+    transform: scale(0.4) rotate(-20deg);
+  }
+  70% {
+    transform: scale(1.12) rotate(6deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes line-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-card-flip {
+  animation: card-flip 620ms cubic-bezier(0.25, 0.8, 0.3, 1) both;
+}
+.animate-challenge-bounce {
+  animation: challenge-bounce 760ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.challenge-line-draw {
+  stroke-dasharray: 1;
+  animation: line-draw 1.6s 300ms ease-in-out both;
+}
+
+.animate-die-tumble {
+  animation: die-tumble 900ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.animate-score-bump {
+  animation: score-bump 500ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.animate-timer-urgent {
+  animation: timer-urgent 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pictionary *,
+  .pictionary *::before,
+  .pictionary *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

@@ -103,7 +103,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
       teamColor={team.color}
       right={
         <>
-          <span className="mr-0.5 whitespace-nowrap rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold tabular-nums">
+          <span className="mr-0.5 whitespace-nowrap chip px-3 py-1.5 text-sm font-semibold tabular-nums">
             <span className="hidden min-[360px]:inline">Round </span>
             <span className="min-[360px]:hidden" aria-hidden="true">R</span>
             {state.round}
@@ -199,8 +199,8 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
                   value={guess}
                   onChange={(e) => setGuess(e.target.value)}
                   disabled={!running}
-                  placeholder="Which movie is this song from?"
-                  className="h-12 min-w-0 flex-1 rounded-2xl border border-line-strong bg-surface-strong px-4 text-base font-medium outline-none transition placeholder:text-subtle focus:border-[var(--team)] focus:shadow-[0_0_0_4px_color-mix(in_oklab,var(--team)_25%,transparent)] sm:h-14 sm:text-lg"
+                  placeholder="Name the movie"
+                  className="h-12 min-w-0 flex-1 field px-4 text-base font-medium sm:h-14 sm:text-lg"
                 />
                 <button type="submit" className="btn btn-primary h-12 shrink-0 px-5 text-base sm:h-14 sm:px-7" disabled={!running || !guess.trim()}>
                   Guess
@@ -213,7 +213,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
                   {state.guesses.map((g, i) => (
                     <li
                       key={`${i}-${g.text}`}
-                      className="rounded-full border border-line bg-surface px-2.5 py-1 text-xs text-muted line-through decoration-miss/70"
+                      className="chip px-2.5 py-1 text-xs text-muted line-through decoration-miss/70"
                       style={{ borderColor: selectTeam(state, g.teamId)?.color }}
                     >
                       {g.text}

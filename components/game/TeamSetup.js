@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { MAX_TEAMS, MIN_TEAMS, defaultTeamName, teamColor } from "@/lib/games/core/teams";
+import { MAX_TEAMS, MIN_TEAMS, defaultTeamName, teamColor, teamInk } from "@/lib/games/core/teams";
 import { ArrowRightIcon, PlusIcon, XIcon } from "@/components/ui/icons";
+import { Segmented, Stepper } from "@/components/ui/Controls";
 import { GameShell } from "./GameShell";
 
 const SOLO_NAME = "You";
@@ -45,44 +46,37 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
 
   const rename = (id, name) => setDrafts((current) => current.map((d) => (d.id === id ? { ...d, name } : d)));
 
+  // The stepper adds or removes the last team, one at a time.
+  const setTeamCount = (count) => (count > drafts.length ? addTeam() : removeTeam(drafts[drafts.length - 1].id));
+
   return (
     <GameShell teamColor={teamColor(0)}>
-      <section className="anim-rise pt-6 sm:pt-12">
-        <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted">
-          <span className="size-1.5 rounded-full bg-accent-2" />
-          {eyebrow}
-        </p>
-        <h1 className="mt-5 font-display text-[clamp(2.4rem,9vw,4.75rem)] font-extrabold leading-[0.95] tracking-[-0.035em]">
+      <section className="anim-rise pt-4 sm:pt-10">
+        <p className="font-display text-sm font-bold uppercase tracking-[0.14em] text-accent-2">{eyebrow}</p>
+        <h1 className="mt-2 font-display text-[clamp(2.4rem,9vw,4.75rem)] font-extrabold leading-[0.95] tracking-[-0.03em]">
           {title}
         </h1>
         <p className="mt-4 max-w-md text-base text-muted sm:text-lg">{intro}</p>
       </section>
 
       <form
-        className="mt-10 flex flex-col gap-6"
+        className="mt-8 flex flex-col gap-6 sm:mt-10"
         onSubmit={(event) => {
           event.preventDefault();
           onStart(solo ? [{ id: 1, name: soloName.trim() || SOLO_NAME }] : drafts);
         }}
       >
         <section className="card rounded-[1.75rem] p-4 sm:p-6" aria-labelledby="teams-heading">
-          <div role="radiogroup" aria-label="Who's playing" className="mb-5 grid grid-cols-2 gap-1 rounded-full border border-line bg-surface p-1">
-            {[
-              [true, "Solo"],
-              [false, "Teams"],
-            ].map(([value, label]) => (
-              <button
-                key={label}
-                type="button"
-                role="radio"
-                aria-checked={solo === value}
-                onClick={() => setSolo(value)}
-                className={`btn h-11 text-base ${solo === value ? "btn-primary" : "btn-ghost"}`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Who's playing"
+            value={solo}
+            onChange={setSolo}
+            options={[
+              { value: true, label: "Solo" },
+              { value: false, label: "Teams" },
+            ]}
+            className="mb-5"
+          />
 
           {solo ? (
             <>
@@ -90,13 +84,8 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
                 Player
               </h2>
               <p className="px-1 text-sm text-muted">Just you against the clock. No steals, no passing the turn.</p>
-              <div
-                className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-surface-strong p-2 pl-3 transition focus-within:border-[color:var(--c)]"
-                style={{ "--c": teamColor(0) }}
-              >
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white" style={{ background: teamColor(0) }}>
-                  1
-                </span>
+              <div className="field mt-4 flex items-center gap-3 p-2 pl-2.5">
+                <TeamBadge color={teamColor(0)}>1</TeamBadge>
                 <label className="sr-only" htmlFor="solo-name">
                   Your name
                 </label>
@@ -107,56 +96,23 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
                   autoComplete="off"
                   placeholder={SOLO_NAME}
                   onChange={(event) => setSoloName(event.target.value)}
-                  className="h-11 min-w-0 flex-1 bg-transparent text-lg font-medium outline-none placeholder:text-subtle"
+                  className="h-10 min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-subtle"
                 />
               </div>
             </>
           ) : (
             <>
-            <div className="flex items-center justify-between gap-4 px-1">
-              <h2 id="teams-heading" className="font-display text-xl font-bold tracking-tight">
-                Teams
-              </h2>
-              <div className="flex items-center gap-1 rounded-full border border-line bg-surface p-1" role="group" aria-label="Number of teams">
-                <button
-                  type="button"
-                  className="btn btn-ghost size-9 p-0"
-                  onClick={() => removeTeam(drafts[drafts.length - 1].id)}
-                  disabled={drafts.length <= MIN_TEAMS}
-                  aria-label="Remove last team"
-                >
-                  <span className="text-lg leading-none">−</span>
-                </button>
-                <span className="w-7 text-center font-display text-lg font-bold tabular-nums" aria-live="polite">
-                  {drafts.length}
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-ghost size-9 p-0"
-                  onClick={addTeam}
-                  disabled={drafts.length >= MAX_TEAMS}
-                  aria-label="Add a team"
-                >
-                  <PlusIcon size={18} />
-                </button>
+              <div className="flex items-center justify-between gap-4 px-1">
+                <h2 id="teams-heading" className="font-display text-xl font-bold tracking-tight">
+                  Teams
+                </h2>
+                <Stepper value={drafts.length} min={MIN_TEAMS} max={MAX_TEAMS} onChange={setTeamCount} label="Number of teams" unit="teams" />
               </div>
-            </div>
 
-            <ul className="mt-5 flex flex-col gap-2.5">
-              {drafts.map((draft, index) => {
-                const color = teamColor(index);
-                return (
-                  <li
-                    key={draft.id}
-                    className="anim-rise group flex items-center gap-3 rounded-2xl border border-line bg-surface-strong p-2 pl-3 transition focus-within:border-[color:var(--c)]"
-                    style={{ "--c": color }}
-                  >
-                    <span
-                      className="grid size-9 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white"
-                      style={{ background: color }}
-                    >
-                      {index + 1}
-                    </span>
+              <ul className="mt-4 flex flex-col gap-2.5">
+                {drafts.map((draft, index) => (
+                  <li key={draft.id} className="field anim-rise flex items-center gap-3 p-2 pl-2.5" style={{ "--team": teamColor(index) }}>
+                    <TeamBadge color={teamColor(index)}>{index + 1}</TeamBadge>
                     <label className="sr-only" htmlFor={`team-${draft.id}`}>
                       Team {index + 1} name
                     </label>
@@ -167,7 +123,7 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
                       autoComplete="off"
                       placeholder={defaultTeamName(index)}
                       onChange={(event) => rename(draft.id, event.target.value)}
-                      className="h-11 min-w-0 flex-1 bg-transparent text-lg font-medium outline-none placeholder:text-subtle"
+                      className="h-10 min-w-0 flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-subtle"
                     />
                     <button
                       type="button"
@@ -179,21 +135,20 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
                       <XIcon size={18} />
                     </button>
                   </li>
-                );
-              })}
-            </ul>
+                ))}
+              </ul>
 
-            {drafts.length < MAX_TEAMS ? (
-              <button
-                type="button"
-                onClick={addTeam}
-                className="mt-2.5 flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-line-strong text-muted transition hover:border-accent hover:text-foreground"
-              >
-                <PlusIcon size={18} /> Add team
-              </button>
-            ) : (
-              <p className="mt-3 text-center text-sm text-subtle">Six teams max. That’s a full house.</p>
-            )}
+              {drafts.length < MAX_TEAMS ? (
+                <button
+                  type="button"
+                  onClick={addTeam}
+                  className="mt-2.5 flex h-14 w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line-strong font-display font-bold text-muted transition hover:border-edge hover:text-foreground"
+                >
+                  <PlusIcon size={18} strokeWidth={3} /> Add team
+                </button>
+              ) : (
+                <p className="mt-3 text-center text-sm text-subtle">Six teams max. That’s a full house.</p>
+              )}
             </>
           )}
         </section>
@@ -202,9 +157,11 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
 
         <ol className="grid gap-3 sm:grid-cols-3">
           {rules.map((rule, i) => (
-            <li key={rule.title} className="rounded-2xl border border-line bg-surface p-4">
-              <span className="font-display text-sm font-bold text-accent">0{i + 1}</span>
-              <p className="mt-1 font-semibold">{rule.title}</p>
+            <li key={rule.title} className="card rounded-2xl p-4">
+              <span className="inline-grid size-7 place-items-center rounded-full bg-[var(--select-bg)] font-display text-sm font-bold text-[var(--select-fg)]">
+                {i + 1}
+              </span>
+              <p className="mt-2 font-display font-bold">{rule.title}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted">{rule.body}</p>
             </li>
           ))}
@@ -217,5 +174,17 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
         </div>
       </form>
     </GameShell>
+  );
+}
+
+/** Numbered team-colour badge, outlined like Pictionary's team number. */
+function TeamBadge({ color, children }) {
+  return (
+    <span
+      className="grid size-9 shrink-0 place-items-center rounded-full border-2 border-edge font-display text-sm font-extrabold"
+      style={{ background: color, color: teamInk(color) }}
+    >
+      {children}
+    </span>
   );
 }

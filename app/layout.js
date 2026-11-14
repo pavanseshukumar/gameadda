@@ -1,4 +1,4 @@
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Baloo_2, Bricolage_Grotesque, Fraunces, Geist, Geist_Mono, Oswald, Space_Grotesk, Unbounded } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,6 +16,15 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
 });
 
+// Each game's display face (see app/game-themes.css). Not preloaded: a file only
+// downloads on the pages whose theme uses it.
+const songbook = Fraunces({ variable: "--font-songbook", subsets: ["latin"], preload: false });
+const tabletop = Baloo_2({ variable: "--font-tabletop", subsets: ["latin"], preload: false });
+const marquee = Oswald({ variable: "--font-marquee", subsets: ["latin"], preload: false });
+const thermal = Space_Grotesk({ variable: "--font-thermal", subsets: ["latin"], preload: false });
+const dial = Unbounded({ variable: "--font-dial", subsets: ["latin"], preload: false });
+const gameFonts = [songbook, tabletop, marquee, thermal, dial];
+
 export const metadata = {
   title: {
     default: "GameAdda · Party games for one screen",
@@ -32,7 +41,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${display.variable} ${gameFonts.map((font) => font.variable).join(" ")} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
