@@ -478,6 +478,103 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
+/* Fill the Film list                                                   */
+/* ------------------------------------------------------------------ */
+
+.film-row {
+  border: 2px solid transparent;
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+  /* Tiles shrink a little on phones so most titles fit one line. */
+  --film-tile: clamp(1.15rem, 5.2vw, 1.9rem);
+}
+/* The movie being played: outlined in the team colour. */
+.film-row[data-status="current"] {
+  background: var(--surface-strong);
+  border-color: var(--team);
+}
+/* Locked until the movies above are done. */
+.film-row[data-status="upcoming"] {
+  opacity: 0.55;
+}
+.film-row-num {
+  color: var(--fg-muted);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.film-row[data-status="current"] .film-row-num {
+  color: #fff;
+  background: var(--team);
+  box-shadow: none;
+}
+.film-row[data-status="solved"] .film-row-num {
+  color: #fff;
+  background: var(--hit);
+  box-shadow: none;
+}
+.film-row[data-status="gave-up"] .film-row-num {
+  color: var(--fg-subtle);
+}
+.film-tile {
+  display: grid;
+  place-items: center;
+  width: var(--film-tile);
+  height: calc(var(--film-tile) * 1.25);
+  border-radius: calc(var(--film-tile) * 0.2);
+  font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
+  font-weight: 700;
+  font-size: calc(var(--film-tile) * 0.7);
+  line-height: 1;
+}
+.film-tile[data-state="blank"] {
+  background: var(--tile-hidden);
+  box-shadow: inset 0 -2.5px 0 var(--line-strong);
+}
+.film-tile[data-state="shown"] {
+  color: var(--tile-revealed-fg);
+  background: var(--tile-revealed);
+}
+.film-tile[data-state="fresh"] {
+  color: #fff;
+  background: var(--accent);
+  animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+.film-tile[data-state="solved"] {
+  color: #fff;
+  background: var(--hit);
+}
+/* Given up: the answer, shown without the "solved" green. */
+.film-tile[data-state="given"] {
+  color: var(--fg-muted);
+  background: var(--tile-hidden);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+/* The one big letter in the reveal dialog. */
+.film-tile-xl {
+  --film-tile: 4.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 5px 0 0 var(--depth);
+}
+/* A guess that wasn't it: red-tinted pill with an ✗, text left readable. */
+.wrong-guess {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.15rem 0.55rem 0.15rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  background: color-mix(in oklab, var(--miss) 12%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--miss) 45%, transparent);
+}
+.wrong-guess svg {
+  color: var(--miss);
+}
+.film-clue-fresh {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
 /* Hangman gallows                                                      */
 /* ------------------------------------------------------------------ */
 

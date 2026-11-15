@@ -348,6 +348,50 @@
   --font-display-face: var(--font-chalkboard), system-ui, sans-serif;
 }
 
+/* ── Fill the Film · "Listings": the newspaper cinema page, ink and red ──── */
+.theme-listings {
+  color-scheme: light;
+  --background: #f2ece0;
+  --foreground: #1d1a16;
+  --panel: #fbf8f1;
+  --well: #f5efe3;
+  --edge: #1d1a16;
+  --depth: #1d1a16;
+  --surface: rgb(60 45 20 / 0.04);
+  --surface-strong: rgb(60 45 20 / 0.08);
+  --line: rgb(60 45 20 / 0.15);
+  --line-strong: rgb(60 45 20 / 0.3);
+  --fg-muted: #4f483d;
+  --fg-subtle: #6b6254;
+
+  --accent: #c32f27;
+  --accent-2: #c32f27;
+  --accent-2-ink: #fff;
+  --accent-3: #9a4a00;
+  --accent-3-ink: #fff;
+  --hit: #1a7f43;
+  --hit-deep: #0f5e30;
+  --miss: #c32f27;
+  --miss-deep: #861b15;
+
+  --select-bg: #1d1a16;
+  --select-fg: #fbf8f1;
+  --select-mark: #c32f27;
+  --btn-primary-bg: #c32f27;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #6e140f;
+  --key-bg: #fbf8f1;
+  --key-fg: #1d1a16;
+
+  --tile-hidden: rgb(60 45 20 / 0.07);
+  --tile-revealed: #1d1a16;
+  --tile-revealed-fg: #fbf8f1;
+  --dot: rgb(60 45 20 / 0.08);
+  --stage-glow: 10%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-listings), Georgia, serif;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -391,3 +435,5 @@ html[data-page="hideout"],
 html[data-page="hideout"] body { background: #120f1d; }
 html[data-page="chalkboard"],
 html[data-page="chalkboard"] body { background: #1f2b25; }
+html[data-page="listings"],
+html[data-page="listings"] body { background: #f2ece0; }

@@ -22,6 +22,7 @@ function previewText(game, tile) {
   if (game.preview.style === "board") return tile === "★" ? tile : null;
   if (game.preview.style === "lineup") return tile || null;
   if (game.preview.style === "chalk") return tile || null;
+  if (game.preview.style === "fill") return tile || null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -74,6 +75,12 @@ function previewStyle(game, tile, i) {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
         };
+  }
+  if (game.preview.style === "fill") {
+    // Shown letters inked in; blanks are pale boxes, like a half-filled listing.
+    return tile
+      ? { background: "var(--tile-revealed)", color: "var(--tile-revealed-fg)" }
+      : { background: "var(--tile-hidden)", boxShadow: `inset 0 -2.5px 0 ${game.accent[0]}` };
   }
   if (game.preview.style === "chalk") {
     // Chalk letters over blank underlines, like a half-solved hangman word.
