@@ -23,6 +23,8 @@ function previewText(game, tile) {
   if (game.preview.style === "lineup") return tile || null;
   if (game.preview.style === "chalk") return tile || null;
   if (game.preview.style === "fill") return tile || null;
+  if (game.preview.style === "ice") return tile || null;
+  if (game.preview.style === "marks") return tile ? tile.split(":")[0] : null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -75,6 +77,24 @@ function previewStyle(game, tile, i) {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
         };
+  }
+  if (game.preview.style === "marks") {
+    // A marked guess: teal = right spot, pink = wrong spot, slate = not in the word.
+    const mark = tile ? tile.split(":")[1] : null;
+    if (!mark) return { boxShadow: "inset 0 0 0 1.5px var(--line)", borderRadius: "0.35rem" };
+    const fill = { hit: "var(--hit)", near: "var(--near)", miss: "var(--absent)" }[mark];
+    return { background: fill, color: mark === "miss" ? "var(--fg-muted)" : "#fff", borderRadius: "0.35rem" };
+  }
+  if (game.preview.style === "ice") {
+    // Letters on frosted ice cubes; an empty slot is the gap between words.
+    if (!tile) return { background: "transparent" };
+    return {
+      color: "var(--foreground)",
+      background: "linear-gradient(160deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0) 50%), linear-gradient(#e0f4ff, #b9e3f7)",
+      border: "1.5px solid var(--edge)",
+      boxShadow: "0 2px 0 var(--depth)",
+      transform: `rotate(${TILT[i % TILT.length] / 2}deg)`,
+    };
   }
   if (game.preview.style === "fill") {
     // Shown letters inked in; blanks are pale boxes, like a half-filled listing.

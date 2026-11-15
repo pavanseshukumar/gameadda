@@ -392,6 +392,99 @@
   --font-display-face: var(--font-listings), Georgia, serif;
 }
 
+/* ── Frozen Brains · "Frost": an ice-blue morning, deep navy ink ───────── */
+.theme-frost {
+  color-scheme: light;
+  --background: #e4f2fa;
+  --foreground: #0b2236;
+  --panel: #f7fcff;
+  --well: #edf6fb;
+  --edge: #0b2236;
+  --depth: #0b2236;
+  --surface: rgb(11 60 100 / 0.04);
+  --surface-strong: rgb(11 60 100 / 0.08);
+  --line: rgb(11 60 100 / 0.15);
+  --line-strong: rgb(11 60 100 / 0.3);
+  --fg-muted: #2c4a61;
+  --fg-subtle: #456277;
+
+  --accent: #0369a1;
+  --accent-2: #0477b3;
+  --accent-2-ink: #fff;
+  --accent-3: #b45309;
+  --accent-3-ink: #fff;
+  --hit: #15803d;
+  --hit-deep: #0f5f2d;
+  --miss: #be123c;
+  --miss-deep: #881030;
+
+  --select-bg: #0b2236;
+  --select-fg: #f7fcff;
+  --select-mark: #38bdf8;
+  --btn-primary-bg: #38bdf8;
+  --btn-primary-fg: #062033;
+  --btn-primary-depth: #0b5f8a;
+  --key-bg: #d3ebf7;
+  --key-fg: #0b2236;
+
+  --tile-hidden: rgb(11 60 100 / 0.07);
+  --tile-revealed: #0b2236;
+  --tile-revealed-fg: #f7fcff;
+  --dot: rgb(11 60 100 / 0.09);
+  --stage-glow: 14%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-frost), system-ui, sans-serif;
+}
+
+/* ── Word Swap · "Arcade": a late-night cabinet, teal hits and pink near-misses ─ */
+.theme-arcade {
+  color-scheme: dark;
+  --background: #14112b;
+  --foreground: #f2f0ff;
+  --panel: #1e1a3d;
+  --well: #18153a;
+  --edge: #3d3770;
+  --depth: #07051a;
+  --surface: rgb(220 215 255 / 0.04);
+  --surface-strong: rgb(220 215 255 / 0.09);
+  --line: rgb(220 215 255 / 0.12);
+  --line-strong: rgb(220 215 255 / 0.24);
+  --fg-muted: #c5c0e8;
+  --fg-subtle: #9c96c6;
+
+  --accent: #2dd4bf;
+  --accent-2: #f472b6;
+  --accent-2-ink: #2a0718;
+  --accent-3: #fbbf24;
+  --accent-3-ink: #231503;
+  /* Letter marks: right spot (teal), wrong spot (pink), not in word (slate). */
+  --hit: #14b8a6;
+  --hit-deep: #0b766b;
+  --near: #ec4899;
+  --near-deep: #9d1d5f;
+  --absent: #3a365c;
+  --absent-deep: #232042;
+  --miss: #fb7185;
+  --miss-deep: #9f1239;
+
+  --select-bg: #f2f0ff;
+  --select-fg: #14112b;
+  --select-mark: #2dd4bf;
+  --btn-primary-bg: #2dd4bf;
+  --btn-primary-fg: #04201c;
+  --btn-primary-depth: #0f766e;
+  --key-bg: #2b2655;
+  --key-fg: #f2f0ff;
+
+  --tile-hidden: rgb(220 215 255 / 0.07);
+  --tile-revealed: #f2f0ff;
+  --tile-revealed-fg: #14112b;
+  --dot: rgb(220 215 255 / 0.05);
+  --stage-glow: 22%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-arcade), ui-monospace, monospace;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -437,3 +530,7 @@ html[data-page="chalkboard"],
 html[data-page="chalkboard"] body { background: #1f2b25; }
 html[data-page="listings"],
 html[data-page="listings"] body { background: #f2ece0; }
+html[data-page="frost"],
+html[data-page="frost"] body { background: #e4f2fa; }
+html[data-page="arcade"],
+html[data-page="arcade"] body { background: #14112b; }
