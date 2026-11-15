@@ -1,4 +1,4 @@
-import { Baloo_2, Bricolage_Grotesque, Fraunces, Geist, Geist_Mono, Oswald, Chakra_Petch, Space_Grotesk, Unbounded } from "next/font/google";
+import { Baloo_2, Bricolage_Grotesque, Fraunces, Geist, Geist_Mono, Oswald, Chakra_Petch, Kalam, Space_Grotesk, Unbounded } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,7 +24,8 @@ const marquee = Oswald({ variable: "--font-marquee", subsets: ["latin"], preload
 const thermal = Space_Grotesk({ variable: "--font-thermal", subsets: ["latin"], preload: false });
 const dial = Unbounded({ variable: "--font-dial", subsets: ["latin"], preload: false });
 const hideout = Chakra_Petch({ variable: "--font-hideout", subsets: ["latin"], weight: ["500", "600", "700"], preload: false });
-const gameFonts = [songbook, tabletop, marquee, thermal, dial, hideout];
+const chalkboard = Kalam({ variable: "--font-chalkboard", subsets: ["latin"], weight: ["400", "700"], preload: false });
+const gameFonts = [songbook, tabletop, marquee, thermal, dial, hideout, chalkboard];
 
 export const metadata = {
   title: {

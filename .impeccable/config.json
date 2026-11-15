@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "app/game-themes.css"
+        ],
+        "createdAt": "2026-11-15T16:24:18.762Z",
+        "reason": "Claude: the flagged rule (.theme-thermal .stage::after, from commit fdb8fe0) is a 3px fixed spectrum strip across the top of the page, not a one-sided card border"
+      }
+    ]
+  }
+}

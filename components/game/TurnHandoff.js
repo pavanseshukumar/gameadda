@@ -7,7 +7,7 @@ import { ArrowRightIcon } from "@/components/ui/icons";
  * @param {{
  *   team: { name: string, color: string },
  *   paused?: boolean,
- *   seconds: number,
+ *   seconds: number,              0 = untimed: the button just says "Start"
  *   detail?: React.ReactNode,
  *   label?: string,               eyebrow text instead of "Your turn" (e.g. "Steal chance")
  *   onStart: () => void,
@@ -35,7 +35,7 @@ export function TurnHandoff({ team, paused = false, seconds, detail, label, onSt
       </h2>
       {detail ? <div className="mt-2 text-sm text-muted">{detail}</div> : null}
       <button type="button" autoFocus onClick={onStart} className="btn btn-primary mt-6 h-14 w-full text-base">
-        {paused ? `Resume · ${seconds}s left` : `Start · ${seconds}s`} <ArrowRightIcon size={18} />
+        {paused ? `Resume · ${seconds}s left` : seconds ? `Start · ${seconds}s` : "Start"} <ArrowRightIcon size={18} />
       </button>
     </div>
   );

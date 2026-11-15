@@ -304,6 +304,50 @@
   --font-display-face: var(--font-hideout), system-ui, sans-serif;
 }
 
+/* ── Hangman · "Chalkboard": slate-green board, chalk white and yellow ──── */
+.theme-chalkboard {
+  color-scheme: dark;
+  --background: #1f2b25;
+  --foreground: #f3f0e6;
+  --panel: #27362e;
+  --well: #1a241f;
+  --edge: #4d6357;
+  --depth: #0c120f;
+  --surface: rgb(243 240 230 / 0.04);
+  --surface-strong: rgb(243 240 230 / 0.09);
+  --line: rgb(243 240 230 / 0.12);
+  --line-strong: rgb(243 240 230 / 0.24);
+  --fg-muted: #ccd5cc;
+  --fg-subtle: #a2b0a6;
+
+  --accent: #f6d65c;
+  --accent-2: #ff9ab8;
+  --accent-2-ink: #2a0c16;
+  --accent-3: #f6d65c;
+  --accent-3-ink: #2a2205;
+  --hit: #4cc77a;
+  --hit-deep: #1f7a44;
+  --miss: #ff7070;
+  --miss-deep: #a3302e;
+
+  --select-bg: #f3f0e6;
+  --select-fg: #1f2b25;
+  --select-mark: #f6d65c;
+  --btn-primary-bg: #f6d65c;
+  --btn-primary-fg: #2a2205;
+  --btn-primary-depth: #8c7312;
+  --key-bg: #2f4137;
+  --key-fg: #f3f0e6;
+
+  --tile-hidden: rgb(243 240 230 / 0.07);
+  --tile-revealed: #f3f0e6;
+  --tile-revealed-fg: #1f2b25;
+  --dot: rgb(243 240 230 / 0.05);
+  --stage-glow: 16%;
+  --team-text-mix: 100%;
+  --font-display-face: var(--font-chalkboard), system-ui, sans-serif;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -345,3 +389,5 @@ html[data-page="dial"],
 html[data-page="dial"] body { background: #e8edf3; }
 html[data-page="hideout"],
 html[data-page="hideout"] body { background: #120f1d; }
+html[data-page="chalkboard"],
+html[data-page="chalkboard"] body { background: #1f2b25; }
