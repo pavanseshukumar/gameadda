@@ -3,67 +3,80 @@
 @import "./game-themes.css";
 
 /* ------------------------------------------------------------------ */
-/* Design system                                                        */
+/* Design system: claymorphism                                          */
 /*                                                                      */
-/* One component style for every game, taken from Pictionary Party:     */
-/* solid panels with a 2px outline, a solid offset "depth" shadow under */
-/* cards and buttons, and buttons that press down into that shadow.     */
-/* Games change only the colours (and display face) by redefining the   */
-/* tokens below on a theme class (app/game-themes.css).                 */
-/* These defaults are GameAdda's own: the hub.                          */
+/* Every surface is soft clay: no outlines, big radii, a soft drop      */
+/* shadow underneath, a bright highlight pressed into the top-left and  */
+/* a tinted shade in the bottom-right. Pressing squishes it in.         */
+/*                                                                      */
+/* Each theme (app/game-themes.css) sets its pastel colours and one     */
+/* `--shade` hue; outlines, wells, dots and clay shading derive from    */
+/* it below. These defaults are GameAdda's own: the hub (lavender).     */
+/*                                                                      */
+/* Mobile first: base styles are for a phone held in one hand; `sm:`    */
+/* and up add room for tablets, laptops and TVs.                        */
 /* ------------------------------------------------------------------ */
 
 :root {
-  color-scheme: dark;
-  --background: #0b0a12;
-  --foreground: #f5f5f7;
+  color-scheme: light;
+  --background: #eeeafb;
+  --foreground: #231c40;
 
   /* Panels: cards, dialogs, secondary buttons, keys. */
-  --panel: #16141f;
+  --panel: #faf8ff;
   /* Wells: inputs and recessed areas. */
-  --well: #0f0e17;
-  /* The 2px outline, and the solid shadow under raised things. */
-  --edge: #35314a;
-  --depth: #000;
+  --well: #e7e1f8;
+  /* The theme's deep tint: every clay shadow and hairline is mixed from it. */
+  --shade: #4b3a8f;
 
-  --bg-elevated: var(--panel);
-  --surface: rgb(255 255 255 / 0.04);
-  --surface-strong: rgb(255 255 255 / 0.08);
-  --line: rgb(255 255 255 / 0.1);
-  --line-strong: rgb(255 255 255 / 0.2);
-  --fg-muted: #b3b3c6;
-  --fg-subtle: #8c8ca2;
+  --fg-muted: #4e4670;
+  --fg-subtle: #655d88;
 
-  --accent: #a78bfa;
-  --accent-2: #f472b6;
-  --accent-3: #fbbf24;
-  --accent-3-ink: #1a1205;
-  --accent-2-ink: #1a0610;
-  --hit: #22c55e;
-  --hit-deep: #15803d;
-  --miss: #ef4444;
-  --miss-deep: #b91c1c;
+  --accent: #6d4fd8;
+  --accent-2: #b8295f;
+  --accent-2-ink: #fff;
+  --accent-3: #a65f00;
+  --accent-3-ink: #fff;
+  --hit: #1f9d55;
+  --hit-deep: #137a3f;
+  --miss: #e0435a;
+  --miss-deep: #a82238;
 
-  /* Selected option in a segmented control: inverted, with a coloured underline. */
-  --select-bg: #f5f5f7;
-  --select-fg: #0b0a12;
-  --select-mark: #a78bfa;
+  /* Selected option in a segmented control: a raised clay pill. */
+  --select-bg: #7a58e8;
+  --select-fg: #fff;
+  --select-mark: #7a58e8;
 
-  --btn-primary-bg: #8b5cf6;
+  --btn-primary-bg: #7a58e8;
   --btn-primary-fg: #fff;
-  --btn-primary-depth: #4c2a9e;
+  --btn-primary-depth: #5b3fc4;
 
-  --key-bg: #221f2e;
-  --key-fg: #f5f5f7;
+  --key-bg: #fdfcff;
+  --key-fg: #231c40;
 
-  --tile-hidden: rgb(255 255 255 / 0.06);
-  --tile-revealed: #f8f7ff;
-  --tile-revealed-fg: #0c0b14;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #231c40;
 
-  /* Faint dot grid on the page, like Pictionary's sketchbook. */
-  --dot: rgb(255 255 255 / 0.06);
-  --stage-glow: 22%;
-  --team-text-mix: 100%;
+  /* Two soft colour blobs behind the page. */
+  --blob-a: #f6d3ea;
+  --blob-b: #cfe0ff;
+  --stage-glow: 34%;
+  --team-text-mix: 70%;
+}
+
+/* Tokens mixed from each theme's own `--shade`. Declared on every theme wrapper too,
+   so they resolve against that theme's shade rather than the hub's. */
+:root,
+[class*="theme-"] {
+  --edge: color-mix(in oklab, var(--shade) 16%, transparent);
+  --depth: color-mix(in oklab, var(--shade) 30%, transparent);
+  --surface: color-mix(in oklab, var(--shade) 5%, transparent);
+  --surface-strong: color-mix(in oklab, var(--shade) 9%, transparent);
+  --line: color-mix(in oklab, var(--shade) 13%, transparent);
+  --line-strong: color-mix(in oklab, var(--shade) 24%, transparent);
+  --tile-hidden: color-mix(in oklab, var(--shade) 8%, transparent);
+  --dot: color-mix(in oklab, var(--shade) 8%, transparent);
+  --bg-elevated: var(--panel);
 }
 
 @theme inline {
@@ -109,7 +122,102 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--accent) 40%, transparent);
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Clay recipes                                                         */
+/*                                                                      */
+/* Written on the element (not as :root tokens) so `--shade` and        */
+/* `--tint` resolve against the element's own theme and colour.         */
+/* `--clay-y` / `--clay-blur` / `--clay-in` scale one recipe from a     */
+/* small chip up to a big card.                                         */
+/* ------------------------------------------------------------------ */
+
+/* Neutral raised clay: panels, keys, secondary buttons. */
+.clay,
+.card,
+.chip,
+.sheet-panel,
+.btn-secondary,
+.step-btn,
+.key,
+.jtile,
+.press,
+.tile[data-state="revealed"],
+.jslot[data-state="filled"],
+.swap-tile[data-state="typed"],
+.film-tile-xl {
+  --clay-y: 10px;
+  --clay-blur: 22px;
+  --clay-in: 8px;
+  box-shadow:
+    0 var(--clay-y) var(--clay-blur) calc(var(--clay-y) * -0.9) color-mix(in oklab, var(--shade) 34%, transparent),
+    0 2px 4px -2px color-mix(in oklab, var(--shade) 22%, transparent),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.85),
+    inset var(--clay-in) var(--clay-in) calc(var(--clay-in) * 1.8) calc(var(--clay-in) * -1) rgb(255 255 255 / 0.9),
+    inset calc(var(--clay-in) * -1) calc(var(--clay-in) * -1) calc(var(--clay-in) * 1.8) calc(var(--clay-in) * -1)
+      color-mix(in oklab, var(--shade) 20%, transparent);
+}
+
+/* Coloured clay: fills that carry their own colour (primary buttons, hit/miss tiles).
+   `--tint` is the colour of the soft drop shadow. */
+.clay-color,
+.btn-primary,
+.btn-danger,
+.key[data-state="hit"],
+.key[data-state="miss"],
+.key[data-state="near"],
+.tile[data-state="fresh"],
+.tile[data-state="complete"],
+.swap-tile[data-state="hit"],
+.swap-tile[data-state="near"],
+.swap-tile[data-state="miss"],
+.jslot[data-state="locked"],
+.jslot[data-state="solved"],
+.seg[aria-checked="true"] {
+  --tint: var(--depth);
+  --clay-y: 10px;
+  --clay-blur: 20px;
+  --clay-in: 8px;
+  box-shadow:
+    0 var(--clay-y) var(--clay-blur) calc(var(--clay-y) * -0.9) color-mix(in oklab, var(--tint) 70%, transparent),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.4),
+    inset var(--clay-in) var(--clay-in) calc(var(--clay-in) * 1.8) calc(var(--clay-in) * -1) rgb(255 255 255 / 0.45),
+    inset calc(var(--clay-in) * -1) calc(var(--clay-in) * -1) calc(var(--clay-in) * 1.8) calc(var(--clay-in) * -1) rgb(0 0 0 / 0.2);
+}
+
+/* Pressed-in clay: wells, inputs, empty slots. */
+.clay-well,
+.field,
+.switch,
+.tile[data-state="hidden"],
+.jslot[data-state="empty"],
+.swap-tile[data-state="empty"],
+.film-tile[data-state="blank"] {
+  --clay-in: 5px;
+  box-shadow:
+    inset var(--clay-in) var(--clay-in) calc(var(--clay-in) * 2) color-mix(in oklab, var(--shade) 16%, transparent),
+    inset calc(var(--clay-in) * -1) calc(var(--clay-in) * -1) calc(var(--clay-in) * 2) rgb(255 255 255 / 0.75);
+}
+
+/* Size steps. */
+.clay-sm,
+.chip,
+.tile,
+.swap-tile,
+.jslot,
+.film-tile {
+  --clay-y: 5px;
+  --clay-blur: 10px;
+  --clay-in: 4px;
+}
+.clay-lg,
+.card,
+.sheet-panel {
+  --clay-y: 16px;
+  --clay-blur: 32px;
+  --clay-in: 12px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -122,7 +230,7 @@ body {
   transition: --team 700ms ease;
 }
 
-/* Dot grid plus a soft wash of the current team's colour at the top. */
+/* Two soft pastel blobs plus a wash of the current team's colour at the top. */
 .stage::before {
   content: "";
   position: fixed;
@@ -130,28 +238,27 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(60vmax 28vmax at 50% -8%, color-mix(in oklab, var(--team) var(--stage-glow), transparent), transparent 70%),
-    radial-gradient(var(--dot) 1px, transparent 1px) 0 0 / 22px 22px;
+    radial-gradient(70vmax 34vmax at 50% -10%, color-mix(in oklab, var(--team) var(--stage-glow), transparent), transparent 70%),
+    radial-gradient(48vmax 48vmax at 105% 40%, color-mix(in oklab, var(--blob-a, transparent) 75%, transparent), transparent 70%),
+    radial-gradient(52vmax 52vmax at -10% 95%, color-mix(in oklab, var(--blob-b, transparent) 75%, transparent), transparent 70%);
 }
 
-/* Raised panel: outline + solid depth shadow. */
+/* Raised clay panel. */
 .card {
   background: var(--panel);
-  border: 2px solid var(--edge);
-  box-shadow: 0 5px 0 0 var(--depth);
+  border: 0;
 }
 
-/* Small outlined pill for badges and chips. */
+/* Small clay pill for badges and chips. */
 .chip {
   background: var(--panel);
-  border: 2px solid var(--line-strong);
   border-radius: 999px;
 }
 
-/* Text input. */
+/* Text input: pressed into the page. */
 .field {
-  border-radius: 1rem;
-  border: 2px solid var(--line-strong);
+  border-radius: 1.1rem;
+  border: 2px solid transparent;
   background: var(--well);
   color: var(--foreground);
   outline: none;
@@ -162,22 +269,19 @@ body {
 }
 .field:focus,
 .field:focus-within {
-  border-color: var(--team, var(--edge));
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--team, var(--edge)) 22%, transparent);
+  border-color: color-mix(in oklab, var(--team, var(--accent)) 55%, transparent);
 }
 .field:disabled {
   opacity: 0.6;
 }
 
 /* ------------------------------------------------------------------ */
-/* Buttons: they sit on a solid shadow and press down into it.          */
+/* Buttons: puffy clay that squishes when pressed.                      */
 /* ------------------------------------------------------------------ */
 
 .btn {
   --btn-bg: transparent;
   --btn-fg: inherit;
-  --btn-depth: transparent;
-  --btn-lift: 0px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -189,19 +293,22 @@ body {
   letter-spacing: -0.01em;
   color: var(--btn-fg);
   background: var(--btn-bg);
-  box-shadow: 0 var(--btn-lift) 0 0 var(--btn-depth);
-  transform: translateY(0);
-  transition: transform 90ms ease-out, box-shadow 90ms ease-out, background-color 150ms ease, filter 150ms ease, color 150ms ease;
+  transform: translateY(0) scale(1);
+  transition: transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 140ms ease-out, background-color 150ms ease, filter 150ms ease,
+    color 150ms ease;
   user-select: none;
   white-space: nowrap;
   touch-action: manipulation;
 }
 .btn:hover:not(:disabled) {
-  filter: brightness(1.06);
+  filter: brightness(1.04);
 }
-.btn:active:not(:disabled) {
-  transform: translateY(var(--btn-lift));
-  box-shadow: 0 0 0 0 var(--btn-depth);
+/* Pressed: the clay squishes and the light now falls into it. */
+:is(.btn-primary, .btn-secondary, .btn-danger, .step-btn, .press, .clay-press):active:not(:disabled) {
+  transform: translateY(2px) scale(0.97);
+  box-shadow:
+    inset 4px 5px 10px rgb(0 0 0 / 0.14),
+    inset -4px -4px 10px rgb(255 255 255 / 0.35);
 }
 .btn:focus-visible {
   outline: 3px solid var(--select-mark);
@@ -211,31 +318,27 @@ body {
 .btn-primary {
   --btn-bg: var(--btn-primary-bg);
   --btn-fg: var(--btn-primary-fg);
-  --btn-depth: var(--btn-primary-depth);
-  --btn-lift: 5px;
+  --tint: var(--btn-primary-depth);
 }
 .btn-secondary {
   --btn-bg: var(--panel);
   --btn-fg: var(--foreground);
-  --btn-depth: var(--depth);
-  --btn-lift: 4px;
-  border: 2px solid var(--edge);
 }
 .btn-danger {
   --btn-bg: var(--miss);
   --btn-fg: #fff;
-  --btn-depth: var(--miss-deep);
-  --btn-lift: 5px;
+  --tint: var(--miss-deep);
 }
-/* Disabled raised buttons: flat, clearly off, text still readable. */
+/* Disabled raised buttons: flat clay pressed into the page, text still readable. */
 .btn-primary:disabled,
 .btn-secondary:disabled,
 .btn-danger:disabled {
   cursor: not-allowed;
   color: var(--fg-subtle);
   background: var(--surface-strong);
-  border: 2px dashed var(--line-strong);
-  box-shadow: none;
+  box-shadow:
+    inset 3px 3px 8px color-mix(in oklab, var(--shade) 12%, transparent),
+    inset -3px -3px 8px rgb(255 255 255 / 0.6);
 }
 
 /* Quiet toolbar buttons (header actions). */
@@ -249,48 +352,57 @@ body {
   filter: none;
 }
 .btn-ghost:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.94);
 }
 .btn-ghost:disabled {
   cursor: not-allowed;
   opacity: 0.4;
 }
 
-/* Segmented control option (components/ui/Segmented.js). */
+/* Segmented control option (components/ui/Controls.js): unselected options sit
+   flat in a shared well; the selected one pops up as a coloured clay pill. */
 .seg {
-  min-height: 3rem;
+  min-height: 2.75rem;
   min-width: 0;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.65rem;
   border-radius: 1rem;
-  border: 2px solid var(--line-strong);
-  background: var(--panel);
-  color: var(--foreground);
+  border: 0;
+  background: color-mix(in oklab, var(--panel) 55%, transparent);
+  color: var(--fg-muted);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
+  font-size: 0.9375rem;
   text-align: center;
-  transition: transform 90ms ease-out, border-color 150ms ease, background-color 150ms ease;
+  transition: transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1.4), background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
   touch-action: manipulation;
 }
 .seg:hover {
-  border-color: var(--edge);
+  color: var(--foreground);
 }
 .seg:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 .seg[aria-checked="true"] {
-  border-color: var(--select-bg);
+  --tint: var(--select-bg);
+  --clay-y: 8px;
+  --clay-blur: 16px;
+  --clay-in: 6px;
   background: var(--select-bg);
   color: var(--select-fg);
-  box-shadow: 0 3px 0 0 var(--select-mark);
 }
 .seg:focus-visible {
   outline: 3px solid var(--select-mark);
   outline-offset: 2px;
 }
-
 .seg:disabled {
   cursor: not-allowed;
   opacity: 0.4;
+}
+@media (min-width: 640px) {
+  .seg {
+    min-height: 3rem;
+    font-size: 1rem;
+  }
 }
 
 /* On/off switch (Toggle in components/ui/Controls.js). */
@@ -300,7 +412,6 @@ body {
   width: 3.5rem;
   height: 2rem;
   border-radius: 999px;
-  border: 2px solid var(--edge);
   background: var(--well);
   transition: background-color 150ms ease;
 }
@@ -313,32 +424,33 @@ body {
 }
 .switch-knob {
   position: absolute;
-  top: 0.125rem;
-  left: 0.125rem;
+  top: 0.25rem;
+  left: 0.25rem;
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 999px;
-  border: 2px solid var(--edge);
-  background: var(--panel);
-  transition: transform 200ms ease;
+  background: #fff;
+  box-shadow:
+    0 3px 6px -2px color-mix(in oklab, var(--shade) 40%, transparent),
+    inset -2px -2px 4px color-mix(in oklab, var(--shade) 15%, transparent);
+  transition: transform 200ms cubic-bezier(0.3, 0.7, 0.4, 1.4);
 }
 .switch[aria-checked="true"] .switch-knob {
   transform: translateX(1.5rem);
 }
 
-/* Square outlined button for steppers (− 2 +). */
+/* Round clay button for steppers (− 2 +). */
 .step-btn {
+  --clay-y: 6px;
+  --clay-blur: 12px;
+  --clay-in: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 1rem;
-  border: 2px solid var(--edge);
+  border-radius: 999px;
   background: var(--panel);
   color: var(--foreground);
-  transition: transform 90ms ease-out;
-}
-.step-btn:active:not(:disabled) {
-  transform: scale(0.94);
+  transition: transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 140ms ease-out;
 }
 .step-btn:disabled {
   opacity: 0.35;
@@ -347,13 +459,8 @@ body {
 
 /* Any custom-shaped raised control (e.g. Tune In's round play button). */
 .press {
-  box-shadow: 0 6px 0 0 var(--depth);
-  transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+  transition: transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 140ms ease-out;
   touch-action: manipulation;
-}
-.press:active:not(:disabled) {
-  transform: translateY(6px);
-  box-shadow: 0 0 0 0 var(--depth);
 }
 
 /* ------------------------------------------------------------------ */
@@ -361,31 +468,36 @@ body {
 /* ------------------------------------------------------------------ */
 
 .key {
+  --clay-y: 5px;
+  --clay-blur: 10px;
+  --clay-in: 4px;
   position: relative;
   display: grid;
   place-items: center;
   flex: 1 1 0;
   min-width: 0;
   max-width: 4.4rem;
-  height: clamp(2.75rem, min(9vw, 7dvh), 4.1rem);
-  border-radius: clamp(0.6rem, 1.6vw, 0.9rem);
-  border: 2px solid var(--edge);
+  height: clamp(2.9rem, min(12vw, 7dvh), 4.1rem);
+  border-radius: clamp(0.7rem, 2.4vw, 1rem);
+  border: 0;
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
-  font-size: clamp(1rem, 2.8vw, 1.35rem);
+  font-size: clamp(1rem, 4.4vw, 1.35rem);
   color: var(--key-fg);
   background: var(--key-bg);
-  box-shadow: 0 4px 0 0 var(--depth);
-  transition: transform 90ms ease-out, box-shadow 90ms ease-out, background 200ms ease, color 200ms ease, opacity 200ms ease;
+  transition: transform 120ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 120ms ease-out, background 200ms ease, color 200ms ease,
+    opacity 200ms ease;
   touch-action: manipulation;
   user-select: none;
 }
 .key:hover:not(:disabled) {
-  border-color: var(--team);
+  color: color-mix(in oklab, var(--team) 70%, var(--key-fg));
 }
 .key:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 0 var(--depth);
+  transform: translateY(2px) scale(0.94);
+  box-shadow:
+    inset 3px 3px 7px color-mix(in oklab, var(--shade) 20%, transparent),
+    inset -3px -3px 7px rgb(255 255 255 / 0.7);
 }
 .key:focus-visible {
   outline: 3px solid var(--team);
@@ -395,30 +507,32 @@ body {
   cursor: default;
 }
 .key[data-state="hit"] {
+  --tint: var(--hit-deep);
   color: #fff;
   background: var(--hit);
-  border-color: var(--hit-deep);
-  box-shadow: 0 4px 0 0 var(--hit-deep);
 }
 .key[data-state="miss"] {
+  --tint: var(--miss-deep);
   color: #fff;
   background: var(--miss);
-  border-color: var(--miss-deep);
-  box-shadow: 0 4px 0 0 var(--miss-deep);
-  opacity: 0.85;
+  opacity: 0.8;
 }
 /* Word Swap: in the word, wrong spot. */
 .key[data-state="near"] {
+  --tint: var(--near-deep, var(--accent-3));
   color: #fff;
   background: var(--near, var(--accent-3));
-  border-color: var(--near-deep, var(--depth));
-  box-shadow: 0 4px 0 0 var(--near-deep, var(--depth));
+}
+.key:is([data-state="hit"], [data-state="miss"], [data-state="near"]) {
+  --clay-y: 5px;
+  --clay-blur: 10px;
+  --clay-in: 4px;
 }
 /* Enter / Backspace: wider, so the bottom row still fits. */
 .key-wide {
   flex: 1.6 1 0;
   max-width: 6.6rem;
-  font-size: clamp(0.8rem, 2.2vw, 1rem);
+  font-size: clamp(0.8rem, 3.2vw, 1rem);
 }
 .key[data-state="idle"]:disabled {
   opacity: 0.45;
@@ -445,7 +559,7 @@ body {
   place-items: center;
   width: var(--tile-w);
   height: calc(var(--tile-w) * 1.32);
-  border-radius: calc(var(--tile-w) * 0.24);
+  border-radius: calc(var(--tile-w) * 0.3);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--tile-w) * 0.74);
@@ -453,33 +567,32 @@ body {
   text-transform: uppercase;
 }
 .tile[data-state="hidden"] {
-  background: var(--tile-hidden);
-  box-shadow:
-    inset 0 0 0 1.5px var(--line-strong),
-    inset 0 -3px 0 color-mix(in oklab, var(--team) 85%, transparent);
+  /* Team-coloured underline marks the blank, clipped to the rounded tile. */
+  background:
+    linear-gradient(to top, color-mix(in oklab, var(--team) 70%, transparent) 3px, transparent 3px),
+    var(--tile-hidden);
 }
 .tile[data-state="revealed"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 3px 0 0 var(--depth);
 }
 .tile[data-state="fresh"] {
+  --tint: var(--hit-deep);
   color: #fff;
   background: var(--hit);
-  box-shadow: 0 3px 0 0 var(--hit-deep);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 .tile[data-state="unsolved"] {
   color: var(--accent-3);
   background: color-mix(in oklab, var(--accent-3) 14%, transparent);
-  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent-3) 55%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--accent-3) 45%, transparent);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
 }
 /* Song-completion: every letter out, played as a wave across the lyric. */
 .tile[data-state="complete"] {
+  --tint: var(--accent-3);
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 3px 0 0 var(--accent-3);
   animation: tile-wave 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .tile-punct {
@@ -502,8 +615,9 @@ body {
 }
 /* The movie being played: outlined in the team colour. */
 .film-row[data-status="current"] {
-  background: var(--surface-strong);
-  border-color: var(--team);
+  background: var(--panel);
+  border-color: color-mix(in oklab, var(--team) 55%, transparent);
+  box-shadow: 0 10px 20px -12px color-mix(in oklab, var(--shade) 40%, transparent);
 }
 /* Locked until the movies above are done. */
 .film-row[data-status="upcoming"] {
@@ -511,17 +625,15 @@ body {
 }
 .film-row-num {
   color: var(--fg-muted);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  background: var(--surface-strong);
 }
 .film-row[data-status="current"] .film-row-num {
   color: #fff;
   background: var(--team);
-  box-shadow: none;
 }
 .film-row[data-status="solved"] .film-row-num {
   color: #fff;
   background: var(--hit);
-  box-shadow: none;
 }
 .film-row[data-status="gave-up"] .film-row-num {
   color: var(--fg-subtle);
@@ -531,7 +643,7 @@ body {
   place-items: center;
   width: var(--film-tile);
   height: calc(var(--film-tile) * 1.25);
-  border-radius: calc(var(--film-tile) * 0.2);
+  border-radius: calc(var(--film-tile) * 0.26);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--film-tile) * 0.7);
@@ -539,11 +651,11 @@ body {
 }
 .film-tile[data-state="blank"] {
   background: var(--tile-hidden);
-  box-shadow: inset 0 -2.5px 0 var(--line-strong);
 }
 .film-tile[data-state="shown"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
+  box-shadow: 0 3px 6px -3px var(--depth);
 }
 .film-tile[data-state="fresh"] {
   color: #fff;
@@ -563,8 +675,10 @@ body {
 /* The one big letter in the reveal dialog. */
 .film-tile-xl {
   --film-tile: 4.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 5px 0 0 var(--depth);
+  --clay-y: 10px;
+  --clay-blur: 20px;
+  --clay-in: 8px;
+  border-radius: 1.25rem;
 }
 /* A guess that wasn't it: red-tinted pill with an ✗, text left readable. */
 .wrong-guess {
@@ -577,7 +691,7 @@ body {
   font-weight: 600;
   color: var(--foreground);
   background: color-mix(in oklab, var(--miss) 12%, transparent);
-  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--miss) 45%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--miss) 35%, transparent);
 }
 .wrong-guess svg {
   color: var(--miss);
@@ -591,11 +705,11 @@ body {
 /* Frozen Brains clue words                                             */
 /* ------------------------------------------------------------------ */
 
-/* Each clue word is an ice cube: frosted fill and a slight tilt. */
+/* Each clue word is an ice cube: frosted clay and a slight tilt. */
 .ice-word {
   display: inline-block;
   padding: 0.18em 0.45em 0.22em;
-  border-radius: 0.4em;
+  border-radius: 0.45em;
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: clamp(1.9rem, 8.5vw, 3.6rem);
@@ -604,14 +718,15 @@ body {
   color: var(--foreground);
   background:
     linear-gradient(160deg, rgb(255 255 255 / 0.95) 0%, rgb(255 255 255 / 0) 45%),
-    linear-gradient(180deg, #e0f4ff 0%, #b9e3f7 100%);
-  border: 2px solid var(--edge);
-  box-shadow: 0 5px 0 0 var(--depth);
+    linear-gradient(180deg, #e8f7ff 0%, #c4e8f9 100%);
+  box-shadow:
+    0 12px 22px -12px color-mix(in oklab, var(--shade) 45%, transparent),
+    inset 6px 6px 12px -6px rgb(255 255 255 / 0.95),
+    inset -6px -6px 12px -6px color-mix(in oklab, var(--shade) 25%, transparent);
   transform: rotate(var(--tilt, 0deg));
 }
 .ice-word-sm {
   font-size: clamp(1.1rem, 4.5vw, 1.6rem);
-  box-shadow: 0 3px 0 0 var(--depth);
 }
 
 /* ------------------------------------------------------------------ */
@@ -634,7 +749,7 @@ body {
   place-items: center;
   width: var(--size);
   height: var(--size);
-  border-radius: calc(var(--size) * 0.18);
+  border-radius: calc(var(--size) * 0.26);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--size) * 0.5);
@@ -642,11 +757,10 @@ body {
   color: var(--foreground);
 }
 .swap-tile[data-state="empty"] {
-  box-shadow: inset 0 0 0 2px var(--line);
+  background: var(--tile-hidden);
 }
 .swap-tile[data-state="typed"] {
-  background: var(--surface-strong);
-  box-shadow: inset 0 0 0 2px var(--line-strong);
+  background: var(--panel);
   animation: pop 160ms ease-out both;
 }
 .swap-tile[data-state="hit"],
@@ -656,17 +770,17 @@ body {
   animation: tile-flip 480ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
 }
 .swap-tile[data-state="hit"] {
+  --tint: var(--hit-deep);
   background: var(--hit);
-  box-shadow: 0 3px 0 0 var(--hit-deep);
 }
 .swap-tile[data-state="near"] {
+  --tint: var(--near-deep, var(--accent-3));
   background: var(--near, var(--accent-3));
-  box-shadow: 0 3px 0 0 var(--near-deep, var(--depth));
 }
 .swap-tile[data-state="miss"] {
+  --tint: var(--absent-deep, var(--depth));
   color: var(--fg-muted);
   background: var(--absent, var(--surface-strong));
-  box-shadow: 0 3px 0 0 var(--absent-deep, var(--depth));
 }
 .swap-tile-key {
   --size: 0.95rem;
@@ -674,10 +788,9 @@ body {
 }
 /* Word Swap keys: a letter that isn't in the word goes slate, not red, and stays usable. */
 .theme-arcade .key[data-state="miss"] {
-  color: var(--fg-subtle);
+  --tint: var(--absent-deep);
+  color: var(--fg-muted);
   background: var(--absent);
-  border-color: var(--absent-deep);
-  box-shadow: 0 4px 0 0 var(--absent-deep);
   opacity: 1;
 }
 /* The secret word shows as dots until the setter taps the eye. */
@@ -715,26 +828,27 @@ path.chalk-draw {
 }
 
 /* ------------------------------------------------------------------ */
-/* Dialogs and floating panels                                          */
+/* Dialogs: a bottom sheet on phones, a centred card from `sm` up.      */
 /* ------------------------------------------------------------------ */
 
 dialog.sheet {
-  margin: auto;
+  margin: auto auto 0;
   padding: 0;
   border: none;
   background: transparent;
   color: var(--foreground);
-  width: min(32rem, calc(100vw - 2rem));
-  max-height: calc(100dvh - 2rem);
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(100dvh - 1.5rem);
   overflow: visible;
 }
 dialog.sheet::backdrop {
-  background: rgb(4 4 10 / 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: color-mix(in oklab, var(--shade) 30%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 dialog.sheet[open] {
-  animation: sheet-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+  animation: sheet-up 300ms cubic-bezier(0.2, 0.9, 0.3, 1.05) both;
 }
 dialog.sheet[open]::backdrop {
   animation: fade-in 200ms ease both;
@@ -742,8 +856,94 @@ dialog.sheet[open]::backdrop {
 .sheet-panel {
   color: var(--foreground);
   background: var(--panel);
-  border: 2px solid var(--edge);
-  box-shadow: 0 6px 0 0 var(--depth);
+  max-height: calc(100dvh - 1.5rem);
+  overflow-y: auto;
+}
+/* Phones: square off the bottom corners, leave room for the home indicator,
+   and add a grab handle so it reads as a sheet. */
+dialog.sheet > .sheet-panel {
+  position: relative;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding-top: 1.75rem;
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+}
+dialog.sheet > .sheet-panel::before {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  left: 50%;
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  translate: -50% 0;
+  background: var(--line-strong);
+}
+@media (min-width: 640px) {
+  dialog.sheet {
+    margin: auto;
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+  }
+  dialog.sheet[open] {
+    animation-name: sheet-in;
+  }
+  dialog.sheet > .sheet-panel {
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    border-radius: 1.75rem;
+    padding-top: revert-layer;
+    padding-bottom: revert-layer;
+  }
+  dialog.sheet > .sheet-panel::before {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile-first layout helpers                                          */
+/* ------------------------------------------------------------------ */
+
+/* Docks a play screen's input (keyboard, tile rack) to the bottom of the
+   screen on phones and tablets, in the thumb zone. Desktop lays it out inline. */
+.dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin-top: auto;
+  margin-inline: -1rem;
+  padding: 0.75rem 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--background) 1.25rem);
+}
+@media (min-width: 640px) {
+  .dock {
+    margin-inline: -1.5rem;
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .dock {
+    position: static;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+}
+
+/* Sticky call-to-action at the bottom of setup screens. */
+.cta-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  margin-inline: -1rem;
+  padding: 1.25rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--background) 1.5rem);
+}
+@media (min-width: 640px) {
+  .cta-bar {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -772,6 +972,10 @@ dialog.sheet[open]::backdrop {
   from { transform: translateY(24px) scale(0.97); opacity: 0; }
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-7px); }
@@ -785,7 +989,7 @@ dialog.sheet[open]::backdrop {
   100% { transform: translate(-50%, -10px) scale(0.98); opacity: 0; visibility: hidden; }
 }
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--team) 55%, transparent); }
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--team) 45%, transparent); }
   100% { box-shadow: 0 0 0 14px transparent; }
 }
 @keyframes confetti-fall {
@@ -805,14 +1009,14 @@ dialog.sheet[open]::backdrop {
   75% { transform: scale(0.96) rotate(-1deg); }
   100% { transform: scale(1) rotate(0); }
 }
-/* Pulses the outline of a solid card (the depth shadow stays put). */
+/* Pulses a soft accent ring around a card (the clay shading stays put). */
 @keyframes glow-breathe {
-  0%, 100% { border-color: color-mix(in oklab, var(--accent-3) 45%, var(--edge)); }
-  50% { border-color: var(--accent-3); }
+  0%, 100% { outline-color: color-mix(in oklab, var(--accent-3) 15%, transparent); }
+  50% { outline-color: color-mix(in oklab, var(--accent-3) 70%, transparent); }
 }
 
 .anim-bonus { animation: bonus-burst 760ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
-.anim-glow { animation: glow-breathe 2.4s ease-in-out infinite; }
+.anim-glow { outline: 3px solid transparent; outline-offset: 2px; animation: glow-breathe 2.4s ease-in-out infinite; }
 .anim-pop { animation: pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
 .anim-rise { animation: rise 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .anim-shake { animation: shake 420ms ease both; }
@@ -824,7 +1028,7 @@ dialog.sheet[open]::backdrop {
   top: 0;
   width: 0.55rem;
   height: 0.9rem;
-  border-radius: 2px;
+  border-radius: 3px;
   animation: confetti-fall var(--dur) cubic-bezier(0.3, 0.6, 0.5, 1) var(--delay) both;
 }
 
@@ -866,7 +1070,7 @@ dialog.sheet[open]::backdrop {
   /* Exactly --per-line slots wide (+ padding, 2px borders and 1px rounding slack). */
   max-width: calc(var(--per-line) * var(--slot) + (var(--per-line) - 1) * 0.3rem + 1rem + 5px);
   padding: 0.5rem;
-  border-radius: calc(var(--slot) * 0.36);
+  border-radius: calc(var(--slot) * 0.4);
   background: var(--surface);
   border: 2px dashed var(--line-strong);
 }
@@ -875,7 +1079,7 @@ dialog.sheet[open]::backdrop {
   place-items: center;
   width: var(--slot);
   height: calc(var(--slot) * 1.22);
-  border-radius: calc(var(--slot) * 0.24);
+  border-radius: calc(var(--slot) * 0.28);
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--slot) * 0.6);
@@ -883,71 +1087,76 @@ dialog.sheet[open]::backdrop {
   transition: background 160ms ease, transform 160ms ease;
 }
 .jslot[data-state="empty"] {
-  background: var(--tile-hidden);
-  box-shadow:
-    inset 0 0 0 1.5px var(--line-strong),
-    inset 0 -3px 0 color-mix(in oklab, var(--team) 85%, transparent);
+  /* Team-coloured underline marks the blank, clipped to the rounded tile. */
+  background:
+    linear-gradient(to top, color-mix(in oklab, var(--team) 70%, transparent) 3px, transparent 3px),
+    var(--tile-hidden);
 }
 .jslot[data-state="filled"] {
   color: var(--tile-revealed-fg);
   background: var(--tile-revealed);
-  box-shadow: 0 3px 0 0 var(--depth);
   animation: pop 260ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
   cursor: pointer;
 }
 .jslot[data-state="locked"] {
+  --tint: var(--accent-3);
   color: var(--accent-3-ink);
   background: var(--accent-3);
-  box-shadow: 0 3px 0 0 var(--depth);
 }
 .jslot[data-state="solved"] {
+  --tint: var(--hit-deep);
   color: #fff;
   background: var(--hit);
-  box-shadow: 0 3px 0 0 var(--hit-deep);
   animation: tile-flip 520ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+.jslot:is([data-state="locked"], [data-state="solved"]) {
+  --clay-y: 5px;
+  --clay-blur: 10px;
+  --clay-in: 4px;
 }
 .jslot:focus-visible {
   outline: 3px solid var(--team);
   outline-offset: 2px;
 }
 
-/* Scrambled tile rack: same raised style as the keyboard keys. */
+/* Scrambled tile rack: same clay as the keyboard keys. */
 .jumble-rack {
   container-type: inline-size;
 }
 .jtile {
   /* --per-row is set from JS: tiles split into even rows of ≤ 8. */
   --size: min(3.5rem, calc((100cqw - (var(--per-row) - 1) * 0.45rem - 1px) / var(--per-row)));
+  --clay-y: 6px;
+  --clay-blur: 12px;
+  --clay-in: 5px;
   position: relative;
   display: grid;
   place-items: center;
   width: var(--size);
   height: var(--size);
-  border-radius: calc(var(--size) * 0.26);
-  border: 2px solid var(--edge);
+  border-radius: calc(var(--size) * 0.3);
+  border: 0;
   font-family: var(--font-display-face), var(--font-geist-sans), sans-serif;
   font-weight: 700;
   font-size: calc(var(--size) * 0.5);
   color: var(--key-fg);
   background: var(--key-bg);
-  box-shadow: 0 4px 0 0 var(--depth);
-  transition: transform 90ms ease-out, box-shadow 90ms ease-out, opacity 200ms ease;
+  transition: transform 120ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 120ms ease-out, opacity 200ms ease;
   touch-action: manipulation;
   user-select: none;
 }
-.jtile:hover:not(:disabled) {
-  border-color: var(--team);
-}
 .jtile:active:not(:disabled) {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 0 var(--depth);
+  transform: translateY(2px) scale(0.94);
+  box-shadow:
+    inset 3px 3px 7px color-mix(in oklab, var(--shade) 20%, transparent),
+    inset -3px -3px 7px rgb(255 255 255 / 0.6);
 }
 .jtile:focus-visible {
   outline: 3px solid var(--team);
   outline-offset: 2px;
 }
 .jtile[data-used="true"] {
-  opacity: 0.18;
+  opacity: 0.2;
   box-shadow: none;
   cursor: default;
 }
@@ -966,4 +1175,62 @@ dialog.sheet[open]::backdrop {
 }
 .board-live {
   transition: filter 300ms ease, opacity 300ms ease;
+}
+
+/* Setup rules (components/game/TeamSetup.js): one card with a divided list on
+   phones, three separate clay cards side by side from `sm` up. */
+@media (min-width: 640px) {
+  .rules.card {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .rules .rule-item {
+    display: block;
+    padding: 1rem;
+    border-radius: 1.25rem;
+    background: var(--panel);
+    box-shadow:
+      0 12px 24px -12px color-mix(in oklab, var(--shade) 34%, transparent),
+      inset 0 1.5px 0 rgb(255 255 255 / 0.85),
+      inset 8px 8px 14px -8px rgb(255 255 255 / 0.9),
+      inset -8px -8px 14px -8px color-mix(in oklab, var(--shade) 20%, transparent);
+  }
+}
+
+/* Highlights a clay surface with a soft coloured ring (`--ring`, e.g. the active team). */
+.clay-ring {
+  outline: 3px solid color-mix(in oklab, var(--ring, var(--team)) 70%, transparent);
+  outline-offset: 2px;
+}
+
+/* Multi-select (MultiSelect in components/ui/Controls.js): any number can be on, so
+   "on" is a light raised clay chip and "off" sits flat and faded, rather than a wall of dark pills. */
+.seg-multi {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--line);
+}
+.seg-multi[aria-checked="true"] {
+  --clay-y: 8px;
+  --clay-blur: 16px;
+  --clay-in: 6px;
+  background: var(--panel);
+  color: var(--foreground);
+  box-shadow:
+    0 8px 16px -8px color-mix(in oklab, var(--shade) 34%, transparent),
+    inset 0 1.5px 0 rgb(255 255 255 / 0.85),
+    inset 6px 6px 11px -6px rgb(255 255 255 / 0.9),
+    inset -6px -6px 11px -6px color-mix(in oklab, var(--shade) 20%, transparent);
+}
+.seg-multi[aria-checked="false"] .seg-dot {
+  opacity: 0.35;
+}
+
+/* Hub game cards (app/page.js): each card is filled with its game's own pastel
+   page colour and blobs, so the hub previews every game's colour, not just its font. */
+.card.hub-card {
+  background:
+    radial-gradient(110% 80% at 100% 0%, color-mix(in oklab, var(--blob-a) 90%, transparent), transparent 65%),
+    radial-gradient(110% 80% at 0% 100%, color-mix(in oklab, var(--blob-b) 80%, transparent), transparent 65%),
+    var(--background);
 }

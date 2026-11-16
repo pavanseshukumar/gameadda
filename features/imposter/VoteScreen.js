@@ -81,8 +81,8 @@ function GuessStep({ state, dispatch, onEnd }) {
   return (
     <RoundShell state={state} teamColor={imposter.color} onEnd={onEnd} step="Caught!">
       <section
-        className="card anim-pop mx-auto mt-2 w-full max-w-md rounded-[1.75rem] p-6 text-center sm:p-8"
-        style={{ borderColor: "var(--accent-2)", boxShadow: "0 6px 0 0 var(--accent-2)" }}
+        className="card clay-ring anim-pop mx-auto mt-2 w-full max-w-md rounded-[1.75rem] p-6 text-center sm:p-8"
+        style={{ "--ring": "var(--accent-2)" }}
       >
         <span className="mx-auto grid size-16 place-items-center rounded-full border-2 border-edge bg-accent-2 text-[var(--accent-2-ink)]">
           <MaskIcon size={34} strokeWidth={2.2} />

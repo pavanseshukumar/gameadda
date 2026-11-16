@@ -4,13 +4,13 @@ import { useEffect, useEffectEvent, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
 import { AnswerSlots } from "@/components/game/AnswerSlots";
 import { TileRack } from "@/components/game/TileRack";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { BackspaceIcon, BulbIcon, EyeIcon, FlagIcon, PauseIcon, ShuffleIcon } from "@/components/ui/icons";
+import { ReadyCard, SoloScore, WordShape } from "@/components/game/ReadyCard";
 import { useClock } from "@/lib/games/core/useClock";
 import {
   ACTIONS,
@@ -30,13 +30,19 @@ import { feedbackFromEvent } from "./feedback";
 
 export function PlayScreen({ state, dispatch }) {
   const [dialog, setDialog] = useState(null); // "reveal" | "end" | null
+  // True while a confirm sheet has the clock stopped mid-turn: the board stays on
+  // screen behind the sheet, and Cancel picks the turn straight back up.
+  const [held, setHeld] = useState(false);
   const team = selectActiveTeam(state);
   const movie = selectMovie(state);
   const running = state.turn.status === TURN.RUNNING;
   const now = useClock(running);
   const left = remainingMs(state, now);
   const totalMs = turnSecondsFor(state) * 1000;
-  const wordCount = selectWordLengths(state).length;
+  const wordLengths = selectWordLengths(state);
+  const paused = state.turn.status === TURN.PAUSED;
+  const showBoard = running || (held && paused);
+  const solo = state.teams.length === 1;
 
   const chars = selectSlotChars(state);
   const usedIds = new Set(state.slots.filter(Boolean));
@@ -49,6 +55,27 @@ export function PlayScreen({ state, dispatch }) {
   const startTurn = () => act(ACTIONS.START_TURN, { now: Date.now() });
   const submit = () => act(ACTIONS.SUBMIT, { now: Date.now() });
   const pause = () => act(ACTIONS.PAUSE, { now: Date.now() });
+
+  // Reveal / End: stop the clock while the player decides, without swapping the board out.
+  const openDialog = (name) => {
+    if (running) {
+      pause();
+      setHeld(true);
+    }
+    setDialog(name);
+  };
+  const cancelDialog = () => {
+    setDialog(null);
+    if (held) {
+      setHeld(false);
+      startTurn();
+    }
+  };
+  const confirmDialog = (type) => {
+    setDialog(null);
+    setHeld(false);
+    act(type);
+  };
 
   // Time's up: the engine double-checks the clock, so an early tick is ignored.
   const timedOut = running && left <= 0;
@@ -105,11 +132,11 @@ export function PlayScreen({ state, dispatch }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Reveal the movie">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("reveal")} aria-label="Reveal the movie">
             <EyeIcon size={18} />
             <span className="hidden md:inline">Reveal</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("end"); }} aria-label="End game">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
             <FlagIcon size={18} />
             <span className="hidden md:inline">End</span>
           </button>
@@ -118,60 +145,64 @@ export function PlayScreen({ state, dispatch }) {
     >
       <FeedbackToast message={feedbackFromEvent(state, event)} />
 
-      <Scoreboard teams={state.teams} activeTeamId={team.id} />
+      {/* Solo: the score lives in the turn row instead, so nothing is shown twice. */}
+      {solo ? null : <Scoreboard teams={state.teams} activeTeamId={team.id} />}
 
-      <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6">
-        <TurnIndicator team={team} hint={state.steal ? "Steal! Half time, half points" : "First try, full points"} />
-        <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={state.turn.status === TURN.PAUSED} />
-      </div>
-
-      <section
-        aria-label="Puzzle"
-        key={wrongShake ? `miss-${event.seq}` : "board"}
-        className={`card relative mt-3 grid overflow-hidden rounded-[1.5rem] px-3 pb-4 pt-3.5 sm:mt-5 sm:rounded-[2rem] sm:px-8 sm:py-7 ${wrongShake ? "anim-shake" : ""}`}
-      >
-        {/* Board and hand-off card share one grid cell, so the card never overflows a short board. */}
-        <div className={`col-start-1 row-start-1 min-w-0 ${running ? "board-live" : "board-veiled"}`} aria-hidden={!running}>
-          {/* Header: what it's worth + hint buttons (kept here to save vertical space on phones). */}
-          <div className="mb-3 flex items-center justify-between gap-2 px-0.5 sm:mb-5">
-            <p className="min-w-0 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">
-              <span className="hidden sm:inline">Unscramble · </span>
-              <span className="tabular-nums text-accent-3">
-                {state.steal ? "½ × (" : ""}
-                {potentialBase(state.hintsUsed)} + speed{state.steal ? ")" : ""}
-              </span>
-            </p>
-            <div className="flex shrink-0 items-center gap-1.5">
-              <button
-                type="button"
-                className="btn btn-secondary h-9 px-3 text-xs sm:text-sm"
-                onClick={() => act(ACTIONS.USE_CLUE)}
-                disabled={!running || state.clueShown || !hintsLeft}
-                aria-label={`Show clue, costs ${HINT_COST} points`}
-              >
-                <BulbIcon size={15} /> Clue <span className="text-miss">−{HINT_COST}</span>
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary h-9 px-3 text-xs sm:text-sm"
-                onClick={() => act(ACTIONS.REVEAL_LETTER)}
-                disabled={!running || !selectCanRevealLetter(state)}
-                aria-label={`Reveal a letter, costs ${HINT_COST} points`}
-              >
-                <EyeIcon size={15} /> Letter <span className="text-miss">−{HINT_COST}</span>
-              </button>
-            </div>
+      {showBoard ? (
+        <>
+          <div className={`flex items-center justify-between gap-3 ${solo ? "" : "mt-3 sm:mt-6"}`}>
+            {solo ? (
+              <SoloScore score={team.score} />
+            ) : (
+              <TurnIndicator team={team} hint={state.steal ? "Steal! Half time, half points" : "First try, full points"} />
+            )}
+            <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
           </div>
 
-          {/* Laptops: answer on the left, tiles and controls on the right. */}
-          <div className="lg:grid lg:grid-cols-2 lg:items-center lg:gap-10">
-            <div>
+          {/* Phones: puzzle up top, tiles and controls docked in the thumb zone.
+              Laptops: answer on the left, tiles and controls on the right. */}
+          <div className="flex flex-1 flex-col lg:mt-5 lg:flex-none lg:grid lg:grid-cols-2 lg:items-center lg:gap-8">
+            <section
+              aria-label="Puzzle"
+              key={wrongShake ? `miss-${event.seq}` : "board"}
+              className={`card mt-3 rounded-[1.5rem] px-3 pb-3 pt-3 sm:mt-5 sm:rounded-[2rem] sm:px-8 sm:py-7 lg:mt-0 ${wrongShake ? "anim-shake" : ""}`}
+            >
+              {/* What it's worth + hint buttons. */}
+              <div className="mb-3 flex items-center justify-between gap-2 px-0.5 sm:mb-5">
+                <p className="min-w-0 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">
+                  <span className="hidden sm:inline">Unscramble · </span>
+                  <span className="tabular-nums text-accent-3">
+                    {state.steal ? "½ × (" : ""}
+                    {potentialBase(state.hintsUsed)} + speed{state.steal ? ")" : ""}
+                  </span>
+                </p>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    type="button"
+                    className="btn btn-secondary h-9 px-3 text-xs sm:text-sm"
+                    onClick={() => act(ACTIONS.USE_CLUE)}
+                    disabled={state.clueShown || !hintsLeft}
+                    aria-label={`Show clue, costs ${HINT_COST} points`}
+                  >
+                    <BulbIcon size={15} /> Clue <span className="text-miss">−{HINT_COST}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary h-9 px-3 text-xs sm:text-sm"
+                    onClick={() => act(ACTIONS.REVEAL_LETTER)}
+                    disabled={!selectCanRevealLetter(state)}
+                    aria-label={`Reveal a letter, costs ${HINT_COST} points`}
+                  >
+                    <EyeIcon size={15} /> Letter <span className="text-miss">−{HINT_COST}</span>
+                  </button>
+                </div>
+              </div>
+
               <AnswerSlots
-                wordLengths={selectWordLengths(state)}
+                wordLengths={wordLengths}
                 chars={chars}
                 locked={state.locked}
                 onRemove={(index) => act(ACTIONS.REMOVE_SLOT, { index })}
-                disabled={!running}
               />
               <p className="mt-2 min-h-5 text-center text-sm text-muted sm:mt-3" aria-live="polite">
                 {state.clueShown ? (
@@ -181,68 +212,53 @@ export function PlayScreen({ state, dispatch }) {
                   </>
                 ) : null}
               </p>
-            </div>
+            </section>
 
-            <div className="mt-2 lg:mt-0">
-              <TileRack tiles={state.tiles} usedIds={usedIds} onPick={(tileId) => act(ACTIONS.PLACE_TILE, { tileId })} disabled={!running} />
-
-              <div className="mt-4 flex items-center gap-2 sm:mt-6">
-                <button type="button" className="btn btn-secondary size-12 shrink-0 p-0" onClick={() => act(ACTIONS.SHUFFLE, { seed: Math.random() })} disabled={!running} aria-label="Shuffle tiles">
+            <section aria-label="Letter tiles" className="dock">
+              <TileRack tiles={state.tiles} usedIds={usedIds} onPick={(tileId) => act(ACTIONS.PLACE_TILE, { tileId })} />
+              <div className="mt-3 flex items-center gap-2 sm:mt-5">
+                <button type="button" className="btn btn-secondary size-12 shrink-0 p-0" onClick={() => act(ACTIONS.SHUFFLE, { seed: Math.random() })} aria-label="Shuffle tiles">
                   <ShuffleIcon size={20} />
                 </button>
-                <button type="button" className="btn btn-secondary size-12 shrink-0 p-0" onClick={() => act(ACTIONS.BACKSPACE)} disabled={!running} aria-label="Remove last letter">
+                <button type="button" className="btn btn-secondary size-12 shrink-0 p-0" onClick={() => act(ACTIONS.BACKSPACE)} aria-label="Remove last letter">
                   <BackspaceIcon size={20} />
                 </button>
-                <button type="button" className="btn btn-secondary h-12 shrink-0 px-4 text-sm" onClick={() => act(ACTIONS.CLEAR)} disabled={!running}>
+                <button type="button" className="btn btn-secondary h-12 shrink-0 px-4 text-sm" onClick={() => act(ACTIONS.CLEAR)}>
                   Clear
                 </button>
-                <button type="button" className="btn btn-primary h-12 min-w-0 flex-1 px-4 text-base" onClick={submit} disabled={!running || !full}>
+                <button type="button" className="btn btn-primary h-12 min-w-0 flex-1 px-4 text-base" onClick={submit} disabled={!full}>
                   Submit
                 </button>
               </div>
-            </div>
+              <p className="mt-3 hidden text-center text-xs text-subtle lg:block">Tip: type letters, Backspace to undo, Enter to submit.</p>
+            </section>
           </div>
-        </div>
-
-        {!running ? (
-          <div className="z-10 col-start-1 row-start-1 grid place-items-center py-1 sm:py-2">
-            <TurnHandoff
-              team={team}
-              paused={state.turn.status === TURN.PAUSED}
-              seconds={Math.ceil(left / 1000)}
-              label={state.steal ? "Steal chance" : undefined}
-              detail={
-                state.turn.status === TURN.PAUSED ? (
-                  "The board is hidden while paused."
-                ) : (
-                  <>
-                    {`${wordCount === 1 ? "One word" : `${wordCount} words`} · ${state.tiles.length} letters`}
-                    {state.steal ? (
-                      <span className="mt-1 block font-semibold text-accent-3">Half the time, half the points</span>
-                    ) : null}
-                  </>
-                )
-              }
-              onStart={startTurn}
-            />
-          </div>
-        ) : null}
-      </section>
-
-      <p className="mt-4 hidden text-center text-xs text-subtle lg:block">
-        Tip: type letters, Backspace to undo, Enter to submit.
-      </p>
+        </>
+      ) : (
+        <ReadyCard
+          team={team}
+          solo={solo}
+          eyebrow={state.steal ? "Steal chance" : `Round ${state.round}`}
+          paused={paused}
+          pausedNote="The tiles are hidden while paused."
+          seconds={Math.ceil(left / 1000)}
+          onStart={startTurn}
+        >
+          <WordShape lengths={wordLengths} />
+          <p className="mt-3 text-sm text-muted">
+            {wordLengths.length === 1 ? "One word" : `${wordLengths.length} words`} · {state.tiles.length} letters
+          </p>
+          {state.steal ? <p className="mt-1 text-sm font-semibold text-accent-3">Half the time, half the points</p> : null}
+        </ReadyCard>
+      )}
 
       <ConfirmDialog
         open={dialog === "reveal"}
         title="Reveal the movie?"
         body="This ends the round with no winner."
         confirmLabel="Reveal movie"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.GIVE_UP);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.GIVE_UP)}
       />
       <ConfirmDialog
         open={dialog === "end"}
@@ -250,12 +266,10 @@ export function PlayScreen({ state, dispatch }) {
         body="We’ll skip to the final standings. This round won’t be finished."
         confirmLabel="End game"
         tone="danger"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.END_GAME);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.END_GAME)}
       />
     </GameShell>
   );
 }
+

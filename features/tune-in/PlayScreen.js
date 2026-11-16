@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
+import { ReadyCard } from "@/components/game/ReadyCard";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -30,11 +30,16 @@ import { feedbackFromEvent } from "./feedback";
  */
 export function PlayScreen({ state, dispatch, onSkip, skipping }) {
   const [dialog, setDialog] = useState(null); // "giveUp" | "end" | null
+  // True while a confirm sheet has the clock stopped mid-turn: the player stays on
+  // screen behind the sheet, and Cancel picks the turn straight back up.
+  const [held, setHeld] = useState(false);
   const [guess, setGuess] = useState("");
   const inputRef = useRef(null);
   const team = selectActiveTeam(state);
   const song = state.song;
   const running = state.turn.status === TURN.RUNNING;
+  const paused = state.turn.status === TURN.PAUSED;
+  const showBoard = running || (held && paused);
   const now = useClock(running);
   const left = remainingMs(state, now);
   const totalMs = turnSecondsFor(state) * 1000;
@@ -46,9 +51,25 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
   const act = (type, extra) => dispatch({ type, ...extra });
   const startTurn = () => act(ACTIONS.START_TURN, { now: Date.now() });
   const pause = () => act(ACTIONS.PAUSE, { now: Date.now() });
+  // Give up / End: stop the clock while the player decides, without swapping the board out.
   const openDialog = (name) => {
-    pause();
+    if (running) {
+      pause();
+      setHeld(true);
+    }
     setDialog(name);
+  };
+  const cancelDialog = () => {
+    setDialog(null);
+    if (held) {
+      setHeld(false);
+      startTurn();
+    }
+  };
+  const confirmDialog = (type) => {
+    setDialog(null);
+    setHeld(false);
+    act(type);
   };
 
   // Time's up: the engine double-checks the clock, so an early tick is ignored.
@@ -123,13 +144,14 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
 
       <Scoreboard teams={state.teams} activeTeamId={team.id} />
 
+      {showBoard ? (
+      <>
       <div className="mt-3 sm:mt-6">
-        <TurnIndicator team={team} hint={state.steal ? "Steal! Half time, half points" : "Play, pause, and guess the movie"} />
+        <TurnIndicator solo={state.teams.length === 1} team={team} hint={state.steal ? "Steal! Half time, half points" : "Play, pause, and guess the movie"} />
       </div>
 
-      <section aria-label="Song clip" className="card relative mt-3 grid overflow-hidden rounded-[1.5rem] p-4 sm:mt-5 sm:rounded-[2rem] sm:p-8">
-        {/* Board and hand-off card share one grid cell, so the card never overflows a short board. */}
-        <div className={`col-start-1 row-start-1 min-w-0 ${running ? "board-live" : "board-veiled"}`} aria-hidden={!running}>
+      <section aria-label="Song clip" className="card mt-3 rounded-[1.5rem] p-4 sm:mt-5 sm:rounded-[2rem] sm:p-8">
+        <div className="min-w-0">
           <div className="lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-center lg:gap-12">
             <ClipPlayer
               src={song.preview}
@@ -142,7 +164,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
             <div className="mt-6 lg:mt-0">
               <div className="flex items-center justify-between gap-2 px-0.5">
                 <div className="flex min-w-0 items-center gap-3">
-                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={state.turn.status === TURN.PAUSED} />
+                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
                   <div className="min-w-0">
                     <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">Worth right now</p>
                     <p className="font-display text-3xl font-extrabold tabular-nums text-accent-3 sm:text-4xl">{pointsNow(state)}</p>
@@ -225,49 +247,49 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
           </div>
         </div>
 
-        {/* Hidden while a confirm dialog is open, so the paused card doesn't stack behind it. */}
-        {!running && !dialog ? (
-          <div className="z-10 col-start-1 row-start-1 grid place-items-center py-1 sm:py-2">
-            <TurnHandoff
-              team={team}
-              paused={state.turn.status === TURN.PAUSED}
-              seconds={Math.ceil(left / 1000)}
-              label={state.steal ? "Steal chance" : undefined}
-              detail={
-                state.turn.status === TURN.PAUSED ? (
-                  "The music stops while paused."
-                ) : state.steal ? (
-                  <span className="font-semibold text-accent-3">Half time, half points · play the clip as much as you like</span>
-                ) : (
-                  <>
-                    Press play when you’re ready. The less you hear, the more it’s worth.
-                    <button
-                      type="button"
-                      className="mx-auto mt-2 flex items-center gap-1.5 text-xs font-semibold text-subtle underline-offset-4 hover:text-foreground hover:underline disabled:opacity-50"
-                      onClick={onSkip}
-                      disabled={skipping}
-                    >
-                      <RefreshIcon size={13} /> {skipping ? "Finding another…" : "Swap for another song"}
-                    </button>
-                  </>
-                )
-              }
-              onStart={startTurn}
-            />
-          </div>
-        ) : null}
       </section>
+      </>
+      ) : (
+        <ReadyCard
+          team={team}
+          solo={state.teams.length === 1}
+          eyebrow={state.steal ? "Steal chance" : `Round ${state.round}`}
+          paused={paused}
+          pausedNote="The music stops while paused."
+          seconds={Math.ceil(left / 1000)}
+          onStart={startTurn}
+        >
+          {/* A still equaliser: the clip is waiting. */}
+          <div className="mx-auto mt-5 flex h-12 items-end justify-center gap-1.5" aria-hidden="true">
+            {[45, 80, 60, 100, 70, 90, 50, 75, 40].map((h, i) => (
+              <span key={i} className="w-2.5 rounded-full" style={{ height: `${h}%`, background: `color-mix(in oklab, ${team.color} ${55 + (i % 3) * 15}%, transparent)` }} />
+            ))}
+          </div>
+          {state.steal ? (
+            <p className="mt-4 text-sm font-semibold text-accent-3">Half time, half points · play the clip as much as you like</p>
+          ) : (
+            <>
+              <p className="mt-4 text-sm text-muted">Press play when you’re ready. The less you hear, the more it’s worth.</p>
+              <button
+                type="button"
+                className="mx-auto mt-3 flex min-h-9 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-subtle transition hover:bg-surface-strong hover:text-foreground disabled:opacity-50"
+                onClick={onSkip}
+                disabled={skipping}
+              >
+                <RefreshIcon size={13} /> {skipping ? "Finding another…" : "Swap for another song"}
+              </button>
+            </>
+          )}
+        </ReadyCard>
+      )}
 
       <ConfirmDialog
         open={dialog === "giveUp"}
         title="Give up this round?"
         body="The movie is revealed and nobody scores. The next round starts fresh."
         confirmLabel="Give up & reveal"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.GIVE_UP);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.GIVE_UP)}
       />
       <ConfirmDialog
         open={dialog === "end"}
@@ -275,11 +297,8 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
         body="We’ll skip to the final standings. This round won’t be finished."
         confirmLabel="End game"
         tone="danger"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.END_GAME);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.END_GAME)}
       />
     </GameShell>
   );

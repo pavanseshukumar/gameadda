@@ -6,7 +6,7 @@ import { LyricsDisplay } from "@/components/game/LyricsDisplay";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { TurnTimer } from "@/components/game/TurnTimer";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
+import { ReadyCard, WordShape } from "@/components/game/ReadyCard";
 import { SongGuessDialog } from "@/components/game/SongGuessDialog";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -24,7 +24,7 @@ import {
 } from "@/lib/games/guess-the-song/engine";
 import { getClues, getPuzzleLines, revealsTitle } from "@/lib/games/guess-the-song/songs";
 import { useSongDetails } from "./useSongDetails";
-import { lettersIn } from "@/lib/games/guess-the-song/lyrics";
+import { lettersIn, tokenizeLine } from "@/lib/games/guess-the-song/lyrics";
 import { GameShell } from "@/components/game/GameShell";
 import { feedbackFromEvent } from "./feedback";
 
@@ -87,21 +87,29 @@ export function PlayScreen({ state, dispatch }) {
       <Scoreboard teams={state.teams} activeTeamId={team.id} roundPoints={{ [team.id]: state.songPoints }} />
 
       {ready ? (
-        <div className="grid place-items-center py-10 sm:py-16">
-          <TurnHandoff
-            team={team}
-            seconds={TURN_SECONDS}
-            detail={`Your own song · ${STARTING_LIVES} lives · ${totalLetters} different letters`}
-            onStart={() => dispatch({ type: ACTIONS.START_TURN })}
-          />
-        </div>
+        <ReadyCard
+          team={team}
+          solo={state.teams.length === 1}
+          eyebrow={`Round ${state.round} · Your song`}
+          seconds={TURN_SECONDS}
+          onStart={() => dispatch({ type: ACTIONS.START_TURN })}
+        >
+          <WordShape lengths={lines.flatMap(tokenizeLine).map((word) => word.chars.filter((c) => c.letter).length).filter(Boolean)} />
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted">
+            <Lives lives={STARTING_LIVES} max={STARTING_LIVES} />
+            <span>
+              {STARTING_LIVES} lives · {totalLetters} different letters
+            </span>
+          </div>
+        </ReadyCard>
       ) : (
       <>
       {/* Wide screens: title puzzle left, keyboard right, so everything fits without scrolling. */}
-      <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
+      <div className="flex flex-1 flex-col lg:mt-6 lg:flex-none lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
       <div className="min-w-0">
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
         <TurnIndicator
+          solo={state.teams.length === 1}
           team={team}
           hint={lastChance ? "No lives left. One guess at the song decides it." : "Call letters or guess the song. Each miss costs a life."}
         />
@@ -169,7 +177,7 @@ export function PlayScreen({ state, dispatch }) {
           Last chance! Letters are locked. Name the song to save it.
         </p>
       ) : null}
-      <section aria-label="Guess a letter" className="mx-auto mt-3 w-full max-w-3xl sm:mt-6 lg:mt-0">
+      <section aria-label="Guess a letter" className="dock">
         <Keyboard
           letterStates={letterStates}
           onKey={guessLetter}

@@ -22,7 +22,7 @@ const SIZES = {
 };
 
 function classes({ size = "md", variant = "ink", block, className }) {
-  return cn("btn-3d", SIZES[size], variant === "paper" && "border-2 border-ink", block && "w-full", className);
+  return cn("btn-3d", SIZES[size], variant === "paper" && "border-2 border-ink/15", block && "w-full", className);
 }
 
 export function Button({ variant = "ink", size = "md", block, className, style, type = "button", ...props }) {
@@ -50,7 +50,7 @@ export function IconButton({ label, className, children, ...props }) {
       aria-label={label}
       title={label}
       className={cn(
-        "inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-paper text-ink transition hover:bg-cream-deep focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun active:scale-95",
+        "inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-transparent bg-paper text-ink transition hover:bg-cream-deep focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun active:scale-95",
         className,
       )}
       {...props}

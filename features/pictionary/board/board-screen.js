@@ -87,7 +87,7 @@ export function BoardScreen({ session }) {
             className="card-ink flex flex-col items-center gap-3 p-6 text-center animate-pop-in"
             style={teamStyle(winner.color)}
           >
-            <span className="inline-flex size-16 items-center justify-center rounded-full border-2 border-ink bg-sun">
+            <span className="inline-flex size-16 items-center justify-center rounded-full border-2 border-transparent bg-sun">
               <Trophy className="size-8" />
             </span>
             <p className="font-display text-3xl font-extrabold tracking-tight">{winner.name} made it!</p>
@@ -102,7 +102,7 @@ export function BoardScreen({ session }) {
         {!rolling && !winner && (
           <section className="card-ink flex flex-col gap-4 p-5" style={teamStyle(next.color)}>
             <div className="flex items-center gap-3">
-              <span className="size-4 rounded-full border-2 border-ink bg-[var(--team)]" />
+              <span className="size-4 rounded-full border-2 border-transparent bg-[var(--team)]" />
               <p className="min-w-0 flex-1 leading-tight">
                 <span className="block text-xs font-bold tracking-wider text-ink-muted uppercase">Up next</span>
                 <span className="block truncate font-display text-xl font-extrabold">{next.name}</span>
@@ -153,7 +153,7 @@ function MoveSummary({ move, session, arrived }) {
   const steps = move.to - move.from;
   return (
     <p className="flex items-center justify-center gap-3 rounded-2xl bg-cream-deep px-4 py-3 font-semibold animate-pop-in">
-      <Die value={move.roll} size={32} className="drop-shadow-[0_2px_0_var(--color-ink)]" />
+      <Die value={move.roll} size={32} className="drop-clay clay-sm" />
       <span>
         {arrived ? "Landed on" : `Moving ${steps} space${steps === 1 ? "" : "s"} to`}{" "}
         <strong>{space.category ? getCategory(space.category).label : "the finish"}</strong>

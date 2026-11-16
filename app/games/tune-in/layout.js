@@ -1,7 +1,7 @@
 import { PageTheme } from "@/components/game/PageTheme";
 
 export const viewport = {
-  themeColor: "#e8edf3",
+  themeColor: "#e6ecf5",
 };
 
 /** Wraps every screen of the game in its theme (tokens live in app/game-themes.css). */

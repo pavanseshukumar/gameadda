@@ -1,10 +1,20 @@
 import { teamInk, teamText } from "@/lib/games/core/teams";
+import { SoloScore } from "./ReadyCard";
 /**
  * Large "whose turn is it" banner. Re-keys on team change so it animates in.
  *
- * @param {{ team: { id: string, name: string, color: string }, hint?: string }} props
+ * In solo there is no turn to announce, so it shows the score instead.
+ *
+ * @param {{ team: { id: string, name: string, color: string, score?: number }, hint?: string, solo?: boolean }} props
  */
-export function TurnIndicator({ team, hint }) {
+export function TurnIndicator({ team, hint, solo = false }) {
+  if (solo) {
+    return (
+      <div className="flex min-w-0 flex-1 items-center">
+        <SoloScore score={team.score ?? 0} />
+      </div>
+    );
+  }
   return (
     <div key={team.id} className="anim-rise flex min-w-0 flex-1 items-center gap-3 sm:gap-3.5" aria-live="polite">
       <span

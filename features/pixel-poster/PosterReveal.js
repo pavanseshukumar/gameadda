@@ -124,13 +124,16 @@ export function PosterReveal({ src, stage, seedKey, className = "" }) {
   }, [img, stage, seedKey]);
 
   const ratio = img ? `${img.naturalWidth} / ${img.naturalHeight}` : "2 / 3";
+  // Sized by height: as wide as the poster needs to be --poster-h tall (set by the
+  // page), never wider than its column. Keeps tall posters from pushing the guess box off a phone.
+  const widthByHeight = `calc(var(--poster-h, 60dvh) * ${img ? img.naturalWidth / img.naturalHeight : 2 / 3})`;
   // Scaled up a touch so the blur's soft, see-through edges stay outside the frame.
   const canvasStyle = { filter: `blur(${BLUR_CQW[stage] ?? 0}cqw)`, transform: "scale(1.08)", transition: "filter 600ms ease" };
 
   return (
     <div
       className={`relative overflow-hidden rounded-2xl bg-surface-strong ${className}`}
-      style={{ aspectRatio: ratio, containerType: "inline-size" }}
+      style={{ aspectRatio: ratio, containerType: "inline-size", width: widthByHeight, maxWidth: "100%" }}
     >
       <canvas
         ref={canvasRef}

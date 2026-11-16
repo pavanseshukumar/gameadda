@@ -73,20 +73,20 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
 
   return (
     <GameShell teamColor={teamColor(0)}>
-      <section className="anim-rise pt-4 sm:pt-10">
-        <p className="font-display text-sm font-bold uppercase tracking-[0.14em] text-accent-2">
+      <section className="anim-rise pt-2 sm:pt-10">
+        <p className="font-display text-xs font-bold uppercase tracking-[0.14em] text-accent-2 sm:text-sm">
           Social deduction · {IMPOSTER_WORDS.length} words
         </p>
-        <h1 className="mt-2 font-display text-[clamp(2.6rem,10vw,5rem)] font-extrabold leading-[0.95] tracking-[-0.03em]">
+        <h1 className="mt-1 font-display text-[clamp(2.1rem,10vw,5rem)] sm:mt-2 font-extrabold leading-[0.95] tracking-[-0.03em]">
           Imp<span className="text-accent-2">o</span>ster
         </h1>
-        <p className="mt-4 max-w-md text-base text-muted sm:text-lg">
+        <p className="mt-2 max-w-md text-[0.9375rem] leading-snug text-muted sm:mt-4 sm:text-lg">
           Everyone knows the secret word except one of you. Give clues, trust no one, and vote out the faker.
         </p>
       </section>
 
       <form
-        className="mt-8 flex flex-col gap-6 sm:mt-10"
+        className="mt-5 flex flex-1 flex-col gap-4 sm:mt-10 sm:gap-6"
         onSubmit={(event) => {
           event.preventDefault();
           if (!noCategory) onStart(drafts, { ...settings, imposterCount });
@@ -94,7 +94,7 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
       >
         <section className="card rounded-[1.75rem] p-4 sm:p-6" aria-labelledby="players-heading">
           <div className="flex items-center justify-between gap-4 px-1">
-            <h2 id="players-heading" className="font-display text-xl font-bold tracking-tight">
+            <h2 id="players-heading" className="font-display text-lg font-bold tracking-tight sm:text-xl">
               Players
             </h2>
             <Stepper value={drafts.length} min={MIN_PLAYERS} max={MAX_PLAYERS} onChange={setCount} label="Number of players" unit="players" />
@@ -173,7 +173,7 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
 
         <section className="card flex flex-col gap-6 rounded-[1.75rem] p-4 sm:p-6">
           <div>
-            <h2 id="imposters-heading" className="px-1 font-display text-xl font-bold tracking-tight">
+            <h2 id="imposters-heading" className="px-1 font-display text-lg font-bold tracking-tight sm:text-xl">
               Imposters
             </h2>
             <p className="mb-3 px-1 text-sm text-muted">
@@ -191,7 +191,7 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
           </div>
 
           <div>
-            <h2 id="timer-heading" className="px-1 font-display text-xl font-bold tracking-tight">
+            <h2 id="timer-heading" className="px-1 font-display text-lg font-bold tracking-tight sm:text-xl">
               Discussion timer
             </h2>
             <p className="mb-3 px-1 text-sm text-muted">Time for clues and arguing before the vote.</p>
@@ -204,7 +204,7 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
           </div>
 
           <div>
-            <h2 className="px-1 font-display text-xl font-bold tracking-tight">Word categories</h2>
+            <h2 className="px-1 font-display text-lg font-bold tracking-tight sm:text-xl">Word categories</h2>
             <p className="mb-3 px-1 text-sm text-muted">The secret word comes from one of these.</p>
             <MultiSelect
               label="Word categories"
@@ -242,8 +242,8 @@ export function SetupScreen({ initialPlayers, initialSettings, onStart }) {
           ))}
         </ol>
 
-        <div className="sticky bottom-4 z-10 mt-2">
-          <button type="submit" className="btn btn-primary h-16 w-full text-lg" disabled={noCategory}>
+        <div className="cta-bar mt-auto">
+          <button type="submit" className="btn btn-primary h-14 w-full text-base sm:h-16 sm:text-lg" disabled={noCategory}>
             Deal the cards <ArrowRightIcon size={20} />
           </button>
         </div>

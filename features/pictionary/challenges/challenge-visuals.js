@@ -73,14 +73,14 @@ export function ChallengeCard({ id, className }) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-[2rem] border-2 border-ink px-6 pt-7 pb-6 text-center shadow-[0_6px_0_0_var(--color-sun)] animate-card-flip",
+        "relative overflow-hidden rounded-[2rem] border-2 border-transparent px-6 pt-7 pb-6 text-center clay-color [--tint:var(--color-sun)] animate-card-flip",
         className,
       )}
       style={{ background: c.color, color: c.ink }}
     >
       <Motif motif={c.motif} />
       <span
-        className="relative mx-auto flex size-24 items-center justify-center rounded-full border-2 border-ink bg-paper text-6xl shadow-[0_4px_0_0_var(--color-ink)] animate-challenge-bounce"
+        className="relative mx-auto flex size-24 items-center justify-center rounded-full border-2 border-transparent bg-paper text-6xl clay animate-challenge-bounce"
         aria-hidden
       >
         {c.emoji}
@@ -100,7 +100,7 @@ export function ChallengeBanner({ id, compact, className }) {
   const c = getChallenge(id);
   return (
     <div
-      className={cn("flex items-center gap-3 rounded-2xl border-2 border-ink", compact ? "px-3 py-1.5" : "px-4 py-2.5", className)}
+      className={cn("flex items-center gap-3 rounded-2xl border-2 border-transparent", compact ? "px-3 py-1.5" : "px-4 py-2.5", className)}
       style={{ background: c.color, color: c.ink }}
     >
       <span className={cn("shrink-0 leading-none", compact ? "text-xl" : "text-3xl")} aria-hidden>
@@ -144,7 +144,7 @@ export function ChallengePicker({ ids, value, onChange, label }) {
             onClick={() => toggle(id)}
             className={cn(
               "relative flex flex-col items-start gap-1.5 rounded-2xl border-2 p-3 text-left transition active:scale-[0.97]",
-              on ? "border-ink shadow-[0_4px_0_0_var(--color-ink)]" : "border-line bg-paper opacity-75 hover:opacity-100",
+              on ? "border-transparent clay" : "border-line bg-paper opacity-75 hover:opacity-100",
             )}
             style={on ? { background: c.color, color: c.ink } : undefined}
           >
@@ -155,7 +155,7 @@ export function ChallengePicker({ ids, value, onChange, label }) {
             <span className="text-xs leading-snug opacity-80">{c.short}</span>
             <ChaosMeter level={c.difficulty} className="mt-0.5 opacity-80" />
             {on && (
-              <span className="absolute top-2 right-2 inline-flex size-6 items-center justify-center rounded-full border-2 border-ink bg-paper text-ink">
+              <span className="absolute top-2 right-2 inline-flex size-6 items-center justify-center rounded-full border-2 border-transparent bg-paper text-ink">
                 <Check className="size-3.5" strokeWidth={4} />
               </span>
             )}

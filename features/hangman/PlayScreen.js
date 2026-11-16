@@ -6,7 +6,7 @@ import { LyricsDisplay } from "@/components/game/LyricsDisplay";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { TurnTimer } from "@/components/game/TurnTimer";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
+import { ReadyCard, WordShape } from "@/components/game/ReadyCard";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -84,20 +84,22 @@ export function PlayScreen({ state, dispatch }) {
       <Scoreboard teams={state.teams} activeTeamId={team.id} roundPoints={{ [team.id]: state.wordPoints }} />
 
       {ready ? (
-        <div className="grid place-items-center py-10 sm:py-16">
-          <TurnHandoff
-            team={team}
-            label={`Round ${state.round} · Your word`}
-            seconds={seconds}
-            detail={`${categoryLabel(state.word.category)} · ${wordCount === 1 ? "one word" : `${wordCount} words`} · ${letterCount} letters`}
-            onStart={start}
-          />
-        </div>
+        <ReadyCard team={team} solo={state.teams.length === 1} eyebrow={`Round ${state.round} · Your word`} seconds={seconds} onStart={start}>
+          <p className="chip mx-auto mt-4 inline-flex items-center gap-2 px-3 py-1 text-sm">
+            <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: categoryColor(state.word.category) }} />
+            <span className="font-semibold">{categoryLabel(state.word.category)}</span>
+          </p>
+          <WordShape lengths={state.word.text.split(/\s+/).map((w) => lettersOf(w).length)} variant="line" />
+          <p className="mt-3 text-sm text-muted">
+            {wordCount === 1 ? "One word" : `${wordCount} words`} · {letterCount} letters · {MAX_MISSES} misses allowed
+          </p>
+        </ReadyCard>
       ) : (
-        <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
+        <div className="flex flex-1 flex-col lg:mt-6 lg:flex-none lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-8">
           <div className="min-w-0">
             <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
               <TurnIndicator
+                solo={state.teams.length === 1}
                 team={team}
                 hint="Your own word. Call letters or solve it; every miss adds a part."
               />
@@ -161,7 +163,7 @@ export function PlayScreen({ state, dispatch }) {
             </section>
           </div>
 
-          <section aria-label="Call a letter" className="mx-auto mt-3 w-full max-w-3xl sm:mt-6 lg:mt-0">
+          <section aria-label="Call a letter" className="dock">
             <Keyboard
               letterStates={selectLetterStates(state)}
               onKey={guessLetter}

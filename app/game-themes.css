@@ -1,18 +1,20 @@
 /*
- * Per-game themes. Every game uses the same components (app/globals.css); a theme
+ * Per-game themes. Every game uses the same clay components (app/globals.css); a theme
  * changes only colours and the display face, by redefining the tokens on a wrapper
  * class set in the game's route layout (app/games/<slug>/layout.js). The hub shows
  * each game card in its theme too.
  *
- * Each theme picks one fixed scheme, like Pictionary's paper look, so a game's
- * identity is the same on every device. Text tokens are ≥ 4.5:1 on the background.
+ * Every theme is a light pastel take on its game's original mood, so a game's
+ * identity is the same on every device. Text tokens are ≥ 4.5:1 on the background
+ * and panel (checked with scripts in review, not by eye).
  *
  * Token guide:
- *   --panel / --well      raised surface / recessed input fill
- *   --edge / --depth      2px outline / solid shadow under raised things
- *   --select-*            selected segmented option (inverted, with an underline)
- *   --btn-primary-*       main action fill, text and press-down shadow
+ *   --shade               the deep tint every clay shadow, hairline and well is mixed from
+ *   --panel / --well      raised clay surface / recessed input fill
+ *   --select-*            selected segmented option (a raised coloured pill)
+ *   --btn-primary-*       main action fill, text and the colour of its soft drop shadow
  *   --key-bg / --key-fg   keyboard keys and letter tiles
+ *   --blob-a / --blob-b   the two soft colour blobs behind the page
  */
 
 .game-theme {
@@ -20,186 +22,172 @@
   background-color: var(--background);
 }
 
-/* ── Guess the Telugu Song · "Songbook": late-night wine and gold ─────────── */
+/* ── Guess the Telugu Song · "Songbook": rose petals and honey ─────────────── */
 .theme-songbook {
-  color-scheme: dark;
-  --background: #1a0b14;
-  --foreground: #fcf2e6;
-  --panel: #2a1420;
-  --well: #1f0e18;
-  --edge: #5c3748;
-  --depth: #080205;
-  --surface: rgb(255 232 210 / 0.05);
-  --surface-strong: rgb(255 232 210 / 0.1);
-  --line: rgb(255 226 200 / 0.13);
-  --line-strong: rgb(255 226 200 / 0.24);
-  --fg-muted: #dcc6bb;
-  --fg-subtle: #b0968c;
+  color-scheme: light;
+  --background: #fbe8ee;
+  --foreground: #3d1426;
+  --panel: #fff7f9;
+  --well: #f5dbe3;
+  --shade: #8a3a57;
+  --fg-muted: #6b3a4f;
+  --fg-subtle: #855266;
 
-  --accent: #f6bd4a;
-  --accent-2: #ff8aa1;
-  --accent-3: #ffcb52;
-  --accent-3-ink: #2a1205;
-  --hit: #2fbf68;
-  --hit-deep: #17803f;
-  --miss: #f2545b;
-  --miss-deep: #a81f27;
+  --accent: #a8456a;
+  --accent-2: #b0305a;
+  --accent-2-ink: #fff;
+  --accent-3: #9a5a00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #dc3d55;
+  --miss-deep: #a3203a;
 
-  --select-bg: #fcf2e6;
-  --select-fg: #1a0b14;
-  --select-mark: #f6bd4a;
-  --btn-primary-bg: #f6bd4a;
-  --btn-primary-fg: #2a1205;
-  --btn-primary-depth: #9c6a12;
-  --key-bg: #3a1e2b;
-  --key-fg: #fcf2e6;
+  --select-bg: #b0305a;
+  --select-fg: #fff;
+  --select-mark: #e0a12a;
+  --btn-primary-bg: #f4bd4f;
+  --btn-primary-fg: #3d1a05;
+  --btn-primary-depth: #c98a1a;
+  --key-bg: #fffafb;
+  --key-fg: #3d1426;
 
-  --tile-hidden: rgb(255 232 210 / 0.1);
   --tile-revealed: #fff3dc;
-  --tile-revealed-fg: #2a1205;
-  --dot: rgb(255 226 200 / 0.06);
-  --stage-glow: 24%;
-  --team-text-mix: 100%;
+  --tile-revealed-fg: #3d1a05;
+  --blob-a: #ffd9a8;
+  --blob-b: #f7c4dc;
+  --stage-glow: 30%;
+  --team-text-mix: 65%;
   --font-display-face: var(--font-songbook), Georgia, serif;
 }
 
-/* ── Jumble Rumble · "Tabletop": sand table, wooden letter blocks ─────────── */
+/* ── Jumble Rumble · "Tabletop": sand table, maple letter blocks ─────────── */
 .theme-tabletop {
   color-scheme: light;
-  --background: #f3eadb;
+  --background: #f6ecdc;
   --foreground: #2a1d10;
-  --panel: #fffaf1;
-  --well: #f6eee0;
-  --edge: #2a1d10;
-  --depth: #2a1d10;
-  --surface: rgb(90 60 20 / 0.04);
-  --surface-strong: rgb(90 60 20 / 0.08);
-  --line: rgb(90 60 20 / 0.15);
-  --line-strong: rgb(90 60 20 / 0.3);
+  --panel: #fffaf2;
+  --well: #efe2cc;
+  --shade: #8a5a2b;
   --fg-muted: #574431;
-  --fg-subtle: #715a44;
+  --fg-subtle: #6e5741;
 
   --accent: #b9391a;
   --accent-2: #0d7470;
-  --accent-3: #a85008;
+  --accent-2-ink: #fff;
+  --accent-3: #a04c06;
   --accent-3-ink: #fff;
   --hit: #1a8a45;
   --hit-deep: #0f6630;
   --miss: #d0362a;
   --miss-deep: #8f1a12;
 
-  --select-bg: #2a1d10;
-  --select-fg: #fff6e6;
-  --select-mark: #ef6448;
-  --btn-primary-bg: #e8553d;
+  --select-bg: #d9573c;
+  --select-fg: #fff;
+  --select-mark: #d9573c;
+  --btn-primary-bg: #d9573c;
   --btn-primary-fg: #fff;
-  --btn-primary-depth: #8e2812;
+  --btn-primary-depth: #a8381f;
   /* Maple blocks. */
-  --key-bg: #f8d9a2;
+  --key-bg: #fadfae;
   --key-fg: #3a2410;
 
-  --tile-hidden: rgb(90 60 20 / 0.07);
-  --tile-revealed: #2a1d10;
-  --tile-revealed-fg: #fff6e6;
-  --dot: rgb(90 60 20 / 0.1);
-  --stage-glow: 14%;
+  --tile-revealed: #fffaf2;
+  --tile-revealed-fg: #2a1d10;
+  --blob-a: #ffd2b8;
+  --blob-b: #c7ece6;
+  --stage-glow: 18%;
   --team-text-mix: 60%;
   --font-display-face: var(--font-tabletop), system-ui, sans-serif;
 }
 
-/* ── Poster Puzzle · "Marquee": a cinema at night, gold and velvet red ────── */
+/* ── Poster Puzzle · "Marquee": popcorn butter and cherry-red velvet ──────── */
 .theme-marquee {
-  color-scheme: dark;
-  --background: #0d0a08;
-  --foreground: #f8f1e5;
-  --panel: #1b1612;
-  --well: #120e0b;
-  --edge: #4d3f2c;
-  --depth: #000;
-  --surface: rgb(255 236 210 / 0.04);
-  --surface-strong: rgb(255 236 210 / 0.09);
-  --line: rgb(255 226 190 / 0.11);
-  --line-strong: rgb(255 226 190 / 0.22);
-  --fg-muted: #cfc2af;
-  --fg-subtle: #a39582;
+  color-scheme: light;
+  --background: #fdf0d6;
+  --foreground: #2e1a0e;
+  --panel: #fffaee;
+  --well: #f6e4c2;
+  --shade: #8a4a1e;
+  --fg-muted: #5c4130;
+  --fg-subtle: #765a44;
 
-  --accent: #f5c542;
-  --accent-2: #ff5a4e;
-  --accent-3: #ffd45e;
-  --accent-3-ink: #1c1300;
-  --hit: #2fbf68;
-  --hit-deep: #17803f;
-  --miss: #f04a3f;
+  --accent: #b5321f;
+  --accent-2: #c0302a;
+  --accent-2-ink: #fff;
+  --accent-3: #9a5a00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d8392f;
   --miss-deep: #a3221a;
 
-  --select-bg: #f8f1e5;
-  --select-fg: #0d0a08;
-  --select-mark: #ff5a4e;
-  --btn-primary-bg: #f5c542;
-  --btn-primary-fg: #1c1300;
-  --btn-primary-depth: #94700e;
-  --key-bg: #2a231c;
-  --key-fg: #f8f1e5;
+  --select-bg: #c93a2c;
+  --select-fg: #fff;
+  --select-mark: #e0a12a;
+  --btn-primary-bg: #c93a2c;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #9a2318;
+  --key-bg: #fffbf2;
+  --key-fg: #2e1a0e;
 
-  --tile-hidden: rgb(255 236 210 / 0.08);
-  --tile-revealed: #f8f1e5;
-  --tile-revealed-fg: #1c1300;
-  --dot: rgb(255 226 190 / 0.05);
-  --stage-glow: 18%;
-  --team-text-mix: 100%;
+  --tile-revealed: #fffaee;
+  --tile-revealed-fg: #2e1a0e;
+  --blob-a: #ffd0c4;
+  --blob-b: #ffe6a3;
+  --stage-glow: 22%;
+  --team-text-mix: 60%;
   --font-display-face: var(--font-marquee), "Arial Narrow", sans-serif;
 }
 /* Bulbs around the poster, like a cinema marquee (Poster Puzzle only). */
 .marquee-frame {
   padding: 12px;
-  border-radius: 1.4rem;
-  border: 2px solid var(--edge);
+  border-radius: 1.6rem;
   background:
-    radial-gradient(circle, #ffe7a3 0 2.4px, rgb(255 210 110 / 0.35) 3.2px, transparent 4.6px) 0 0 / 16px 16px,
-    #2a1414;
-  box-shadow: 0 5px 0 0 var(--depth), 0 0 40px -12px rgb(245 197 66 / 0.4);
+    radial-gradient(circle, #fff6d6 0 2.4px, rgb(255 200 90 / 0.55) 3.2px, transparent 4.6px) 0 0 / 16px 16px,
+    #d9493a;
+  box-shadow:
+    0 16px 30px -14px rgb(154 35 24 / 0.55),
+    inset 6px 6px 12px -6px rgb(255 255 255 / 0.5),
+    inset -6px -6px 12px -6px rgb(0 0 0 / 0.25);
 }
 
-/* ── Hot & Cold · "Thermal": instrument navy, cold-to-hot spectrum ─────────── */
+/* ── Hot & Cold · "Thermal": ice-blue to peach, a pastel heat spectrum ───── */
 .theme-thermal {
-  color-scheme: dark;
-  --background: #06131f;
-  --foreground: #eaf5ff;
-  --panel: #0e2133;
-  --well: #091827;
-  --edge: #2b4964;
-  --depth: #01070d;
-  --surface: rgb(170 215 255 / 0.04);
-  --surface-strong: rgb(170 215 255 / 0.09);
-  --line: rgb(150 205 255 / 0.12);
-  --line-strong: rgb(150 205 255 / 0.24);
-  --fg-muted: #aac3d8;
-  --fg-subtle: #8ba5ba;
+  color-scheme: light;
+  --background: #e6f0fb;
+  --foreground: #0f2740;
+  --panel: #f8fbff;
+  --well: #dbe7f5;
+  --shade: #2d5a85;
+  --fg-muted: #34506b;
+  --fg-subtle: #4b6680;
 
-  --accent: #4cc9f0;
-  --accent-2: #ff7043;
-  --accent-3: #ffb52e;
-  --accent-3-ink: #1f1200;
-  --hit: #2fcf78;
-  --hit-deep: #148a4c;
-  --miss: #f25050;
+  --accent: #1a6fa8;
+  --accent-2: #b03e12;
+  --accent-2-ink: #fff;
+  --accent-3: #9a5a00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #dc3d3d;
   --miss-deep: #a51f1f;
 
-  --select-bg: #eaf5ff;
-  --select-fg: #06131f;
-  --select-mark: #ff7043;
-  --btn-primary-bg: linear-gradient(110deg, #5ad1f5, #ffd166 55%, #ff8a4c);
-  --btn-primary-fg: #06131f;
-  --btn-primary-depth: #8a3f17;
-  --key-bg: #15304a;
-  --key-fg: #eaf5ff;
+  --select-bg: #1a6fa8;
+  --select-fg: #fff;
+  --select-mark: #f08a5d;
+  --btn-primary-bg: linear-gradient(110deg, #8fdcf5, #ffe08a 55%, #ffab80);
+  --btn-primary-fg: #0f2740;
+  --btn-primary-depth: #e08a5a;
+  --key-bg: #fbfdff;
+  --key-fg: #0f2740;
 
-  --tile-hidden: rgb(170 215 255 / 0.08);
-  --tile-revealed: #eaf5ff;
-  --tile-revealed-fg: #06131f;
-  --dot: rgb(150 205 255 / 0.06);
-  --stage-glow: 20%;
-  --team-text-mix: 100%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #0f2740;
+  --blob-a: #ffd8c2;
+  --blob-b: #bfe7f7;
+  --stage-glow: 24%;
+  --team-text-mix: 60%;
   --font-display-face: var(--font-thermal), system-ui, sans-serif;
 }
 /* A thin cold → hot spectrum across the top of every Hot & Cold screen. */
@@ -207,51 +195,47 @@
   content: "";
   position: fixed;
   inset: 0 0 auto;
-  height: 3px;
+  height: 4px;
   z-index: 50;
   pointer-events: none;
-  background: linear-gradient(90deg, #60a5fa, #22d3ee 25%, #fbbf24 50%, #f97316 75%, #ef4444);
+  background: linear-gradient(90deg, #7cb8fa, #5fdcef 25%, #fcd060 50%, #fb9a5a 75%, #f26b6b);
 }
 
 /* ── Tune In · "FM dial": cool faceplate, electric blue, coral needle ──────── */
 .theme-dial {
   color-scheme: light;
-  --background: #e8edf3;
+  --background: #e6ecf5;
   --foreground: #0d1626;
-  --panel: #ffffff;
-  --well: #eef2f7;
-  --edge: #0d1626;
-  --depth: #0d1626;
-  --surface: rgb(13 22 38 / 0.03);
-  --surface-strong: rgb(13 22 38 / 0.07);
-  --line: rgb(13 22 38 / 0.12);
-  --line-strong: rgb(13 22 38 / 0.26);
+  --panel: #fbfcff;
+  --well: #dce3ee;
+  --shade: #2c3e66;
   --fg-muted: #3c4859;
-  --fg-subtle: #566275;
+  --fg-subtle: #536073;
 
   --accent: #2346e0;
-  --accent-2: #e2432a;
-  --accent-3: #c2410c;
+  --accent-2: #b5301a;
+  --accent-2-ink: #fff;
+  --accent-3: #b13c0b;
   --accent-3-ink: #fff;
   --hit: #15803d;
   --hit-deep: #0f5f2c;
   --miss: #d42a2a;
   --miss-deep: #8c1414;
 
-  --select-bg: #0d1626;
+  --select-bg: #2346e0;
   --select-fg: #fff;
   --select-mark: #e2432a;
-  --btn-primary-bg: #2346e0;
+  --btn-primary-bg: #2f52e6;
   --btn-primary-fg: #fff;
-  --btn-primary-depth: #0f2380;
+  --btn-primary-depth: #1a36b8;
   --key-bg: #ffffff;
   --key-fg: #0d1626;
 
-  --tile-hidden: rgb(13 22 38 / 0.06);
-  --tile-revealed: #0d1626;
-  --tile-revealed-fg: #ffffff;
-  --dot: rgb(13 22 38 / 0.09);
-  --stage-glow: 14%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #0d1626;
+  --blob-a: #ffd2c8;
+  --blob-b: #c9d6ff;
+  --stage-glow: 18%;
   --team-text-mix: 60%;
   --font-display-face: var(--font-dial), system-ui, sans-serif;
 }
@@ -260,109 +244,94 @@
   letter-spacing: -0.02em;
 }
 
-/* ── Imposter · "Hideout": a dim back room, acid lime and signal red ──────── */
+/* ── Imposter · "Hideout": lilac room, lime signal and alarm red ────────── */
 .theme-hideout {
-  color-scheme: dark;
-  --background: #120f1d;
-  --foreground: #f1eefc;
-  --panel: #1d1830;
-  --well: #161227;
-  --edge: #43396a;
-  --depth: #05030b;
-  --surface: rgb(220 210 255 / 0.04);
-  --surface-strong: rgb(220 210 255 / 0.09);
-  --line: rgb(210 200 255 / 0.12);
-  --line-strong: rgb(210 200 255 / 0.24);
-  --fg-muted: #c3bce0;
-  --fg-subtle: #9a92bd;
+  color-scheme: light;
+  --background: #eeeaf8;
+  --foreground: #241c3d;
+  --panel: #fbfaff;
+  --well: #e2ddf2;
+  --shade: #4a3d7a;
+  --fg-muted: #4b4466;
+  --fg-subtle: #635c80;
 
-  --accent: #c6f432;
-  --accent-2: #ff4d6d;
-  --accent-2-ink: #1d0610;
-  --accent-3: #c6f432;
-  --accent-3-ink: #14170a;
-  --hit: #3ddc84;
-  --hit-deep: #168a4e;
-  --miss: #ff4d6d;
+  --accent: #4f6b00;
+  --accent-2: #bf2548;
+  --accent-2-ink: #fff;
+  --accent-3: #4f6b00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d42f55;
   --miss-deep: #a3203a;
 
-  --select-bg: #f1eefc;
-  --select-fg: #120f1d;
-  --select-mark: #c6f432;
-  --btn-primary-bg: #c6f432;
-  --btn-primary-fg: #14170a;
-  --btn-primary-depth: #5f7a10;
-  --key-bg: #2a2342;
-  --key-fg: #f1eefc;
+  --select-bg: #3a2f66;
+  --select-fg: #fff;
+  --select-mark: #8fb81a;
+  --btn-primary-bg: #c8f05a;
+  --btn-primary-fg: #1f2605;
+  --btn-primary-depth: #8fb81a;
+  --key-bg: #fdfcff;
+  --key-fg: #241c3d;
 
-  --tile-hidden: rgb(220 210 255 / 0.08);
-  --tile-revealed: #f1eefc;
-  --tile-revealed-fg: #120f1d;
-  --dot: rgb(210 200 255 / 0.06);
-  --stage-glow: 22%;
-  --team-text-mix: 100%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #241c3d;
+  --blob-a: #e2f7b0;
+  --blob-b: #ffc8d6;
+  --stage-glow: 26%;
+  --team-text-mix: 60%;
   --font-display-face: var(--font-hideout), system-ui, sans-serif;
 }
 
-/* ── Hangman · "Chalkboard": slate-green board, chalk white and yellow ──── */
+/* ── Hangman · "Chalkboard": sage board, chalk-yellow, pencil grey ──────── */
 .theme-chalkboard {
-  color-scheme: dark;
-  --background: #1f2b25;
-  --foreground: #f3f0e6;
-  --panel: #27362e;
-  --well: #1a241f;
-  --edge: #4d6357;
-  --depth: #0c120f;
-  --surface: rgb(243 240 230 / 0.04);
-  --surface-strong: rgb(243 240 230 / 0.09);
-  --line: rgb(243 240 230 / 0.12);
-  --line-strong: rgb(243 240 230 / 0.24);
-  --fg-muted: #ccd5cc;
-  --fg-subtle: #a2b0a6;
+  color-scheme: light;
+  --background: #e4eee6;
+  --foreground: #1d3326;
+  --panel: #f8fbf8;
+  --well: #d6e4da;
+  --shade: #3d6650;
+  --fg-muted: #3c5546;
+  --fg-subtle: #526b5c;
 
-  --accent: #f6d65c;
-  --accent-2: #ff9ab8;
-  --accent-2-ink: #2a0c16;
-  --accent-3: #f6d65c;
-  --accent-3-ink: #2a2205;
-  --hit: #4cc77a;
-  --hit-deep: #1f7a44;
-  --miss: #ff7070;
+  --accent: #7a5c00;
+  --accent-2: #c2306a;
+  --accent-2-ink: #fff;
+  --accent-3: #8a6200;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d8434a;
   --miss-deep: #a3302e;
 
-  --select-bg: #f3f0e6;
-  --select-fg: #1f2b25;
-  --select-mark: #f6d65c;
-  --btn-primary-bg: #f6d65c;
+  --select-bg: #2f5a43;
+  --select-fg: #fff;
+  --select-mark: #e8b92c;
+  --btn-primary-bg: #f6d660;
   --btn-primary-fg: #2a2205;
-  --btn-primary-depth: #8c7312;
-  --key-bg: #2f4137;
-  --key-fg: #f3f0e6;
+  --btn-primary-depth: #cfa92a;
+  --key-bg: #fcfefc;
+  --key-fg: #1d3326;
 
-  --tile-hidden: rgb(243 240 230 / 0.07);
-  --tile-revealed: #f3f0e6;
-  --tile-revealed-fg: #1f2b25;
-  --dot: rgb(243 240 230 / 0.05);
-  --stage-glow: 16%;
-  --team-text-mix: 100%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #1d3326;
+  --blob-a: #fdeeb0;
+  --blob-b: #c4e6d2;
+  --stage-glow: 20%;
+  --team-text-mix: 60%;
   --font-display-face: var(--font-chalkboard), system-ui, sans-serif;
 }
 
-/* ── Fill the Film · "Listings": the newspaper cinema page, ink and red ──── */
+/* ── Fill the Film · "Listings": newsprint cream, ink and red ─────────────── */
 .theme-listings {
   color-scheme: light;
-  --background: #f2ece0;
+  --background: #f4eee3;
   --foreground: #1d1a16;
-  --panel: #fbf8f1;
-  --well: #f5efe3;
-  --edge: #1d1a16;
-  --depth: #1d1a16;
-  --surface: rgb(60 45 20 / 0.04);
-  --surface-strong: rgb(60 45 20 / 0.08);
-  --line: rgb(60 45 20 / 0.15);
-  --line-strong: rgb(60 45 20 / 0.3);
+  --panel: #fdfaf4;
+  --well: #ebe2d2;
+  --shade: #6b5233;
   --fg-muted: #4f483d;
-  --fg-subtle: #6b6254;
+  --fg-subtle: #665d4f;
 
   --accent: #c32f27;
   --accent-2: #c32f27;
@@ -374,20 +343,20 @@
   --miss: #c32f27;
   --miss-deep: #861b15;
 
-  --select-bg: #1d1a16;
-  --select-fg: #fbf8f1;
+  --select-bg: #2b2620;
+  --select-fg: #fdfaf4;
   --select-mark: #c32f27;
-  --btn-primary-bg: #c32f27;
+  --btn-primary-bg: #c9362d;
   --btn-primary-fg: #fff;
-  --btn-primary-depth: #6e140f;
-  --key-bg: #fbf8f1;
+  --btn-primary-depth: #8f1d16;
+  --key-bg: #fffdf8;
   --key-fg: #1d1a16;
 
-  --tile-hidden: rgb(60 45 20 / 0.07);
-  --tile-revealed: #1d1a16;
-  --tile-revealed-fg: #fbf8f1;
-  --dot: rgb(60 45 20 / 0.08);
-  --stage-glow: 10%;
+  --tile-revealed: #2b2620;
+  --tile-revealed-fg: #fdfaf4;
+  --blob-a: #f8d0c8;
+  --blob-b: #e8e0cf;
+  --stage-glow: 12%;
   --team-text-mix: 60%;
   --font-display-face: var(--font-listings), Georgia, serif;
 }
@@ -395,93 +364,83 @@
 /* ── Frozen Brains · "Frost": an ice-blue morning, deep navy ink ───────── */
 .theme-frost {
   color-scheme: light;
-  --background: #e4f2fa;
+  --background: #e3f1fa;
   --foreground: #0b2236;
-  --panel: #f7fcff;
-  --well: #edf6fb;
-  --edge: #0b2236;
-  --depth: #0b2236;
-  --surface: rgb(11 60 100 / 0.04);
-  --surface-strong: rgb(11 60 100 / 0.08);
-  --line: rgb(11 60 100 / 0.15);
-  --line-strong: rgb(11 60 100 / 0.3);
+  --panel: #f8fcff;
+  --well: #d4e8f4;
+  --shade: #2d6688;
   --fg-muted: #2c4a61;
-  --fg-subtle: #456277;
+  --fg-subtle: #435f74;
 
   --accent: #0369a1;
-  --accent-2: #0477b3;
+  --accent-2: #0470a8;
   --accent-2-ink: #fff;
-  --accent-3: #b45309;
+  --accent-3: #a14b07;
   --accent-3-ink: #fff;
   --hit: #15803d;
   --hit-deep: #0f5f2d;
   --miss: #be123c;
   --miss-deep: #881030;
 
-  --select-bg: #0b2236;
-  --select-fg: #f7fcff;
+  --select-bg: #0b5f8a;
+  --select-fg: #fff;
   --select-mark: #38bdf8;
-  --btn-primary-bg: #38bdf8;
+  --btn-primary-bg: #6ccdf7;
   --btn-primary-fg: #062033;
-  --btn-primary-depth: #0b5f8a;
-  --key-bg: #d3ebf7;
+  --btn-primary-depth: #2a9fd4;
+  --key-bg: #f2faff;
   --key-fg: #0b2236;
 
-  --tile-hidden: rgb(11 60 100 / 0.07);
-  --tile-revealed: #0b2236;
-  --tile-revealed-fg: #f7fcff;
-  --dot: rgb(11 60 100 / 0.09);
-  --stage-glow: 14%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #0b2236;
+  --blob-a: #d6ecff;
+  --blob-b: #d9f6f0;
+  --stage-glow: 18%;
   --team-text-mix: 60%;
   --font-display-face: var(--font-frost), system-ui, sans-serif;
 }
 
-/* ── Word Swap · "Arcade": a late-night cabinet, teal hits and pink near-misses ─ */
+/* ── Word Swap · "Arcade": lilac cabinet, teal hits and pink near-misses ─── */
 .theme-arcade {
-  color-scheme: dark;
-  --background: #14112b;
-  --foreground: #f2f0ff;
-  --panel: #1e1a3d;
-  --well: #18153a;
-  --edge: #3d3770;
-  --depth: #07051a;
-  --surface: rgb(220 215 255 / 0.04);
-  --surface-strong: rgb(220 215 255 / 0.09);
-  --line: rgb(220 215 255 / 0.12);
-  --line-strong: rgb(220 215 255 / 0.24);
-  --fg-muted: #c5c0e8;
-  --fg-subtle: #9c96c6;
+  color-scheme: light;
+  --background: #ece9fb;
+  --foreground: #1e1a3d;
+  --panel: #fbfaff;
+  --well: #dfdbf3;
+  --shade: #4a428a;
+  --fg-muted: #464170;
+  --fg-subtle: #5e5988;
 
-  --accent: #2dd4bf;
-  --accent-2: #f472b6;
-  --accent-2-ink: #2a0718;
-  --accent-3: #fbbf24;
-  --accent-3-ink: #231503;
+  --accent: #0a7266;
+  --accent-2: #b5246d;
+  --accent-2-ink: #fff;
+  --accent-3: #9a5a00;
+  --accent-3-ink: #fff;
   /* Letter marks: right spot (teal), wrong spot (pink), not in word (slate). */
-  --hit: #14b8a6;
-  --hit-deep: #0b766b;
-  --near: #ec4899;
-  --near-deep: #9d1d5f;
-  --absent: #3a365c;
-  --absent-deep: #232042;
-  --miss: #fb7185;
+  --hit: #0f8f82;
+  --hit-deep: #0b6b61;
+  --near: #d6408a;
+  --near-deep: #a3256a;
+  --absent: #cfcbe6;
+  --absent-deep: #9b95c2;
+  --miss: #e0436a;
   --miss-deep: #9f1239;
 
-  --select-bg: #f2f0ff;
-  --select-fg: #14112b;
-  --select-mark: #2dd4bf;
-  --btn-primary-bg: #2dd4bf;
+  --select-bg: #0f8f82;
+  --select-fg: #fff;
+  --select-mark: #0f8f82;
+  --btn-primary-bg: #3fd9c4;
   --btn-primary-fg: #04201c;
-  --btn-primary-depth: #0f766e;
-  --key-bg: #2b2655;
-  --key-fg: #f2f0ff;
+  --btn-primary-depth: #18a896;
+  --key-bg: #fdfcff;
+  --key-fg: #1e1a3d;
 
-  --tile-hidden: rgb(220 215 255 / 0.07);
-  --tile-revealed: #f2f0ff;
-  --tile-revealed-fg: #14112b;
-  --dot: rgb(220 215 255 / 0.05);
-  --stage-glow: 22%;
-  --team-text-mix: 100%;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #1e1a3d;
+  --blob-a: #ffc9e4;
+  --blob-b: #b8f0e6;
+  --stage-glow: 24%;
+  --team-text-mix: 60%;
   --font-display-face: var(--font-arcade), ui-monospace, monospace;
 }
 
@@ -491,46 +450,41 @@
   --background: #fbf5ea;
   --foreground: #1b2140;
   --panel: #fffdf8;
-  --well: #fbf5ea;
-  --edge: #1b2140;
-  --depth: #1b2140;
-  --surface: rgb(27 33 64 / 0.03);
-  --surface-strong: rgb(27 33 64 / 0.07);
-  --line: #e6dbc5;
-  --line-strong: rgb(27 33 64 / 0.24);
+  --well: #f3e9d6;
+  --shade: #6b5a3a;
   --fg-muted: #4a5175;
-  --fg-subtle: #5f6482;
+  --fg-subtle: #5a6080;
   --select-bg: #1b2140;
   --select-fg: #fbf5ea;
   --select-mark: #f2b01e;
-  --btn-primary-bg: #1b2140;
-  --btn-primary-fg: #fbf5ea;
-  --btn-primary-depth: #0b0e1f;
-  --tile-hidden: rgb(27 33 64 / 0.07);
-  --tile-revealed: #1b2140;
-  --tile-revealed-fg: #fbf5ea;
-  --dot: rgb(27 33 64 / 0.09);
+  --btn-primary-bg: #2e6be6;
+  --btn-primary-fg: #fff;
+  --btn-primary-depth: #1d4fb8;
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #1b2140;
+  --blob-a: #fde4a6;
+  --blob-b: #cfe0ff;
 }
 
 /* Page background and overscroll per game. `data-page` is set by <PageTheme> in each
    game's layout and cleared when the route is hidden, so it never leaks onto the hub. */
 html[data-page="songbook"],
-html[data-page="songbook"] body { background: #1a0b14; }
+html[data-page="songbook"] body { background: #fbe8ee; }
 html[data-page="tabletop"],
-html[data-page="tabletop"] body { background: #f3eadb; }
+html[data-page="tabletop"] body { background: #f6ecdc; }
 html[data-page="marquee"],
-html[data-page="marquee"] body { background: #0d0a08; }
+html[data-page="marquee"] body { background: #fdf0d6; }
 html[data-page="thermal"],
-html[data-page="thermal"] body { background: #06131f; }
+html[data-page="thermal"] body { background: #e6f0fb; }
 html[data-page="dial"],
-html[data-page="dial"] body { background: #e8edf3; }
+html[data-page="dial"] body { background: #e6ecf5; }
 html[data-page="hideout"],
-html[data-page="hideout"] body { background: #120f1d; }
+html[data-page="hideout"] body { background: #eeeaf8; }
 html[data-page="chalkboard"],
-html[data-page="chalkboard"] body { background: #1f2b25; }
+html[data-page="chalkboard"] body { background: #e4eee6; }
 html[data-page="listings"],
-html[data-page="listings"] body { background: #f2ece0; }
+html[data-page="listings"] body { background: #f4eee3; }
 html[data-page="frost"],
-html[data-page="frost"] body { background: #e4f2fa; }
+html[data-page="frost"] body { background: #e3f1fa; }
 html[data-page="arcade"],
-html[data-page="arcade"] body { background: #14112b; }
+html[data-page="arcade"] body { background: #ece9fb; }

@@ -20,7 +20,7 @@ export function PageShell({ children, className, wide }) {
 /** Back link + title row for secondary screens. */
 export function PageHeader({ title, eyebrow, backHref = "/games/pictionary", backLabel = "Home", action }) {
   return (
-    <header className="mb-6 pt-2">
+    <header className="mb-4 pt-1 sm:mb-6 sm:pt-2">
       <div className="flex items-center justify-between gap-3">
         <Link
           href={backHref}
@@ -31,16 +31,16 @@ export function PageHeader({ title, eyebrow, backHref = "/games/pictionary", bac
         </Link>
         {action}
       </div>
-      {eyebrow && <p className="mt-4 font-display text-sm font-bold tracking-[0.14em] text-coral uppercase">{eyebrow}</p>}
-      <h1 className="mt-1 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">{title}</h1>
+      {eyebrow && <p className="mt-2 font-display text-xs font-bold sm:mt-4 sm:text-sm tracking-[0.14em] text-coral uppercase">{eyebrow}</p>}
+      <h1 className="mt-1 font-display text-[2rem] leading-tight font-extrabold tracking-tight sm:text-5xl">{title}</h1>
     </header>
   );
 }
 
 export function SectionTitle({ step, children, aside }) {
   return (
-    <div className="mb-4 flex items-end justify-between gap-3">
-      <h2 className="flex items-center gap-3 font-display text-2xl font-extrabold tracking-tight">
+    <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
+      <h2 className="flex items-center gap-3 font-display text-xl font-extrabold tracking-tight sm:text-2xl">
         {step && (
           <span className="inline-flex size-8 items-center justify-center rounded-full bg-ink text-base text-sun">
             {step}

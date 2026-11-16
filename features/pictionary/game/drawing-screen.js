@@ -59,7 +59,7 @@ export function DrawingScreen({ session }) {
         <header className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="flex items-center gap-2 font-display text-xl font-extrabold">
-              <span className="size-3.5 shrink-0 rounded-full border-2 border-ink bg-[var(--team)]" />
+              <span className="size-3.5 shrink-0 rounded-full border-2 border-transparent bg-[var(--team)]" />
               <span className="truncate">{team.name}</span>
             </p>
             <p className="text-sm text-ink-soft">
@@ -184,7 +184,7 @@ function PeekButton({ word }) {
         onKeyUp={hide}
         onBlur={hide}
         onContextMenu={(e) => e.preventDefault()}
-        className="btn-3d min-h-12 w-full border-2 border-ink px-3 text-sm [--btn-lift:3px] select-none"
+        className="btn-3d min-h-12 w-full border-2 border-transparent px-3 text-sm [--btn-lift:3px] select-none"
         style={{ "--btn-bg": "var(--color-paper)", "--btn-fg": "var(--color-ink)", "--btn-depth": "var(--color-ink)" }}
         aria-label="Hold to peek at the word (drawer only)"
       >

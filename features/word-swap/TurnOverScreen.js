@@ -20,13 +20,12 @@ export function TurnOverScreen({ state, dispatch }) {
   const solo = isSolo(state.teams);
   const usesRandom = solo || state.settings.source === "random";
 
-  const nextLabel = next
+  const nextLabel = next ? "Next turn" : solo ? "Next word" : `Start round ${state.round + 1}`;
+  const nextDetail = next
     ? usesRandom
-      ? `Next: ${next.guesser.name}`
-      : `Next: ${next.setter.name} sets for ${next.guesser.name}`
-    : solo
-      ? "Next word"
-      : `Start round ${state.round + 1}`;
+      ? `${next.guesser.name} guesses a random word`
+      : `${next.setter.name} sets a word for ${next.guesser.name}`
+    : null;
 
   return (
     <GameShell teamColor={team.color}>
@@ -72,10 +71,14 @@ export function TurnOverScreen({ state, dispatch }) {
         <button
           type="button"
           autoFocus
-          className="btn btn-primary h-14 text-base sm:h-16 sm:flex-1 sm:text-lg"
+          className="btn btn-primary min-h-14 flex-col gap-0 px-5 py-2 text-base sm:min-h-16 sm:flex-1 sm:text-lg"
           onClick={() => dispatch({ type: ACTIONS.NEXT_TURN, seed: Math.random() })}
         >
-          {nextLabel} <ArrowRightIcon size={20} />
+          <span className="flex items-center gap-2">
+            {nextLabel} <ArrowRightIcon size={20} />
+          </span>
+          {/* Team names can be long: this line wraps instead of overflowing the button. */}
+          {nextDetail ? <span className="max-w-full whitespace-normal text-balance text-xs font-semibold leading-snug opacity-80 sm:text-sm">{nextDetail}</span> : null}
         </button>
         <button type="button" className="btn btn-secondary h-14 px-8 text-base sm:h-16" onClick={() => setConfirmEnd(true)}>
           <FlagIcon size={18} /> Finish game

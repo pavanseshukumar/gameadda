@@ -40,6 +40,8 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
             <>
               {winner.name} <span style={{ color: teamText(winner.color) }}>found it!</span>
             </>
+          ) : result?.outcome === "timeout" ? (
+            "Time’s up!"
           ) : (
             "The secret is out"
           )}
@@ -47,7 +49,9 @@ export function RoundCompleteScreen({ state, dispatch, onNextRound, loadingNext,
         <p className="anim-rise mx-auto mt-3 max-w-md text-muted">
           {solved
             ? `On guess ${result.guessCount}, for a pot of ${result.points}.`
-            : `The host revealed it after ${result?.guessCount ?? 0} guess${result?.guessCount === 1 ? "" : "es"}.`}
+            : result?.outcome === "timeout"
+              ? `The clock ran out after ${result.guessCount} guess${result.guessCount === 1 ? "" : "es"}. Here’s the movie.`
+              : `The host revealed it after ${result?.guessCount ?? 0} guess${result?.guessCount === 1 ? "" : "es"}.`}
         </p>
       </section>
 

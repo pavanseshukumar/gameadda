@@ -23,7 +23,7 @@ export function TeamPickerDialog({ open, teams, onPick, onCancel }) {
         onCancel();
       }}
       onClick={(e) => e.target === ref.current && onCancel()}
-      className="m-auto w-[min(92vw,26rem)] rounded-[1.75rem] open:animate-pop-in border-2 border-ink bg-paper p-0 text-ink shadow-[0_6px_0_0_var(--color-ink)] backdrop:bg-ink/55"
+      className="m-auto w-[min(92vw,26rem)] rounded-[1.75rem] open:animate-pop-in border-2 border-transparent bg-paper p-0 text-ink clay backdrop:bg-ink/55"
     >
       {/* The pop-in runs on the <dialog> (open:animate-pop-in): on this inner box its overshoot overflowed the dialog and flashed a scrollbar. */}
       {open && (
@@ -37,7 +37,7 @@ export function TeamPickerDialog({ open, teams, onPick, onCancel }) {
                 type="button"
                 onClick={() => onPick(team.id)}
                 style={teamStyle(team.color)}
-                className="flex min-h-14 items-center gap-3 rounded-2xl border-2 border-ink bg-[var(--team-soft)] px-4 text-left font-display text-lg font-bold shadow-[0_3px_0_0_var(--color-ink)] transition active:translate-y-[3px] active:shadow-none"
+                className="flex min-h-14 items-center gap-3 rounded-2xl border-2 border-transparent bg-[var(--team-soft)] px-4 text-left font-display text-lg font-bold clay clay-sm transition active:translate-y-[3px] active:shadow-none"
               >
                 <TeamToken color={team.color} size={28} />
                 {team.name}

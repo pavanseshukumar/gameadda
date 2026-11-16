@@ -130,7 +130,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
           className="btn btn-primary h-14 text-base sm:h-16 sm:flex-1 sm:text-lg"
           onClick={() => dispatch({ type: ACTIONS.NEXT_TURN, seed: Math.random() })}
         >
-          {nextTeam ? `Next: ${nextTeam.name}` : solo ? "Next word" : `Start round ${state.round + 1}`} <ArrowRightIcon size={20} />
+          <span className="min-w-0 truncate">{nextTeam ? `Next: ${nextTeam.name}` : solo ? "Next word" : `Start round ${state.round + 1}`}</span> <ArrowRightIcon className="shrink-0" size={20} />
         </button>
         <button type="button" className="btn btn-secondary h-14 px-8 text-base sm:h-16" onClick={() => setConfirmEnd(true)}>
           <FlagIcon size={18} /> Finish game

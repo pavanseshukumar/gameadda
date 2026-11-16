@@ -21,7 +21,7 @@ export function Segmented({ value, onChange, options, label, labelledBy, classNa
       role="radiogroup"
       aria-label={labelledBy ? undefined : label}
       aria-labelledby={labelledBy}
-      className={`grid auto-cols-fr grid-flow-col gap-2 ${className}`}
+      className={`clay-well grid auto-cols-fr grid-flow-col gap-1 rounded-[1.25rem] p-1 ${className}`}
     >
       {options.map((option) => {
         const selected = option.value === value;
@@ -95,9 +95,9 @@ export function MultiSelect({ values, onChange, options, label, className = "" }
             role="checkbox"
             aria-checked={selected}
             onClick={() => toggle(option.value)}
-            className="seg flex items-center justify-center gap-2"
+            className="seg seg-multi flex items-center justify-center gap-2"
           >
-            {option.color ? <span aria-hidden="true" className="size-2.5 shrink-0 rounded-full" style={{ background: option.color }} /> : null}
+            {option.color ? <span aria-hidden="true" className="seg-dot size-2.5 shrink-0 rounded-full" style={{ background: option.color }} /> : null}
             {option.label}
           </button>
         );

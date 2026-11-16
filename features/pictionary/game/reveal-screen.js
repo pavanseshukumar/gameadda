@@ -83,7 +83,7 @@ export function RevealScreen({ session }) {
               <p className="mt-1 text-cream/70">Check nobody’s peeking over your shoulder.</p>
             </div>
 
-            <div className="overflow-hidden rounded-[2rem] border-2 border-cream/20 bg-paper text-ink shadow-[0_6px_0_0_var(--team)] animate-pop-in">
+            <div className="overflow-hidden rounded-[2rem] border-2 border-cream/20 bg-paper text-ink clay-color [--tint:var(--team)] animate-pop-in">
               <div className="flex items-center justify-between gap-2 border-b-2 border-dashed border-line px-5 py-3">
                 <CategoryBadge category={turn.category} />
                 <DifficultyPips difficulty={turn.word.difficulty} className="text-ink-soft" />

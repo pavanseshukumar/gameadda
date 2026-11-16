@@ -39,7 +39,9 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#07070c",
+  themeColor: "#eeeafb",
+  // Lets pages draw under the notch / home bar; GameShell pads with env(safe-area-inset-*).
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }) {

@@ -32,11 +32,11 @@ export function ResultsScreen({ session }) {
       {champ && <Confetti color={getTeamColor(champ.color).hex} />}
 
       <section
-        className="relative overflow-hidden rounded-[2rem] border-2 border-ink bg-[var(--team)] px-6 pt-10 pb-8 text-center text-[var(--team-fg)] shadow-[0_6px_0_0_var(--color-ink)] animate-pop-in"
+        className="relative overflow-hidden rounded-[2rem] border-2 border-transparent bg-[var(--team)] px-6 pt-10 pb-8 text-center text-[var(--team-fg)] clay animate-pop-in"
         style={teamStyle(champ?.color ?? "sun")}
       >
         <Sunburst />
-        <span className="relative mx-auto inline-flex size-24 items-center justify-center rounded-full border-[3px] border-ink bg-sun text-ink shadow-[0_5px_0_0_var(--color-ink)] animate-wiggle">
+        <span className="relative mx-auto inline-flex size-24 items-center justify-center rounded-full border-[3px] border-transparent bg-sun text-ink clay animate-wiggle">
           <Trophy className="size-12" strokeWidth={2.25} />
         </span>
         <p className="relative mt-5 font-display text-sm font-bold tracking-[0.16em] uppercase opacity-85">
@@ -71,8 +71,8 @@ export function ResultsScreen({ session }) {
                 key={team.id}
                 style={{ ...teamStyle(team.color), animationDelay: `${150 + i * 90}ms` }}
                 className={cn(
-                  "flex items-center gap-3 rounded-2xl border-2 border-ink px-4 py-3 animate-rise",
-                  team.rank === 1 ? "bg-[var(--team-soft)] shadow-[0_4px_0_0_var(--color-ink)]" : "bg-paper",
+                  "flex items-center gap-3 rounded-2xl border-2 border-transparent px-4 py-3 animate-rise",
+                  team.rank === 1 ? "bg-[var(--team-soft)] clay" : "bg-paper",
                 )}
               >
                 <span className="w-9 font-display text-xl font-extrabold text-ink-muted">{ordinal(team.rank)}</span>

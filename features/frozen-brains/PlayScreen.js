@@ -9,7 +9,8 @@ import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { ArrowRightIcon, BulbIcon, EyeIcon, FlagIcon, PauseIcon } from "@/components/ui/icons";
 import { X } from "lucide-react";
-import { isSolo, teamText } from "@/lib/games/core/teams";
+import { isSolo } from "@/lib/games/core/teams";
+import { ReadyCard } from "@/components/game/ReadyCard";
 import { useClock } from "@/lib/games/core/useClock";
 import {
   ACTIONS,
@@ -29,6 +30,9 @@ const TILT = [-2.5, 1.5, -1, 2.5, -2, 1];
 
 export function PlayScreen({ state, dispatch }) {
   const [dialog, setDialog] = useState(null); // "reveal" | "end" | null
+  // True while a confirm sheet has the clock stopped mid-turn: the card stays on
+  // screen behind the sheet, and Cancel picks the turn straight back up.
+  const [held, setHeld] = useState(false);
   const [guess, setGuess] = useState("");
   const inputRef = useRef(null);
   const team = selectActiveTeam(state);
@@ -44,6 +48,23 @@ export function PlayScreen({ state, dispatch }) {
 
   const act = (type, extra) => dispatch({ type, now: Date.now(), ...extra });
   const pause = () => act(ACTIONS.PAUSE);
+  const showBoard = running || held;
+
+  // Reveal / End: stop the clock while the player decides, without swapping the card out.
+  const openDialog = (name) => {
+    if (running) {
+      pause();
+      setHeld(true);
+    }
+    setDialog(name);
+  };
+  const cancelDialog = () => {
+    setDialog(null);
+    if (held) {
+      setHeld(false);
+      act(ACTIONS.RESUME);
+    }
+  };
 
   // Time's up: the engine double-checks the clock, so an early tick is ignored.
   const timedOut = running && left <= 0;
@@ -94,11 +115,11 @@ export function PlayScreen({ state, dispatch }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Reveal the answer">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("reveal")} aria-label="Reveal the answer">
             <EyeIcon size={18} />
             <span className="hidden md:inline">Reveal</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("end"); }} aria-label="End game">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
             <FlagIcon size={18} />
             <span className="hidden md:inline">End</span>
           </button>
@@ -109,17 +130,19 @@ export function PlayScreen({ state, dispatch }) {
 
       <Scoreboard teams={state.teams} activeTeamId={team.id} />
 
+      {showBoard ? (
+      <>
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6">
-        <TurnIndicator team={team} hint={state.steal ? "Steal! Half the time, half the points" : "Say it out loud, fast. Type what you hear."} />
+        <TurnIndicator solo={state.teams.length === 1} team={team} hint={state.steal ? "Steal! Half the time, half the points" : "Say it out loud, fast. Type what you hear."} />
         <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
       </div>
 
       <section
         aria-label="Puzzle"
         key={wrongShake ? `miss-${event.seq}` : "card"}
-        className={`card relative mt-3 grid overflow-hidden rounded-[1.75rem] px-4 pb-5 pt-4 sm:mt-5 sm:rounded-[2rem] sm:px-10 sm:py-8 ${wrongShake ? "anim-shake" : ""}`}
+        className={`card mt-3 rounded-[1.75rem] px-4 pb-5 pt-4 sm:mt-5 sm:rounded-[2rem] sm:px-10 sm:py-8 ${wrongShake ? "anim-shake" : ""}`}
       >
-        <div className={`col-start-1 row-start-1 min-w-0 ${running ? "board-live" : "board-veiled"}`} aria-hidden={!running}>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="chip inline-flex items-center gap-2 px-3 py-1 text-xs sm:text-sm">
               <span aria-hidden="true" className="size-2.5 rounded-full" style={{ background: category.color }} />
@@ -193,34 +216,30 @@ export function PlayScreen({ state, dispatch }) {
           </div>
         </div>
 
-        {!running ? (
-          // Paused (button, hidden tab or a reload): the card is hidden until play resumes.
-          <div className="z-10 col-start-1 row-start-1 grid place-items-center">
-            <div className="sheet-panel anim-pop w-full max-w-sm rounded-[1.75rem] p-6 text-center" style={{ borderColor: team.color }}>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: teamText(team.color) }}>
-                Paused
-              </p>
-              <h2 className="mt-1 font-display text-3xl font-bold tracking-tight">{team.name}</h2>
-              <p className="mt-2 text-sm text-muted">The card is hidden while paused.</p>
-              <button type="button" autoFocus className="btn btn-primary mt-6 h-14 w-full text-base" onClick={() => act(ACTIONS.RESUME)}>
-                Resume · {Math.ceil(left / 1000)}s left <ArrowRightIcon size={18} />
-              </button>
-            </div>
-          </div>
-        ) : null}
       </section>
+      </>
+      ) : (
+        // Paused (button, hidden tab or a reload): the card is hidden until play resumes.
+        <ReadyCard
+          team={team}
+          solo={solo}
+          eyebrow={`Card ${state.round}`}
+          paused
+          pausedNote="The card is hidden while paused."
+          seconds={Math.ceil(left / 1000)}
+          onStart={() => act(ACTIONS.RESUME)}
+        />
+      )}
 
       <ConfirmDialog
         open={dialog === "reveal"}
         title="Reveal the answer?"
         body="This ends the round with no points."
         confirmLabel="Reveal"
-        onCancel={() => {
-          setDialog(null);
-          act(ACTIONS.RESUME);
-        }}
+        onCancel={cancelDialog}
         onConfirm={() => {
           setDialog(null);
+          setHeld(false);
           act(ACTIONS.REVEAL);
         }}
       />
@@ -230,12 +249,10 @@ export function PlayScreen({ state, dispatch }) {
         body="We’ll skip to the final standings. This card won’t count."
         confirmLabel="End game"
         tone="danger"
-        onCancel={() => {
-          setDialog(null);
-          act(ACTIONS.RESUME);
-        }}
+        onCancel={cancelDialog}
         onConfirm={() => {
           setDialog(null);
+          setHeld(false);
           dispatch({ type: ACTIONS.END_GAME });
         }}
       />

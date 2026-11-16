@@ -83,10 +83,10 @@ export function GuessScreen({ state, dispatch }) {
 
       <Scoreboard teams={state.teams} activeTeamId={team.id} />
 
-      <div className="lg:mt-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-10">
+      <div className="flex flex-1 flex-col lg:mt-6 lg:flex-none lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(24rem,30rem)] lg:items-center lg:gap-10">
         <div className="min-w-0">
           <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6 lg:mt-0">
-            <TurnIndicator team={team} hint={setter ? `Cracking ${setter.name}’s word` : "Cracking a random word"} />
+            <TurnIndicator solo={state.teams.length === 1} team={team} hint={setter ? `Cracking ${setter.name}’s word` : "Cracking a random word"} />
             <p className="shrink-0 text-right leading-none">
               <span className="block text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-subtle">Next guess</span>
               <span className="font-display text-2xl font-bold tabular-nums text-accent-3">+{selectNextGuessValue(state)}</span>
@@ -110,7 +110,7 @@ export function GuessScreen({ state, dispatch }) {
           </section>
         </div>
 
-        <section aria-label="Keyboard" className="mx-auto mt-4 w-full max-w-3xl sm:mt-6 lg:mt-0">
+        <section aria-label="Keyboard" className="dock">
           <Keyboard
             letterStates={selectLetterStates(state)}
             onKey={type}

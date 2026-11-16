@@ -26,7 +26,7 @@ export function GameTopBar({ session }) {
         href="/games/pictionary"
         aria-label="Home (your game is saved)"
         title="Home — your game is saved"
-        className="inline-flex size-11 items-center justify-center rounded-full border-2 border-ink bg-paper transition hover:bg-cream-deep active:scale-95"
+        className="inline-flex size-11 items-center justify-center rounded-full border-2 border-transparent bg-paper transition hover:bg-cream-deep active:scale-95"
       >
         <House className="size-5" />
       </Link>
@@ -49,7 +49,7 @@ export function GameTopBar({ session }) {
           href="/games/pictionary/setup"
           aria-label="Change setup"
           title="Change setup"
-          className="inline-flex size-11 items-center justify-center rounded-full border-2 border-ink bg-paper transition hover:bg-cream-deep active:scale-95"
+          className="inline-flex size-11 items-center justify-center rounded-full border-2 border-transparent bg-paper transition hover:bg-cream-deep active:scale-95"
         >
           <Settings2 className="size-5" />
         </Link>

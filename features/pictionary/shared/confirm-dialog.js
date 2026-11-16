@@ -24,7 +24,7 @@ export function ConfirmDialog({ open, title, body, confirmLabel = "Confirm", can
       onClick={(e) => {
         if (e.target === ref.current) onCancel();
       }}
-      className="m-auto w-[min(92vw,26rem)] rounded-[1.75rem] open:animate-pop-in border-2 border-ink bg-paper p-0 text-ink shadow-[0_6px_0_0_var(--color-ink)] backdrop:bg-ink/55 backdrop:backdrop-blur-[2px]"
+      className="m-auto w-[min(92vw,26rem)] rounded-[1.75rem] open:animate-pop-in border-2 border-transparent bg-paper p-0 text-ink clay backdrop:bg-ink/55 backdrop:backdrop-blur-[2px]"
     >
       {/* The pop-in runs on the <dialog> (open:animate-pop-in): on this inner box its overshoot overflowed the dialog and flashed a scrollbar. */}
       {open && (

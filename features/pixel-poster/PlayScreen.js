@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
+import { ReadyCard, SoloScore } from "@/components/game/ReadyCard";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -32,11 +32,17 @@ import { feedbackFromEvent } from "./feedback";
  */
 export function PlayScreen({ state, dispatch, onSkip, skipping }) {
   const [dialog, setDialog] = useState(null); // "reveal" | "end" | null
+  // True while a confirm sheet has the clock stopped mid-turn: the poster stays on
+  // screen behind the sheet, and Cancel picks the turn straight back up.
+  const [held, setHeld] = useState(false);
   const [guess, setGuess] = useState("");
   const inputRef = useRef(null);
   const team = selectActiveTeam(state);
   const movie = state.movie;
   const running = state.turn.status === TURN.RUNNING;
+  const paused = state.turn.status === TURN.PAUSED;
+  const showBoard = running || (held && paused);
+  const solo = state.teams.length === 1;
   const now = useClock(running);
   const left = remainingMs(state, now);
   const totalMs = turnSecondsFor(state) * 1000;
@@ -49,6 +55,27 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
   const act = (type, extra) => dispatch({ type, ...extra });
   const startTurn = () => act(ACTIONS.START_TURN, { now: Date.now() });
   const pause = () => act(ACTIONS.PAUSE, { now: Date.now() });
+
+  // Give up / End: stop the clock while the player decides, without swapping the poster out.
+  const openDialog = (name) => {
+    if (running) {
+      pause();
+      setHeld(true);
+    }
+    setDialog(name);
+  };
+  const cancelDialog = () => {
+    setDialog(null);
+    if (held) {
+      setHeld(false);
+      startTurn();
+    }
+  };
+  const confirmDialog = (type) => {
+    setDialog(null);
+    setHeld(false);
+    act(type);
+  };
 
   // Time's up: the engine double-checks the clock, so an early tick is ignored.
   const timedOut = running && left <= 0;
@@ -110,11 +137,11 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Give up this round">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("reveal")} aria-label="Give up this round">
             <EyeIcon size={18} />
             <span className="hidden md:inline">Give up</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("end"); }} aria-label="End game">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
             <FlagIcon size={18} />
             <span className="hidden md:inline">End</span>
           </button>
@@ -123,18 +150,24 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
     >
       <FeedbackToast message={feedbackFromEvent(state, event)} />
 
-      <Scoreboard teams={state.teams} activeTeamId={team.id} />
+      {/* Solo: the score sits in the turn row instead, so nothing is shown twice. */}
+      {solo ? null : <Scoreboard teams={state.teams} activeTeamId={team.id} />}
 
-      <div className="mt-3 sm:mt-6">
-        <TurnIndicator team={team} hint={state.steal ? "Steal! Half time, half points" : "Guess as often as you like"} />
+      {showBoard ? (
+      <>
+      <div className={solo ? "" : "mt-3 sm:mt-6"}>
+        {solo ? (
+          <SoloScore score={team.score} />
+        ) : (
+          <TurnIndicator team={team} hint={state.steal ? "Steal! Half time, half points" : "Guess as often as you like"} />
+        )}
       </div>
 
-      <section aria-label="Poster" className="card relative mt-3 grid overflow-hidden rounded-[1.5rem] p-3 sm:mt-5 sm:rounded-[2rem] sm:p-7">
-        {/* Board and hand-off card share one grid cell, so the card never overflows a short board. */}
-        <div className={`col-start-1 row-start-1 min-w-0 ${running ? "board-live" : "board-veiled"}`} aria-hidden={!running}>
+      <section aria-label="Poster" className="card mt-3 rounded-[1.5rem] p-3 sm:mt-5 sm:rounded-[2rem] sm:p-7">
+        <div className="min-w-0">
           <div className="lg:grid lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-center lg:gap-10">
-            {/* Height-capped so the guess box stays on screen on phones. */}
-            <div className="marquee-frame mx-auto w-full max-w-[min(100%,calc(48dvh*2/3+24px))] lg:max-w-none">
+            {/* Height-capped (--poster-h) so the timer and guess box stay on screen on phones. */}
+            <div className="marquee-frame mx-auto w-fit max-w-full [--poster-h:38dvh] sm:[--poster-h:46dvh] lg:[--poster-h:min(70dvh,38rem)]">
               <PosterReveal src={movie.poster} stage={stage} seedKey={movie.id} />
             </div>
 
@@ -142,7 +175,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
               {/* Timer sits right above the guess box, where the team is looking. */}
               <div className="flex items-center justify-between gap-2 px-0.5">
                 <div className="flex min-w-0 items-center gap-3">
-                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={state.turn.status === TURN.PAUSED} />
+                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
                   <div className="min-w-0">
                     <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">Worth right now</p>
                     <p className="font-display text-3xl font-extrabold tabular-nums text-accent-3 sm:text-4xl">{pointsAt(state, stage)}</p>
@@ -161,10 +194,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
                   <button
                     type="button"
                     className="btn btn-secondary h-9 px-3 text-xs hover:border-miss/60 hover:text-miss sm:text-sm"
-                    onClick={() => {
-                      pause();
-                      setDialog("reveal");
-                    }}
+                    onClick={() => openDialog("reveal")}
                     disabled={!running}
                     aria-label="Give up this round and reveal the movie"
                   >
@@ -227,49 +257,49 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
           </div>
         </div>
 
-        {/* Hidden while a confirm dialog is open, so the paused card doesn't stack behind it. */}
-        {!running && !dialog ? (
-          <div className="z-10 col-start-1 row-start-1 grid place-items-center py-1 sm:py-2">
-            <TurnHandoff
-              team={team}
-              paused={state.turn.status === TURN.PAUSED}
-              seconds={Math.ceil(left / 1000)}
-              label={state.steal ? "Steal chance" : undefined}
-              detail={
-                state.turn.status === TURN.PAUSED ? (
-                  "The poster is hidden while paused."
-                ) : state.steal ? (
-                  <span className="font-semibold text-accent-3">Sharpest poster · half time, half points</span>
-                ) : (
-                  <>
-                    Starts shuffled and blurred, clears up after {Math.round(totalMs / 1000 / STAGE_COUNT)}s.
-                    <button
-                      type="button"
-                      className="mx-auto mt-2 flex items-center gap-1.5 text-xs font-semibold text-subtle underline-offset-4 hover:text-foreground hover:underline disabled:opacity-50"
-                      onClick={onSkip}
-                      disabled={skipping}
-                    >
-                      <RefreshIcon size={13} /> {skipping ? "Finding another…" : "Swap for another movie"}
-                    </button>
-                  </>
-                )
-              }
-              onStart={startTurn}
-            />
-          </div>
-        ) : null}
       </section>
+      </>
+      ) : (
+        <ReadyCard
+          team={team}
+          solo={solo}
+          eyebrow={state.steal ? "Steal chance" : `Round ${state.round}`}
+          paused={paused}
+          pausedNote="The poster is hidden while paused."
+          seconds={Math.ceil(left / 1000)}
+          onStart={startTurn}
+        >
+          {/* A tiny marquee poster: what's coming, without showing it. */}
+          <div className="marquee-frame mx-auto mt-5 w-24 !rounded-2xl !p-2" aria-hidden="true">
+            <div className="grid aspect-[2/3] place-items-center rounded-lg bg-[#3a1e14] font-display text-4xl font-bold text-[#ffe7a3]">?</div>
+          </div>
+          {state.steal ? (
+            <p className="mt-4 text-sm font-semibold text-accent-3">Sharpest poster · half the time, half the points</p>
+          ) : (
+            <>
+              <p className="mt-4 text-sm text-muted">
+                Starts blurred and shuffled, gets clearer every {Math.round(totalMs / 1000 / STAGE_COUNT)}s. Guess early for more points.
+              </p>
+              <button
+                type="button"
+                className="mx-auto mt-3 flex min-h-9 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-subtle transition hover:bg-surface-strong hover:text-foreground disabled:opacity-50"
+                onClick={onSkip}
+                disabled={skipping}
+              >
+                <RefreshIcon size={13} /> {skipping ? "Finding another…" : "Swap for another movie"}
+              </button>
+            </>
+          )}
+        </ReadyCard>
+      )}
 
       <ConfirmDialog
         open={dialog === "reveal"}
         title="Give up this round?"
         body="The movie is revealed and nobody scores. The next round starts fresh."
         confirmLabel="Give up & reveal"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.GIVE_UP);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.GIVE_UP)}
       />
       <ConfirmDialog
         open={dialog === "end"}
@@ -277,11 +307,8 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
         body="We’ll skip to the final standings. This round won’t be finished."
         confirmLabel="End game"
         tone="danger"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.END_GAME);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.END_GAME)}
       />
     </GameShell>
   );

@@ -52,8 +52,8 @@ export function RevealScreen({ state, dispatch, onEnd }) {
         ) : (
           <section
             key={`card-${player.id}`}
-            className="card anim-pop w-full max-w-sm rounded-[1.75rem] p-6 text-center sm:p-8"
-            style={imposter ? { borderColor: "var(--accent-2)", boxShadow: "0 6px 0 0 var(--accent-2)" } : undefined}
+            className={`card anim-pop w-full max-w-sm rounded-[1.75rem] p-6 text-center sm:p-8 ${imposter ? "clay-ring" : ""}`}
+            style={{ "--ring": "var(--accent-2)" }}
             aria-live="polite"
           >
             {imposter ? (

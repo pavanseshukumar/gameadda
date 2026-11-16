@@ -39,7 +39,7 @@ export function TurnResult({ session }) {
       >
         <span
           className={cn(
-            "inline-flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-paper animate-stamp",
+            "inline-flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-transparent bg-paper animate-stamp",
             success ? "text-mint" : "text-coral",
           )}
         >

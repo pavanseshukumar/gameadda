@@ -4,7 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
-import { TurnHandoff } from "@/components/game/TurnHandoff";
+import { ReadyCard } from "@/components/game/ReadyCard";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
@@ -31,6 +31,9 @@ import { feedbackFromEvent } from "./feedback";
  */
 export function PlayScreen({ state, dispatch, pool }) {
   const [dialog, setDialog] = useState(null); // "reveal" | "end" | null
+  // True while a confirm sheet has the clock stopped mid-turn: the guess box stays on
+  // screen behind the sheet, and Cancel picks the turn straight back up.
+  const [held, setHeld] = useState(false);
   const inputRef = useRef(null);
   const team = selectActiveTeam(state);
   const running = state.turn.status === TURN.RUNNING;
@@ -41,10 +44,34 @@ export function PlayScreen({ state, dispatch, pool }) {
   const event = state.lastEvent;
   const hints = selectHints(state);
   const guessedIds = new Set(state.guesses.map((g) => g.movie.id));
+  // Team games: the previous team ran out of time, so this ready card says so.
+  const timedOutTeam = event?.type === "timeout" && !paused ? state.teams.find((t) => t.id === event.teamId) : null;
 
   const act = (type, extra) => dispatch({ type, ...extra });
   const startTurn = () => act(ACTIONS.START_TURN, { now: Date.now() });
   const pause = () => act(ACTIONS.PAUSE, { now: Date.now() });
+  const showControls = running || (held && paused);
+
+  // Reveal / End: stop the clock while the player decides, without swapping the controls out.
+  const openDialog = (name) => {
+    if (running) {
+      pause();
+      setHeld(true);
+    }
+    setDialog(name);
+  };
+  const cancelDialog = () => {
+    setDialog(null);
+    if (held) {
+      setHeld(false);
+      startTurn();
+    }
+  };
+  const confirmDialog = (type) => {
+    setDialog(null);
+    setHeld(false);
+    act(type);
+  };
 
   const timedOut = running && left <= 0;
   useEffect(() => {
@@ -97,11 +124,11 @@ export function PlayScreen({ state, dispatch, pool }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("reveal"); }} aria-label="Reveal the movie">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("reveal")} aria-label="Reveal the movie">
             <EyeIcon size={18} />
             <span className="hidden md:inline">Reveal</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => { pause(); setDialog("end"); }} aria-label="End game">
+          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
             <FlagIcon size={18} />
             <span className="hidden md:inline">End</span>
           </button>
@@ -113,17 +140,17 @@ export function PlayScreen({ state, dispatch, pool }) {
       <Scoreboard teams={state.teams} activeTeamId={team.id} />
 
       <div className="mt-3 sm:mt-6">
-        <TurnIndicator team={team} hint="One guess per turn. Hotter means closer." />
+        <TurnIndicator solo={state.teams.length === 1} team={team} hint="One guess per turn. Hotter means closer." />
       </div>
 
       <div className="mt-3 grid gap-4 sm:mt-5 lg:grid-cols-[minmax(0,24rem)_1fr] lg:items-start lg:gap-8">
         {/* Controls: timer, pot and hints sit right by the guess box. Sticky on laptops so it stays in view as the board grows. */}
         <section aria-label="Your guess" className="card relative rounded-[1.5rem] p-4 sm:rounded-[2rem] sm:p-6 lg:sticky lg:top-4">
-          {running ? (
+          {showControls ? (
             <>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-3">
-                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} />
+                  <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
                   <div className="min-w-0">
                     <p className="text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-subtle sm:text-xs">Pot</p>
                     <p className="font-display text-3xl font-extrabold tabular-nums text-accent-3 sm:text-4xl">{currentPot(state)}</p>
@@ -152,21 +179,33 @@ export function PlayScreen({ state, dispatch, pool }) {
               <p className="mt-1.5 px-1 text-xs text-subtle">Pick from the list. A guess passes the turn on.</p>
             </>
           ) : (
-            <div className="grid place-items-center">
-              <TurnHandoff
-                team={team}
-                paused={paused}
-                seconds={Math.ceil(left / 1000)}
-                detail={
-                  paused
-                    ? "Timer paused."
-                    : state.guesses.length === 0
-                      ? "Any Telugu movie will do for a first reading."
-                      : `Pot is at ${currentPot(state)}. Study the board!`
-                }
-                onStart={startTurn}
-              />
-            </div>
+            <ReadyCard
+              bare
+              team={team}
+              solo={state.teams.length === 1}
+              eyebrow={timedOutTeam ? "Time’s up · Over to you" : `Round ${state.round} · ${state.guesses.length ? "Your guess" : "First reading"}`}
+              paused={paused}
+              pausedNote="Timer paused. The readings stay on the board."
+              seconds={Math.ceil(left / 1000)}
+              onStart={startTurn}
+            >
+              {/* The cold → hot scale every reading lands on. */}
+              <div className="mx-auto mt-5 h-3 max-w-60 rounded-full bg-[linear-gradient(90deg,#7cb8fa,#5fdcef_25%,#fcd060_50%,#fb9a5a_75%,#f26b6b)] shadow-[inset_0_2px_3px_rgb(0_0_0/0.12)]" aria-hidden="true" />
+              {timedOutTeam ? (
+                <p className="mt-4 text-sm font-semibold" style={{ color: "var(--miss)" }}>
+                  {timedOutTeam.name} ran out of time. No guess this turn.
+                </p>
+              ) : null}
+              <p className="mt-3 text-sm text-muted">
+                {state.guesses.length === 0 ? (
+                  "Any Telugu movie will do for a first reading."
+                ) : (
+                  <>
+                    Pot is at <span className="font-semibold tabular-nums text-accent-3">{currentPot(state)}</span>. Study the readings first!
+                  </>
+                )}
+              </p>
+            </ReadyCard>
           )}
 
           {hints.length ? (
@@ -204,11 +243,8 @@ export function PlayScreen({ state, dispatch, pool }) {
         title="Reveal the movie?"
         body="This ends the round with no winner."
         confirmLabel="Reveal movie"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.GIVE_UP);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.GIVE_UP)}
       />
       <ConfirmDialog
         open={dialog === "end"}
@@ -216,11 +252,8 @@ export function PlayScreen({ state, dispatch, pool }) {
         body="We’ll skip to the final standings. This round won’t be finished."
         confirmLabel="End game"
         tone="danger"
-        onCancel={() => setDialog(null)}
-        onConfirm={() => {
-          setDialog(null);
-          act(ACTIONS.END_GAME);
-        }}
+        onCancel={cancelDialog}
+        onConfirm={() => confirmDialog(ACTIONS.END_GAME)}
       />
     </GameShell>
   );

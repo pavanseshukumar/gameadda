@@ -44,12 +44,11 @@ export function RoundCompleteScreen({ state, dispatch }) {
         </p>
         {team ? (
           <div
-            className="anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold"
+            className="clay-color anim-pop mx-auto mt-6 grid size-20 place-items-center rounded-[1.75rem] font-display text-3xl font-extrabold"
             style={{
               background: solved ? team.color : "var(--surface-strong)",
               color: solved ? teamInk(team.color) : teamText(team.color),
-              boxShadow: "0 5px 0 0 var(--depth)",
-              border: "2px solid var(--edge)",
+              "--tint": solved ? team.color : "var(--depth)",
             }}
           >
             {team.name.replace(/^team\s+/i, "").charAt(0).toUpperCase()}
@@ -118,7 +117,7 @@ export function RoundCompleteScreen({ state, dispatch }) {
           className="btn btn-primary h-14 text-base sm:h-16 sm:flex-1 sm:text-lg"
           onClick={() => dispatch({ type: ACTIONS.NEXT_TURN, random: Math.random() })}
         >
-          {roundDone ? `Start round ${state.round + 1}` : `Next: ${nextTeam.name}`} <ArrowRightIcon size={20} />
+          <span className="min-w-0 truncate">{roundDone ? `Start round ${state.round + 1}` : `Next: ${nextTeam.name}`}</span> <ArrowRightIcon className="shrink-0" size={20} />
         </button>
         <button type="button" className="btn btn-secondary h-14 px-8 text-base sm:h-16" onClick={() => setConfirmEnd(true)}>
           <FlagIcon size={18} /> Finish game
@@ -150,8 +149,8 @@ function BonusBurst({ alphabetPoints, multiplier, bonus }) {
           <span className="ml-1 text-sm font-semibold text-subtle">pts</span>
         </span>
         <span
-          className="anim-bonus grid size-16 place-items-center rounded-[1.25rem] text-3xl text-[var(--accent-3-ink)] sm:size-20 sm:text-4xl"
-          style={{ background: "var(--accent-3)", boxShadow: "0 5px 0 0 var(--depth)", border: "2px solid var(--edge)", animationDelay: "450ms" }}
+          className="clay-color anim-bonus grid size-16 place-items-center rounded-[1.25rem] text-3xl text-[var(--accent-3-ink)] sm:size-20 sm:text-4xl"
+          style={{ background: "var(--accent-3)", "--tint": "var(--accent-3)", animationDelay: "450ms" }}
         >
           {multiplier}×
         </span>

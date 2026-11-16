@@ -43,8 +43,8 @@ function GuessRow({ guess, team, latest }) {
 
   return (
     <li
-      className={`relative overflow-hidden rounded-2xl border-2 bg-panel px-3 py-2.5 sm:px-4 ${latest ? "anim-pop" : ""}`}
-      style={{ borderColor: latest ? color : "var(--edge)", boxShadow: `0 4px 0 0 ${latest ? color : "var(--depth)"}` }}
+      className={`clay clay-sm relative overflow-hidden rounded-2xl bg-panel px-3 py-2.5 sm:px-4 ${latest ? "anim-pop clay-ring" : ""}`}
+      style={{ "--ring": color }}
     >
       {/* Thermometer fill behind the row. */}
       <span

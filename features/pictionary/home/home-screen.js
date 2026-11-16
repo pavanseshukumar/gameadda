@@ -22,21 +22,22 @@ export function HomeScreen() {
   const onNewGame = () => (inProgress ? setConfirmNew(true) : router.push("/games/pictionary/setup"));
 
   return (
-    <PageShell wide className="justify-center">
-      <div className="grid items-center gap-10 py-6 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
-        <section className="animate-rise">
+    <PageShell wide className="sm:justify-center">
+      {/* minmax(0, …): columns never grow past the screen, whatever a card's text wants. */}
+      <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-6 py-1 sm:gap-10 sm:py-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-16">
+        <section className="min-w-0 animate-rise">
           <Link
             href="/"
-            className="-ml-2 mb-6 flex min-h-11 w-fit items-center gap-1 rounded-full px-2 font-semibold text-ink-soft transition hover:text-ink"
+            className="-ml-2 mb-3 flex min-h-11 w-fit items-center gap-1 rounded-full px-2 font-semibold text-ink-soft transition hover:text-ink"
           >
             <ChevronLeft className="size-5" />
             All games
           </Link>
           <Logo size="lg" />
-          <h1 className="mt-8 max-w-xl font-display text-[2.6rem] leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl">
+          <h1 className="mt-5 max-w-xl font-display text-[clamp(2.1rem,10vw,2.6rem)] sm:mt-8 leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl">
             Grab a pen. <span className="hand-underline">Draw badly.</span> Win anyway.
           </h1>
-          <p className="mt-4 max-w-md text-lg text-ink-soft text-pretty">
+          <p className="mt-3 max-w-md text-[0.9375rem] text-ink-soft text-pretty sm:mt-4 sm:text-lg">
             The board, dice, word cards, timer and scorekeeper for your drawing game night — on one shared phone. Paper
             and pens not included.
           </p>
@@ -64,19 +65,19 @@ export function HomeScreen() {
             </div>
           )}
 
-          <div className="mt-8 flex max-w-md flex-col gap-4">
+          <div className="mt-6 flex max-w-md flex-col gap-3 sm:mt-8 sm:gap-4">
             {ready && session && <SavedGameCard session={session} />}
             <Button size="xl" variant={inProgress ? "paper" : "ink"} block onClick={onNewGame}>
               <Plus className="size-6" strokeWidth={3} />
               New game
             </Button>
             <div className="grid grid-cols-2 gap-3">
-              <ButtonLink href="/games/pictionary/how-to-play" variant="paper" size="lg" className="whitespace-nowrap px-4">
-                <BookOpen className="size-5" />
+              <ButtonLink href="/games/pictionary/how-to-play" variant="paper" size="lg" className="whitespace-nowrap px-3 sm:px-4">
+                <BookOpen className="size-5 shrink-0" />
                 How to play
               </ButtonLink>
-              <ButtonLink href="/games/pictionary/settings" variant="paper" size="lg" className="whitespace-nowrap px-4">
-                <Settings className="size-5" />
+              <ButtonLink href="/games/pictionary/settings" variant="paper" size="lg" className="whitespace-nowrap px-3 sm:px-4">
+                <Settings className="size-5 shrink-0" />
                 Settings
               </ButtonLink>
             </div>
@@ -114,23 +115,25 @@ function SavedGameCard({ session }) {
         : `Turn ${session.turnNumber} · ${team.name} up`;
 
   return (
-    <div className="card-ink flex items-center gap-4 p-4 animate-pop-in">
+    <div className="card-ink flex flex-wrap items-center gap-3 p-3.5 animate-pop-in sm:flex-nowrap sm:gap-4 sm:p-4">
+      {/* Narrow phones: the button drops to its own full-width row under the status. */}
       <div className="flex -space-x-2" aria-hidden>
         {session.teams.map((t) => (
           <span
             key={t.id}
-            className="size-8 rounded-full border-2 border-paper ring-2 ring-ink"
+            className="size-7 rounded-full border-2 border-paper shadow-[0_2px_4px_rgb(0_0_0/0.18)] sm:size-8"
             style={{ background: getTeamColor(t.color).hex }}
           />
         ))}
       </div>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 basis-44">
         <p className="text-xs font-bold tracking-wider text-ink-muted uppercase">
           Saved · {session.mode === "classic" ? "Classic Board" : "Quick Play"}
         </p>
-        <p className="truncate font-semibold">{status}</p>
+        {/* Wraps to a second line on narrow phones rather than pushing the button off screen. */}
+        <p className="font-semibold leading-snug text-balance">{status}</p>
       </div>
-      <ButtonLink href="/games/pictionary/play" variant={finished ? "paper" : "success"} size="sm" className="shrink-0">
+      <ButtonLink href="/games/pictionary/play" variant={finished ? "sun" : "success"} size="sm" className="w-full shrink-0 sm:w-auto">
         {finished ? <Trophy className="size-4" /> : <Play className="size-4" fill="currentColor" />}
         {finished ? "Results" : "Continue"}
       </ButtonLink>

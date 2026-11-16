@@ -14,6 +14,9 @@ import { rankTeams, teamInk } from "@/lib/games/core/teams";
  */
 export function Scoreboard({ teams, activeTeamId = null, roundPoints = {}, variant = "strip" }) {
   if (variant === "ranked") return <RankedScoreboard teams={teams} roundPoints={roundPoints} />;
+  // Solo: one card saying "You · 0" adds nothing; the turn row shows the score instead
+  // (<TurnIndicator solo />).
+  if (teams.length === 1) return null;
 
   const n = teams.length;
   // Every team stays visible, no sideways scrolling:
@@ -39,11 +42,10 @@ export function Scoreboard({ teams, activeTeamId = null, roundPoints = {}, varia
           <li
             key={team.id}
             aria-current={active ? "true" : undefined}
-            className="min-w-0 rounded-xl border-2 px-2.5 py-2 transition-[background,border-color,box-shadow] duration-500 sm:rounded-2xl sm:px-3.5 sm:py-3"
+            className={`clay clay-sm min-w-0 rounded-2xl px-2.5 py-1.5 transition-[background,outline-color] duration-500 sm:px-3.5 sm:py-3 ${active ? "clay-ring" : ""}`}
             style={{
-              borderColor: active ? team.color : "var(--edge)",
-              background: active ? `color-mix(in oklab, ${team.color} 18%, var(--panel))` : "var(--panel)",
-              boxShadow: `0 4px 0 0 ${active ? team.color : "var(--depth)"}`,
+              "--ring": team.color,
+              background: active ? `color-mix(in oklab, ${team.color} 16%, var(--panel))` : "var(--panel)",
             }}
           >
             <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">

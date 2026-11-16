@@ -298,7 +298,7 @@ function SetupForm() {
       </section>
 
       {/* Sticky start bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-ink bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center gap-4">
           <p className="min-w-0 flex-1 text-sm leading-tight text-ink-soft">
             <span className="block font-display text-base font-bold text-ink">
@@ -339,8 +339,8 @@ function ModeCard({ selected, onSelect, icon: Icon, title, body }) {
       className={cn(
         "group relative flex flex-col items-start gap-3 rounded-[1.75rem] border-2 p-5 text-left transition active:scale-[0.98]",
         selected
-          ? "border-ink bg-ink text-cream shadow-[0_5px_0_0_var(--color-coral)]"
-          : "border-ink bg-paper shadow-[0_5px_0_0_var(--color-ink)] hover:-translate-y-0.5",
+          ? "border-transparent bg-ink text-cream clay-color [--tint:var(--color-coral)]"
+          : "border-transparent bg-paper clay hover:-translate-y-0.5",
       )}
     >
       <span

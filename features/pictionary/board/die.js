@@ -17,7 +17,7 @@ export function Die({ value, size = 96, className, color = PALETTE.paper, pip = 
       viewBox="0 0 100 100"
       width={size}
       height={size}
-      className={cn("drop-shadow-[0_5px_0_var(--color-ink)]", className)}
+      className={cn("drop-clay", className)}
       role="img"
       aria-label={`Die showing ${value}`}
     >

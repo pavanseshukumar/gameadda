@@ -33,8 +33,8 @@ export function FinalResults({ teams, rounds, onPlayAgain }) {
 
       <section className="relative pt-8 text-center sm:pt-14">
         <div
-          className="anim-pop mx-auto grid size-24 place-items-center rounded-[2rem] border-2 border-edge"
-          style={{ color: champion ? teamInk(champion.color) : "var(--btn-primary-fg, #fff)", background: champion?.color ?? "var(--accent)", boxShadow: "0 6px 0 0 var(--depth)" }}
+          className="clay-color anim-pop mx-auto grid size-24 place-items-center rounded-[2rem]"
+          style={{ color: champion ? teamInk(champion.color) : "#fff", background: champion?.color ?? "var(--accent)", "--tint": champion?.color ?? "var(--accent)" }}
         >
           <TrophyIcon size={44} />
         </div>

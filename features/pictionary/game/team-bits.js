@@ -6,7 +6,7 @@ export function TeamToken({ color, size = 28, className, children }) {
   const c = getTeamColor(color);
   return (
     <span
-      className={cn("inline-flex shrink-0 items-center justify-center rounded-full border-2 border-ink font-display font-extrabold", className)}
+      className={cn("inline-flex shrink-0 items-center justify-center rounded-full border-2 border-transparent font-display font-extrabold", className)}
       style={{ width: size, height: size, background: c.hex, color: c.fg, boxShadow: "inset 0 -3px 0 rgba(0,0,0,.18)" }}
     >
       {children}
@@ -41,7 +41,7 @@ export function Standings({ teams, activeId, metric, metricLabel, highlightId })
             style={teamStyle(team.color)}
             className={cn(
               "flex items-center gap-3 rounded-2xl border-2 px-3 py-2.5 transition",
-              active ? "border-ink bg-[var(--team-soft)] shadow-[0_3px_0_0_var(--color-ink)]" : "border-line bg-paper",
+              active ? "border-transparent bg-[var(--team-soft)] clay clay-sm" : "border-line bg-paper",
             )}
           >
             <TeamToken color={team.color} size={30} />

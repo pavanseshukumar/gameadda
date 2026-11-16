@@ -182,7 +182,7 @@ export function BoardLegend({ board }) {
     <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-sm font-semibold text-ink-soft">
       {ids.map((id) => (
         <li key={id} className="inline-flex items-center gap-1.5">
-          <span className="size-3 rounded-[4px] border-2 border-ink" style={{ background: getCategory(id).color }} />
+          <span className="size-3 rounded-[4px] border-2 border-transparent" style={{ background: getCategory(id).color }} />
           {getCategory(id).label}
         </li>
       ))}

@@ -23,7 +23,7 @@ export function TeamEditor({ team, index, onChange }) {
   return (
     <div className="card-ink overflow-hidden" style={teamStyle(team.color)}>
       <div className="flex items-center gap-3 bg-[var(--team)] px-4 py-3">
-        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-paper font-display text-lg font-extrabold text-[var(--team-deep)]">
+        <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-transparent bg-paper font-display text-lg font-extrabold text-[var(--team-deep)]">
           {index + 1}
         </span>
         <label className="sr-only" htmlFor={`team-name-${team.key}`}>
@@ -53,7 +53,7 @@ export function TeamEditor({ team, index, onChange }) {
                 aria-label={c.label}
                 onClick={() => onChange({ color: id })}
                 className={cn(
-                  "inline-flex size-10 items-center justify-center rounded-full border-2 border-ink transition active:scale-90",
+                  "inline-flex size-10 items-center justify-center rounded-full border-2 border-transparent transition active:scale-90",
                   selected ? "scale-110 ring-3 ring-ink/15" : "opacity-80 hover:opacity-100",
                 )}
                 style={{ background: c.hex }}
@@ -104,7 +104,7 @@ export function TeamEditor({ team, index, onChange }) {
               type="submit"
               aria-label="Add player"
               disabled={!playerName.trim() || full}
-              className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl border-2 border-ink bg-[var(--team)] text-[var(--team-fg)] transition active:scale-95 disabled:opacity-35"
+              className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl border-2 border-transparent bg-[var(--team)] text-[var(--team-fg)] transition active:scale-95 disabled:opacity-35"
             >
               <Plus className="size-5" strokeWidth={3} />
             </button>

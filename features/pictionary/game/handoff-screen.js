@@ -26,7 +26,7 @@ export function HandoffScreen({ session }) {
 
   return (
     <div className="flex flex-1 flex-col gap-5" style={teamStyle(team.color)}>
-      <section className="relative overflow-hidden rounded-[2rem] border-2 border-ink bg-[var(--team)] px-6 pt-7 pb-8 text-center text-[var(--team-fg)] shadow-[0_6px_0_0_var(--color-ink)] animate-pop-in">
+      <section className="relative overflow-hidden rounded-[2rem] border-2 border-transparent bg-[var(--team)] px-6 pt-7 pb-8 text-center text-[var(--team-fg)] clay animate-pop-in">
         <Scribbles />
         <p className="relative inline-flex items-center gap-2 rounded-full bg-black/15 px-3 py-1 font-display text-sm font-bold">
           Turn {turn.number} · {team.name}
@@ -36,7 +36,7 @@ export function HandoffScreen({ session }) {
           {named ? drawer : team.name}
         </h1>
         <div className="relative mt-6 flex justify-center">
-          <CategoryBadge category={turn.category} size="lg" className="border-2 border-ink shadow-[0_3px_0_0_var(--color-ink)]" />
+          <CategoryBadge category={turn.category} size="lg" className="border-2 border-transparent clay clay-sm" />
         </div>
       </section>
 
@@ -118,7 +118,7 @@ export function HandoffScreen({ session }) {
 function Notice({ icon: Icon, tone, children }) {
   return (
     <div
-      className={`flex items-start gap-3 rounded-2xl border-2 border-ink p-4 animate-rise ${tone === "sun" ? "bg-sun-soft" : "bg-paper"}`}
+      className={`flex items-start gap-3 rounded-2xl border-2 border-transparent p-4 animate-rise ${tone === "sun" ? "bg-sun-soft" : "bg-paper"}`}
     >
       <Icon className="mt-0.5 size-5 shrink-0" />
       <p className="text-ink-soft [&_strong]:text-ink">{children}</p>

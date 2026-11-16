@@ -81,7 +81,7 @@ export function PlayScreen({ state, dispatch }) {
       <Scoreboard teams={state.teams} activeTeamId={team.id} />
 
       <div className="mt-3 flex items-center justify-between gap-3 sm:mt-6">
-        <TurnIndicator team={team} hint={solo ? "Work down your list, top to bottom." : "Top to bottom. Guess right and keep going; anything else passes the turn."} />
+        <TurnIndicator solo={state.teams.length === 1} team={team} hint={solo ? "Work down your list, top to bottom." : "Top to bottom. Guess right and keep going; anything else passes the turn."} />
         {seconds && live ? (
           // Starts with the turn and restarts on every event (new turn, right answer). Held while a confirm box is open.
           <TurnTimer

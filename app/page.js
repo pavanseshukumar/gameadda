@@ -4,6 +4,9 @@ import { ArrowRightIcon, SparkleIcon } from "@/components/ui/icons";
 
 const TILT = [-6, 4, -3, 7, -5, 3, -4];
 
+/** Tiny clay shading for the preview tiles. */
+const CLAY_NUB = "0 3px 5px -2px var(--depth), inset 2px 2px 3px -1px rgb(255 255 255 / 0.7), inset -2px -2px 3px -1px rgb(0 0 0 / 0.14)";
+
 /** A made-up poster (warm sky, dark ground) the "scramble" preview cuts into strips. */
 const POSTER_ART = "linear-gradient(165deg, #1e1b4b 0%, #7c2d12 30%, #f59e0b 48%, #fde68a 56%, #ea580c 68%, #4c1d95 84%, #0f172a 100%)";
 
@@ -72,7 +75,7 @@ function previewStyle(game, tile, i) {
     const imposter = tile === "?";
     const ink = imposter ? "var(--accent-2)" : "var(--fg-subtle)";
     return imposter
-      ? { background: "var(--accent-2)", color: "var(--accent-2-ink)", border: "1.5px solid var(--edge)", boxShadow: "0 2px 0 var(--depth)" }
+      ? { background: "var(--accent-2)", color: "var(--accent-2-ink)", border: "1.5px solid var(--edge)", boxShadow: CLAY_NUB }
       : {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
@@ -92,7 +95,7 @@ function previewStyle(game, tile, i) {
       color: "var(--foreground)",
       background: "linear-gradient(160deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0) 50%), linear-gradient(#e0f4ff, #b9e3f7)",
       border: "1.5px solid var(--edge)",
-      boxShadow: "0 2px 0 var(--depth)",
+      boxShadow: CLAY_NUB,
       transform: `rotate(${TILT[i % TILT.length] / 2}deg)`,
     };
   }
@@ -115,23 +118,23 @@ function previewStyle(game, tile, i) {
       background: "var(--key-bg)",
       color: "var(--key-fg)",
       border: "1.5px solid var(--edge)",
-      boxShadow: "0 2px 0 var(--depth)",
+      boxShadow: CLAY_NUB,
       transform: `rotate(${TILT[i % TILT.length]}deg) translateY(${i % 2 ? 2 : -1}px)`,
     };
   }
   return tile
-    ? { background: "var(--tile-revealed)", color: "var(--tile-revealed-fg)", boxShadow: "0 2px 0 var(--depth)" }
+    ? { background: "var(--tile-revealed)", color: "var(--tile-revealed-fg)", boxShadow: CLAY_NUB }
     : { background: "var(--tile-hidden)", boxShadow: `inset 0 0 0 1.5px var(--line-strong), inset 0 -3px 0 ${game.accent[0]}` };
 }
 
 export default function Home() {
   return (
     <div className="stage flex min-h-dvh flex-col" style={{ "--team": "#8b5cf6" }}>
-      <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col px-4 pb-6 pt-5 sm:px-6 sm:pt-8">
+      <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] sm:px-6 sm:pt-8">
         <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
           <div>
-            <p className="font-display text-base font-bold tracking-tight text-muted">GameAdda</p>
-            <h1 className="mt-1 font-display text-[clamp(1.9rem,6.5vw,3.5rem)] font-extrabold leading-[0.95] tracking-[-0.035em]">
+            <p className="font-display text-sm font-bold tracking-tight text-muted sm:text-base">GameAdda</p>
+            <h1 className="mt-1 font-display text-[clamp(1.85rem,8.4vw,3.5rem)] font-extrabold leading-[0.95] tracking-[-0.035em]">
               One screen. <span className="text-accent-2">Everyone</span> plays.
             </h1>
           </div>
@@ -140,17 +143,13 @@ export default function Home() {
           </p>
         </header>
 
-        <ul className="mt-5 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 md:grid-cols-3">
+        <ul className="mt-5 grid grid-cols-2 gap-3.5 sm:mt-8 sm:gap-5 md:grid-cols-3">
           {GAMES.map((game) => (
             <li key={game.slug} className="min-w-0">
               {/* Each card wears its game's theme (app/game-themes.css), so the hub previews every look. */}
               <Link
                 href={game.href}
-                className={`card theme-${game.theme} group flex h-full min-w-0 flex-col rounded-[1.5rem] p-3.5 text-foreground transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-1 sm:p-5`}
-                style={{
-                  backgroundImage: "radial-gradient(var(--dot) 1px, transparent 1px)",
-                  backgroundSize: "18px 18px",
-                }}
+                className={`card hub-card theme-${game.theme} group flex h-full min-w-0 flex-col rounded-[1.75rem] p-3.5 text-foreground transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.97] sm:p-5`}
               >
                 <div aria-hidden="true" className="grid w-full max-w-[14rem] grid-cols-7 gap-1 sm:gap-1.5">
                   {game.preview.tiles.map((char, i) => (
@@ -172,7 +171,7 @@ export default function Home() {
                     <br className="min-[420px]:hidden" />
                     {game.duration}
                   </span>
-                  <span className="btn btn-primary size-9 shrink-0 rounded-xl p-0 sm:size-11" aria-hidden="true">
+                  <span className="btn btn-primary size-9 shrink-0 rounded-full p-0 sm:size-11" aria-hidden="true">
                     <ArrowRightIcon size={18} />
                   </span>
                 </div>
