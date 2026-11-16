@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Flag, House, Settings2 } from "lucide-react";
+import { House, LogOut, Settings2 } from "lucide-react";
 import { gameActions } from "@/lib/games/pictionary/store/game-store";
 import { totalQuickTurns } from "@/lib/games/pictionary/game-engine/engine";
 import { ConfirmDialog } from "@/features/pictionary/shared/confirm-dialog";
-import { IconButton } from "@/features/pictionary/shared/button";
 
 export function GameTopBar({ session }) {
   const [confirmEnd, setConfirmEnd] = useState(false);
@@ -54,9 +53,15 @@ export function GameTopBar({ session }) {
           <Settings2 className="size-5" />
         </Link>
       ) : (
-        <IconButton label="End game" onClick={() => setConfirmEnd(true)}>
-          <Flag className="size-5" />
-        </IconButton>
+        // Labelled, not icon-only: a lone flag wasn't clear on phones.
+        <button
+          type="button"
+          onClick={() => setConfirmEnd(true)}
+          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full border-2 border-coral/30 bg-paper px-3.5 text-sm font-bold text-coral-deep transition hover:bg-coral/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-sun active:scale-95"
+        >
+          <LogOut className="size-4" />
+          End
+        </button>
       )}
 
       <ConfirmDialog

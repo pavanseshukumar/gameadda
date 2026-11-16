@@ -5,7 +5,8 @@ import { GameShell } from "@/components/game/GameShell";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { ReadyCard } from "@/components/game/ReadyCard";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { FlagIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+
 import { ACTIONS, selectActiveTeam } from "@/lib/games/head-rush/engine";
 
 /** Between turns: who's up, how to hold the phone, and the Start button. */
@@ -22,10 +23,7 @@ export function ReadyScreen({ state, dispatch, onStart }) {
           <span className="chip whitespace-nowrap px-3 py-1.5 text-sm font-semibold tabular-nums">
             Round {state.round}/{rounds}
           </span>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => setConfirmEnd(true)} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => setConfirmEnd(true)} />
         </>
       }
     >

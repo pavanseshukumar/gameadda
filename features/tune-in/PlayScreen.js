@@ -8,7 +8,8 @@ import { ReadyCard } from "@/components/game/ReadyCard";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { BulbIcon, EyeIcon, FlagIcon, PauseIcon, RefreshIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+import { BulbIcon, EyeIcon, PauseIcon, RefreshIcon } from "@/components/ui/icons";
 import { useClock } from "@/lib/games/core/useClock";
 import {
   ACTIONS,
@@ -133,10 +134,7 @@ export function PlayScreen({ state, dispatch, onSkip, skipping }) {
             <PauseIcon size={18} />
             <span className="hidden md:inline">Pause</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => openDialog("end")} />
         </>
       }
     >

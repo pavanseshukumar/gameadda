@@ -74,7 +74,7 @@ export function GuessScreen({ state, dispatch }) {
           <span className="chip mr-0.5 whitespace-nowrap px-3 py-1.5 text-sm font-semibold tabular-nums">Round {state.round}</span>
           <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => setDialog("give-up")} aria-label="Give up this word">
             <FlagIcon size={18} />
-            <span className="hidden md:inline">Give up</span>
+            <span>Give up</span>
           </button>
         </>
       }

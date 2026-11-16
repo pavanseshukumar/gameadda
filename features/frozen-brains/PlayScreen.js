@@ -7,7 +7,8 @@ import { Countdown } from "@/components/game/Countdown";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { ArrowRightIcon, BulbIcon, EyeIcon, FlagIcon, PauseIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+import { ArrowRightIcon, BulbIcon, EyeIcon, PauseIcon } from "@/components/ui/icons";
 import { X } from "lucide-react";
 import { isSolo } from "@/lib/games/core/teams";
 import { ReadyCard } from "@/components/game/ReadyCard";
@@ -119,10 +120,7 @@ export function PlayScreen({ state, dispatch }) {
             <EyeIcon size={18} />
             <span className="hidden md:inline">Reveal</span>
           </button>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => openDialog("end")} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => openDialog("end")} />
         </>
       }
     >

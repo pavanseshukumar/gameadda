@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { FlagIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+
 
 /** Frame for every in-round screen: round badge, current step, End game. */
 export function RoundShell({ state, teamColor, step, onEnd, children }) {
@@ -15,10 +16,7 @@ export function RoundShell({ state, teamColor, step, onEnd, children }) {
       right={
         <>
           <span className="chip mr-0.5 whitespace-nowrap px-3 py-1.5 text-sm font-semibold tabular-nums">Round {state.round}</span>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => setConfirmEnd(true)} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => setConfirmEnd(true)} />
         </>
       }
     >

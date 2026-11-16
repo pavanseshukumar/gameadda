@@ -56,6 +56,14 @@ export const FlagIcon = (p) => (
     <path d="M4 22V4M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1" />
   </Icon>
 );
+/** A door frame with an arrow leaving it: "exit". Used for "End game". */
+export const ExitIcon = (p) => (
+  <Icon {...p}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <path d="m16 17 5-5-5-5" />
+    <path d="M21 12H9" />
+  </Icon>
+);
 export const TrophyIcon = (p) => (
   <Icon {...p}>
     <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z" />

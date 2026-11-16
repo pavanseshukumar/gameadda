@@ -7,7 +7,8 @@ import { TurnTimer } from "@/components/game/TurnTimer";
 import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { FlagIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+
 import { Clapperboard, Eye, Flag, Lightbulb } from "lucide-react";
 import { isSolo, teamText } from "@/lib/games/core/teams";
 import {
@@ -69,10 +70,7 @@ export function PlayScreen({ state, dispatch }) {
             {done}/{list.length}
             <span className="hidden min-[380px]:inline"> done</span>
           </span>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => setDialog("end")} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => setDialog("end")} />
         </>
       }
     >

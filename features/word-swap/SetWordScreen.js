@@ -4,7 +4,8 @@ import { useState } from "react";
 import { GameShell } from "@/components/game/GameShell";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { ConfirmDialog } from "@/components/ui/Dialog";
-import { ArrowRightIcon, EyeIcon, FlagIcon, ShuffleIcon } from "@/components/ui/icons";
+import { EndGameButton } from "@/components/game/EndGameButton";
+import { ArrowRightIcon, EyeIcon, ShuffleIcon } from "@/components/ui/icons";
 import { EyeOff } from "lucide-react";
 import { teamInk, teamText } from "@/lib/games/core/teams";
 import { ACTIONS, HINT_MAX, MAX_LENGTH, MIN_LENGTH, cleanWord, isValidWord, selectActiveTeam, selectSetter } from "@/lib/games/word-swap/engine";
@@ -27,10 +28,7 @@ export function SetWordScreen({ state, dispatch }) {
       right={
         <>
           <span className="chip mr-0.5 whitespace-nowrap px-3 py-1.5 text-sm font-semibold tabular-nums">Round {state.round}</span>
-          <button type="button" className="btn btn-ghost h-10 px-2 text-sm sm:px-3" onClick={() => setConfirmEnd(true)} aria-label="End game">
-            <FlagIcon size={18} />
-            <span className="hidden md:inline">End</span>
-          </button>
+          <EndGameButton onClick={() => setConfirmEnd(true)} />
         </>
       }
     >
