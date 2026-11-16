@@ -444,6 +444,48 @@
   --font-display-face: var(--font-arcade), ui-monospace, monospace;
 }
 
+/* ── Head Rush · "Carnival": peach fairground, tangerine and berry ────────── */
+.theme-carnival {
+  color-scheme: light;
+  --background: #fff0e4;
+  --foreground: #2b1630;
+  --panel: #fffaf6;
+  --well: #f7e1d3;
+  --shade: #8a4b3a;
+  --fg-muted: #57404f;
+  --fg-subtle: #6e5664;
+
+  --accent: #b83c0a;
+  --accent-2: #b3245f;
+  --accent-2-ink: #fff;
+  --accent-3: #9a5a00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d6334a;
+  --miss-deep: #a3203a;
+
+  --select-bg: #b83c0a;
+  --select-fg: #fff;
+  --select-mark: #ff8a4c;
+  --btn-primary-bg: #ff8a4c;
+  --btn-primary-fg: #2b1105;
+  --btn-primary-depth: #d9602a;
+  --key-bg: #fffdfb;
+  --key-fg: #2b1630;
+
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #2b1630;
+  --blob-a: #ffcfb0;
+  --blob-b: #e6d2ff;
+  --stage-glow: 24%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-carnival), system-ui, sans-serif;
+  /* Lilita One has one (already heavy) weight: never let the browser fake a bold
+     on top of it, which smudges the letters (e.g. the hub card's font-bold title). */
+  font-synthesis-weight: none;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -488,3 +530,5 @@ html[data-page="frost"],
 html[data-page="frost"] body { background: #e3f1fa; }
 html[data-page="arcade"],
 html[data-page="arcade"] body { background: #ece9fb; }
+html[data-page="carnival"],
+html[data-page="carnival"] body { background: #fff0e4; }

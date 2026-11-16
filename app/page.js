@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GAMES } from "@/lib/games/registry";
 import { ArrowRightIcon, SparkleIcon } from "@/components/ui/icons";
+import { GameGrid } from "@/components/hub/GameGrid";
 
 const TILT = [-6, 4, -3, 7, -5, 3, -4];
 
@@ -28,6 +29,7 @@ function previewText(game, tile) {
   if (game.preview.style === "fill") return tile || null;
   if (game.preview.style === "ice") return tile || null;
   if (game.preview.style === "marks") return tile ? tile.split(":")[0] : null;
+  if (game.preview.style === "swipe") return tile;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -80,6 +82,11 @@ function previewStyle(game, tile, i) {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
         };
+  }
+  if (game.preview.style === "swipe") {
+    // A turn's results: green "got it" and red "pass" chips.
+    const got = tile === "✓";
+    return { background: got ? "var(--hit)" : "var(--miss)", color: "#fff", borderRadius: "999px", boxShadow: CLAY_NUB, transform: `translateY(${got ? -2 : 2}px)` };
   }
   if (game.preview.style === "marks") {
     // A marked guess: teal = right spot, pink = wrong spot, slate = not in the word.
@@ -143,10 +150,13 @@ export default function Home() {
           </p>
         </header>
 
-        <ul className="mt-5 grid grid-cols-2 gap-3.5 sm:mt-8 sm:gap-5 md:grid-cols-3">
-          {GAMES.map((game) => (
-            <li key={game.slug} className="min-w-0">
-              {/* Each card wears its game's theme (app/game-themes.css), so the hub previews every look. */}
+        {/* The All / Solo filter lives in GameGrid; the cards are rendered here. */}
+        <GameGrid
+          items={GAMES.map((game) => ({
+            slug: game.slug,
+            modes: game.modes,
+            card: (
+              // Each card wears its game's theme (app/game-themes.css), so the hub previews every look.
               <Link
                 href={game.href}
                 className={`card hub-card theme-${game.theme} group flex h-full min-w-0 flex-col rounded-[1.75rem] p-3.5 text-foreground transition-transform duration-200 ease-out hover:-translate-y-1 active:scale-[0.97] sm:p-5`}
@@ -176,9 +186,9 @@ export default function Home() {
                   </span>
                 </div>
               </Link>
-            </li>
-          ))}
-        </ul>
+            ),
+          }))}
+        />
 
         <p className="mt-6 flex items-center justify-center gap-2 text-sm text-subtle">
           <SparkleIcon size={16} /> More games are on the way

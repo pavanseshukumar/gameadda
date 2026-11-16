@@ -1234,3 +1234,43 @@ dialog.sheet > .sheet-panel::before {
     radial-gradient(110% 80% at 0% 100%, color-mix(in oklab, var(--blob-b) 80%, transparent), transparent 65%),
     var(--background);
 }
+
+/* ------------------------------------------------------------------ */
+/* Head Rush (features/head-rush/TurnStage.js)                          */
+/* ------------------------------------------------------------------ */
+
+/* The full-screen sideways turn: the theme's page colour with a wash of the team colour. */
+.hr-stage {
+  color: var(--foreground);
+  background:
+    radial-gradient(80vmax 50vmax at 50% 120%, color-mix(in oklab, var(--team) 22%, transparent), transparent 70%),
+    radial-gradient(60vmax 40vmax at 100% 0%, color-mix(in oklab, var(--blob-a, transparent) 70%, transparent), transparent 70%),
+    var(--background);
+  touch-action: none;
+  -webkit-user-select: none;
+}
+/* "Got it!" / "Pass": a full-screen colour burst that fades away. */
+.hr-flash {
+  animation: hr-flash 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes hr-flash {
+  0% { opacity: 0; }
+  15% { opacity: 0.94; }
+  60% { opacity: 0.94; }
+  100% { opacity: 0; }
+}
+/* A phone outline that tips over to landscape, on the "turn sideways" prompt. */
+.hr-rotate {
+  animation: hr-rotate 2.2s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+@keyframes hr-rotate {
+  0%, 20% { transform: rotate(0deg); }
+  55%, 85% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Hub filter chips (components/hub/GameGrid.js). */
+.hub-filter:focus-visible {
+  outline: 3px solid var(--select-mark);
+  outline-offset: 2px;
+}

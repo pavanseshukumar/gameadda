@@ -29,11 +29,13 @@ function initialDrafts(teams) {
  *   children?: React.ReactNode | ((solo: boolean) => React.ReactNode),   settings; a function gets the Solo / Teams choice
  *   startDisabled?: boolean,   e.g. while an async start is in flight
  *   startLabel?: string,
+ *   allowSolo?: boolean,       false for games that need a team (e.g. Head Rush: someone has to give clues)
  * }} props
  */
-export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart, children, startDisabled = false, startLabel }) {
+export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart, children, startDisabled = false, startLabel, allowSolo = true }) {
   const [drafts, setDrafts] = useState(() => initialDrafts(initialTeams));
-  const [solo, setSolo] = useState(initialTeams?.length === 1);
+  const [soloChoice, setSolo] = useState(initialTeams?.length === 1);
+  const solo = allowSolo && soloChoice;
   const [soloName, setSoloName] = useState(initialTeams?.length === 1 ? initialTeams[0].name : SOLO_NAME);
 
   const addTeam = () =>
@@ -68,16 +70,18 @@ export function TeamSetup({ eyebrow, title, intro, rules, initialTeams, onStart,
         }}
       >
         <section className="card rounded-[1.75rem] p-3.5 sm:p-6" aria-labelledby="teams-heading">
-          <Segmented
-            label="Who's playing"
-            value={solo}
-            onChange={setSolo}
-            options={[
-              { value: true, label: "Solo" },
-              { value: false, label: "Teams" },
-            ]}
-            className="mb-4 sm:mb-5"
-          />
+          {allowSolo ? (
+            <Segmented
+              label="Who's playing"
+              value={solo}
+              onChange={setSolo}
+              options={[
+                { value: true, label: "Solo" },
+                { value: false, label: "Teams" },
+              ]}
+              className="mb-4 sm:mb-5"
+            />
+          ) : null}
 
           {solo ? (
             <>
