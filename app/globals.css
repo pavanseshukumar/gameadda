@@ -168,6 +168,7 @@ body {
 .key[data-state="hit"],
 .key[data-state="miss"],
 .key[data-state="near"],
+.key-primary,
 .tile[data-state="fresh"],
 .tile[data-state="complete"],
 .swap-tile[data-state="hit"],
@@ -528,7 +529,22 @@ body {
   --clay-blur: 10px;
   --clay-in: 4px;
 }
-/* Enter / Backspace: wider, so the bottom row still fits. */
+/* The submit key (Guess): the game's primary-button colour, in the bottom row. */
+.key-primary {
+  --tint: var(--btn-primary-depth);
+  --clay-y: 5px;
+  --clay-blur: 10px;
+  --clay-in: 4px;
+  color: var(--btn-primary-fg);
+  background: var(--btn-primary-bg);
+}
+.key-primary:hover:not(:disabled) {
+  color: var(--btn-primary-fg);
+}
+.key-primary:disabled {
+  opacity: 0.5;
+}
+/* Backspace: wider, so the last row still fits. */
 .key-wide {
   flex: 1.6 1 0;
   max-width: 6.6rem;

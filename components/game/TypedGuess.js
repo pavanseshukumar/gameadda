@@ -82,7 +82,7 @@ export function GuessKeyboard({ guess, disabled = false, placeholder = "Type you
           {disabled ? null : <span aria-hidden="true" className="typed-caret" />}
         </div>
       </div>
-      <Keyboard letterStates={{}} reusable disabled={disabled} onKey={guess.type} onBackspace={guess.backspace} onSpace={guess.space} onEnter={guess.submit} enterLabel="Guess" />
+      <Keyboard letterStates={{}} reusable disabled={disabled} onKey={guess.type} onBackspace={guess.backspace} onSpace={guess.space} onEnter={guess.submit} enterLabel="Guess" enterDisabled={!guess.value.trim()} />
       <p className="mt-3 hidden text-center text-xs text-subtle lg:block">Type on your keyboard too · Enter to guess</p>
     </section>
   );
