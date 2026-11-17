@@ -31,6 +31,7 @@ function previewText(game, tile) {
   if (game.preview.style === "marks") return tile ? tile.split(":")[0] : null;
   if (game.preview.style === "swipe") return tile;
   if (game.preview.style === "emoji") return tile || "?";
+  if (game.preview.style === "twins") return tile ? tile.split("|")[0] : null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -95,6 +96,16 @@ function previewStyle(game, tile, i) {
           boxShadow: CLAY_NUB,
           rotate: `${TILT[i % TILT.length] / 2}deg`,
         };
+  }
+  if (game.preview.style === "twins") {
+    // Indigo card backs; a face-up card shows its pair's colour (twins match).
+    if (!tile) {
+      return {
+        background: "radial-gradient(circle, rgb(255 255 255 / 0.16) 1px, transparent 1.4px) 0 0 / 5px 5px, linear-gradient(155deg, #5560cc, #2f3796)",
+        boxShadow: CLAY_NUB,
+      };
+    }
+    return { background: tile.split("|")[1], boxShadow: CLAY_NUB, fontSize: "clamp(0.8rem,3.4vw,1.15rem)" };
   }
   if (game.preview.style === "swipe") {
     // A turn's results: green "got it" and red "pass" chips.
