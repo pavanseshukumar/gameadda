@@ -15,7 +15,7 @@ export function EmojiRow({ tiles, size = "lg", label = "Emoji clue" }) {
         <li
           key={`${i}-${tile}`}
           className={`sticker anim-pop grid place-items-center ${
-            big ? "size-[clamp(3.5rem,17vw,6.5rem)] rounded-[1.4rem] text-[clamp(2rem,10vw,3.9rem)]" : "size-12 rounded-xl text-[1.75rem]"
+            big ? "size-[clamp(3rem,13vw,6.5rem)] rounded-[clamp(1rem,3.5vw,1.4rem)] text-[clamp(1.7rem,7.5vw,3.9rem)]" : "size-12 rounded-xl text-[1.75rem]"
           }`}
           style={{ "--tilt": `${TILT[i % TILT.length]}deg`, animationDelay: big ? `${i * 70}ms` : undefined }}
         >

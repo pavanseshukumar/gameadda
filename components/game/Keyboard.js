@@ -15,7 +15,8 @@ const STATE_LABEL = { hit: "correct", near: "in the word, wrong spot", miss: "in
  *
  * By default a used letter is spent (disabled), as in Guess the Song and Hangman.
  * Pass `reusable` for games where letters can be typed again (Word Swap), and
- * `onEnter` / `onBackspace` to add those keys around the last row.
+ * `onEnter` / `onBackspace` to add those keys around the last row, and `onSpace`
+ * for a space bar under it (games that take whole titles: Emoji Talkies, Frozen Brains).
  *
  * @param {{
  *   letterStates: Record<string, "hit" | "near" | "miss">,
@@ -26,9 +27,10 @@ const STATE_LABEL = { hit: "correct", near: "in the word, wrong spot", miss: "in
  *   onEnter?: () => void,
  *   onBackspace?: () => void,
  *   enterLabel?: string,
+ *   onSpace?: () => void,
  * }} props
  */
-export function Keyboard({ letterStates, onKey, disabled = false, lastMiss = null, reusable = false, onEnter, onBackspace, enterLabel = "Enter" }) {
+export function Keyboard({ letterStates, onKey, disabled = false, lastMiss = null, reusable = false, onEnter, onBackspace, enterLabel = "Enter", onSpace }) {
   return (
     <div role="group" aria-label="Letter keyboard" className="flex w-full flex-col gap-[clamp(0.35rem,1.2vw,0.6rem)]">
       {ROWS.map((row, rowIndex) => {
@@ -67,6 +69,13 @@ export function Keyboard({ letterStates, onKey, disabled = false, lastMiss = nul
           </div>
         );
       })}
+      {onSpace ? (
+        <div className="flex justify-center">
+          <button type="button" className="key text-base" style={{ flex: "0 1 60%", maxWidth: "24rem" }} disabled={disabled} onClick={onSpace}>
+            Space
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
