@@ -586,6 +586,47 @@
   --font-display-face: var(--font-playroom), system-ui, sans-serif;
 }
 
+/* ── Release Ladder · "Box office": mint ticket stock, teal ink, marigold stubs ── */
+.theme-boxoffice {
+  color-scheme: light;
+  --background: #e6f2ee;
+  --foreground: #11302b;
+  --panel: #fbfffd;
+  --well: #d3e8e1;
+  --shade: #2c6159;
+  --fg-muted: #35524c;
+  --fg-subtle: #48645e;
+
+  --accent: #0f6b63;
+  --accent-2: #b8401a;
+  --accent-2-ink: #fff;
+  --accent-3: #8a5300;
+  --accent-3-ink: #fff;
+  --hit: #1a8a4c;
+  --hit-deep: #137a3f;
+  --miss: #c92a42;
+  --miss-deep: #a3203a;
+
+  --select-bg: #0f6b63;
+  --select-fg: #fff;
+  --select-mark: #ffb547;
+  --btn-primary-bg: #ffb547;
+  --btn-primary-fg: #2a1700;
+  --btn-primary-depth: #d98c1a;
+  --key-bg: #fbfffd;
+  --key-fg: #11302b;
+
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #11302b;
+  --blob-a: #ffe1b0;
+  --blob-b: #bfe6dc;
+  --stage-glow: 22%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-boxoffice), system-ui, sans-serif;
+  /* Righteous has one weight: don't let the browser fake a bold on top of it. */
+  font-synthesis-weight: none;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -636,3 +677,5 @@ html[data-page="sticker"],
 html[data-page="sticker"] body { background: #eaf7ef; }
 html[data-page="playroom"],
 html[data-page="playroom"] body { background: #f4efe6; }
+html[data-page="boxoffice"],
+html[data-page="boxoffice"] body { background: #e6f2ee; }

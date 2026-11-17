@@ -97,6 +97,16 @@ function previewStyle(game, tile, i) {
           rotate: `${TILT[i % TILT.length] / 2}deg`,
         };
   }
+  if (game.preview.style === "ladder") {
+    // Rungs climbing left to right; one out of order (taller than the next) is highlighted.
+    const tiles = game.preview.tiles;
+    const outOfPlace = i < tiles.length - 1 && tile > tiles[i + 1];
+    const color = outOfPlace ? game.accent[1] : game.accent[0];
+    return {
+      background: `linear-gradient(to top, ${color} ${tile}%, var(--tile-hidden) ${tile}%)`,
+      borderRadius: "0.35rem",
+    };
+  }
   if (game.preview.style === "twins") {
     // Indigo card backs; a face-up card shows its pair's colour (twins match).
     if (!tile) {
