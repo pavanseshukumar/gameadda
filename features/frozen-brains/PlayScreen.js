@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
@@ -8,7 +8,8 @@ import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { EndGameButton } from "@/components/game/EndGameButton";
-import { ArrowRightIcon, BulbIcon, EyeIcon, PauseIcon } from "@/components/ui/icons";
+import { GuessKeyboard, useTypedGuess } from "@/components/game/TypedGuess";
+import { BulbIcon, EyeIcon, PauseIcon } from "@/components/ui/icons";
 import { X } from "lucide-react";
 import { isSolo } from "@/lib/games/core/teams";
 import { ReadyCard } from "@/components/game/ReadyCard";
@@ -34,8 +35,6 @@ export function PlayScreen({ state, dispatch }) {
   // True while a confirm sheet has the clock stopped mid-turn: the card stays on
   // screen behind the sheet, and Cancel picks the turn straight back up.
   const [held, setHeld] = useState(false);
-  const [guess, setGuess] = useState("");
-  const inputRef = useRef(null);
   const team = selectActiveTeam(state);
   const puzzle = state.puzzle;
   const category = categoryOf(puzzle.category);
@@ -83,24 +82,14 @@ export function PlayScreen({ state, dispatch }) {
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
-  // A new card or a steal clears the box and puts the cursor back in it.
-  const tryKey = `${state.round}-${state.activeTeamIndex}`;
-  const [lastTry, setLastTry] = useState(tryKey);
-  if (lastTry !== tryKey) {
-    setLastTry(tryKey);
-    setGuess("");
-  }
-  useEffect(() => {
-    if (running) inputRef.current?.focus();
-  }, [tryKey, running]);
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (!guess.trim() || !running) return;
-    act(ACTIONS.GUESS, { guess });
-    setGuess("");
-    inputRef.current?.focus();
-  };
+  // Typed on the on-screen keyboard (or a laptop's keys), so the phone's own keyboard
+  // never opens. A new card or a steal clears the box.
+  const guess = useTypedGuess({
+    enabled: running,
+    blocked: !!dialog,
+    resetKey: `${state.round}-${state.activeTeamIndex}`,
+    onSubmit: (text) => act(ACTIONS.GUESS, { guess: text }),
+  });
 
   return (
     <GameShell
@@ -170,26 +159,6 @@ export function PlayScreen({ state, dispatch }) {
             ) : null}
           </p>
 
-          <form onSubmit={submit} className="mx-auto mt-4 flex w-full max-w-xl gap-2">
-            <label htmlFor="fb-guess" className="sr-only">
-              Your answer
-            </label>
-            <input
-              ref={inputRef}
-              id="fb-guess"
-              value={guess}
-              onChange={(e) => setGuess(e.target.value)}
-              disabled={!running}
-              autoComplete="off"
-              autoCapitalize="words"
-              spellCheck={false}
-              placeholder="What do you hear?"
-              className="field h-14 min-w-0 flex-1 px-4 text-lg font-medium"
-            />
-            <button type="submit" className="btn btn-primary h-14 shrink-0 px-5 text-base" disabled={!running || !guess.trim()}>
-              Guess <ArrowRightIcon size={18} />
-            </button>
-          </form>
 
           {state.wrongGuesses.length ? (
             <div className="mx-auto mt-3 flex max-w-xl flex-wrap items-center gap-1.5 text-xs">
@@ -215,6 +184,8 @@ export function PlayScreen({ state, dispatch }) {
         </div>
 
       </section>
+
+      <GuessKeyboard guess={guess} disabled={!running} placeholder="What do you hear?" />
       </>
       ) : (
         // Paused (button, hidden tab or a reload): the card is hidden until play resumes.

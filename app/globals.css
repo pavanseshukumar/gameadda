@@ -1274,3 +1274,20 @@ dialog.sheet > .sheet-panel::before {
   outline: 3px solid var(--select-mark);
   outline-offset: 2px;
 }
+
+/* Blinking caret in a typed-guess box (components/game/TypedGuess.js). */
+.typed-caret {
+  flex: none;
+  width: 2px;
+  height: 1.3em;
+  margin-left: 2px;
+  border-radius: 1px;
+  background: var(--team, var(--accent));
+  animation: typed-caret-blink 1s steps(1) infinite;
+}
+@keyframes typed-caret-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .typed-caret { animation: none; }
+}

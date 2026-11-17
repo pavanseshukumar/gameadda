@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { Scoreboard } from "@/components/game/Scoreboard";
 import { TurnIndicator } from "@/components/game/TurnIndicator";
 import { Countdown } from "@/components/game/Countdown";
@@ -9,6 +9,7 @@ import { FeedbackToast } from "@/components/game/FeedbackToast";
 import { GameShell } from "@/components/game/GameShell";
 import { ConfirmDialog } from "@/components/ui/Dialog";
 import { EndGameButton } from "@/components/game/EndGameButton";
+import { GuessKeyboard, useTypedGuess } from "@/components/game/TypedGuess";
 import { BulbIcon, EyeIcon, PauseIcon, RefreshIcon } from "@/components/ui/icons";
 import { useClock } from "@/lib/games/core/useClock";
 import {
@@ -35,8 +36,6 @@ export function PlayScreen({ state, dispatch }) {
   // True while a confirm sheet has the clock stopped mid-turn: the emojis stay on
   // screen behind the sheet, and Cancel picks the turn straight back up.
   const [held, setHeld] = useState(false);
-  const [guess, setGuess] = useState("");
-  const inputRef = useRef(null);
   const team = selectActiveTeam(state);
   const movie = selectMovie(state);
   const tiles = selectEmojiTiles(state);
@@ -81,11 +80,13 @@ export function PlayScreen({ state, dispatch }) {
     if (timedOut) dispatch({ type: ACTIONS.TIME_UP, now: Date.now() });
   }, [timedOut, dispatch]);
 
-  // Keep the cursor in the guess box when a turn starts and after a wrong guess.
-  const eventSeq = event?.seq;
-  useEffect(() => {
-    if (running) inputRef.current?.focus();
-  }, [running, eventSeq]);
+  // Typed on the on-screen keyboard (or a laptop's keys), so the phone's own keyboard never opens.
+  const guess = useTypedGuess({
+    enabled: running,
+    blocked: !!dialog,
+    resetKey: `${state.round}-${state.activeTeamIndex}-${state.movieId}`,
+    onSubmit: (title) => act(ACTIONS.GUESS, { title, now: Date.now() }),
+  });
 
   // Pause when the tab is hidden or the screen unmounts mid-turn.
   const pauseIfRunning = useEffectEvent(() => {
@@ -111,13 +112,6 @@ export function PlayScreen({ state, dispatch }) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
-
-  const submitGuess = (e) => {
-    e.preventDefault();
-    if (!running || !guess.trim()) return;
-    act(ACTIONS.GUESS, { title: guess, now: Date.now() });
-    setGuess("");
-  };
 
   return (
     <GameShell
@@ -156,14 +150,7 @@ export function PlayScreen({ state, dispatch }) {
           </div>
 
           <section aria-label="Emoji puzzle" className="card mt-3 rounded-[1.5rem] p-4 sm:mt-5 sm:rounded-[2rem] sm:p-8">
-            <div className="sticker-screen rounded-[1.25rem] px-3 py-6 sm:rounded-[1.6rem] sm:px-6 sm:py-10">
-              <EmojiRow tiles={tiles} />
-              <p className="mt-5 text-center text-sm font-semibold text-muted">
-                {wordCount === 1 ? "One word" : `${wordCount} words`} in the title
-              </p>
-            </div>
-
-            <div className="mt-4 flex items-center justify-between gap-2 px-0.5">
+            <div className="flex items-center justify-between gap-2 px-0.5">
               <div className="flex min-w-0 items-center gap-3">
                 <Countdown remainingMs={left} totalMs={totalMs} color={team.color} paused={!running} />
                 <div className="min-w-0">
@@ -193,6 +180,12 @@ export function PlayScreen({ state, dispatch }) {
               </div>
             </div>
 
+            <div className="sticker-screen mt-3 sm:mt-5 rounded-[1.25rem] px-3 py-4 sm:rounded-[1.6rem] sm:px-6 sm:py-10">
+              <EmojiRow tiles={tiles} />
+              <p className="mt-3 text-center text-sm font-semibold text-muted sm:mt-5">
+                {wordCount === 1 ? "One word" : `${wordCount} words`} in the title
+              </p>
+            </div>
             <p className="mt-2 min-h-5 px-0.5 text-sm text-muted" aria-live="polite">
               {state.clueShown ? (
                 <>
@@ -200,33 +193,10 @@ export function PlayScreen({ state, dispatch }) {
                   {movie.year} · {movie.lead}
                 </>
               ) : (
-                `Points slide from ${START_POINTS} to ${END_POINTS} as the clock runs.`
+                `Points slide from ${START_POINTS} to ${END_POINTS} as the clock runs. Spelling is forgiving.`
               )}
             </p>
 
-            <form onSubmit={submitGuess} className={`mt-3 flex gap-2 ${wrongShake ? "anim-shake" : ""}`} key={wrongShake ? `miss-${event.seq}` : "form"}>
-              <label htmlFor="emoji-guess" className="sr-only">
-                Movie name
-              </label>
-              <input
-                ref={inputRef}
-                id="emoji-guess"
-                name="emoji-guess"
-                autoComplete="off"
-                autoCapitalize="words"
-                spellCheck={false}
-                enterKeyHint="send"
-                value={guess}
-                onChange={(e) => setGuess(e.target.value)}
-                disabled={!running}
-                placeholder="Type the movie name"
-                className="h-12 min-w-0 flex-1 field px-4 text-base font-medium sm:h-14 sm:text-lg"
-              />
-              <button type="submit" className="btn btn-primary h-12 shrink-0 px-5 text-base sm:h-14 sm:px-7" disabled={!running || !guess.trim()}>
-                Guess
-              </button>
-            </form>
-            <p className="mt-1.5 px-1 text-xs text-subtle">Spelling is forgiving: Chatrapathi, Chhatrapati, both count.</p>
 
             {state.guesses.length ? (
               <ul aria-label="Wrong guesses" className="mt-3 flex flex-wrap gap-1.5">
@@ -242,6 +212,8 @@ export function PlayScreen({ state, dispatch }) {
               </ul>
             ) : null}
           </section>
+
+          <GuessKeyboard guess={guess} disabled={!running} placeholder="Type the movie name" shakeKey={wrongShake ? `miss-${event.seq}` : null} />
         </>
       ) : (
         <ReadyCard
