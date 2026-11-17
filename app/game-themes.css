@@ -486,6 +486,67 @@
   font-synthesis-weight: none;
 }
 
+/* ── Emoji Talkies · "Sticker": mint notebook, sunshine stickers, berry ink ── */
+.theme-sticker {
+  color-scheme: light;
+  --background: #eaf7ef;
+  --foreground: #13261c;
+  --panel: #fbfffc;
+  --well: #d9eee1;
+  --shade: #2f6b4c;
+  --fg-muted: #3b5547;
+  --fg-subtle: #4d6658;
+
+  --accent: #0d7350;
+  --accent-2: #b8266a;
+  --accent-2-ink: #fff;
+  --accent-3: #8a5300;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d6334a;
+  --miss-deep: #a3203a;
+
+  --select-bg: #0d7350;
+  --select-fg: #fff;
+  --select-mark: #ffcf3f;
+  --btn-primary-bg: #ffcf3f;
+  --btn-primary-fg: #2a1d00;
+  --btn-primary-depth: #d9a514;
+  --key-bg: #fffefa;
+  --key-fg: #13261c;
+
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #13261c;
+  --blob-a: #c4efd4;
+  --blob-b: #ffe8a3;
+  --stage-glow: 22%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-sticker), system-ui, sans-serif;
+}
+
+/* Emoji stickers: a white die-cut edge, a little tilt and a soft drop (Emoji Talkies only). */
+.sticker {
+  background: #fff;
+  border: 3px solid #fff;
+  rotate: var(--tilt, 0deg);
+  box-shadow:
+    0 0 0 1.5px rgb(47 107 76 / 0.18),
+    0 10px 18px -10px rgb(47 107 76 / 0.55),
+    inset 0 -4px 0 rgb(47 107 76 / 0.08);
+}
+.sticker-back {
+  background: repeating-linear-gradient(135deg, #ffcf3f 0 8px, #ffd95f 8px 16px);
+  color: #6b4a00;
+}
+/* The board the stickers sit on: a dotted notebook page. */
+.sticker-screen {
+  background:
+    radial-gradient(circle, rgb(47 107 76 / 0.16) 1.2px, transparent 1.6px) 0 0 / 18px 18px,
+    var(--well);
+  box-shadow: inset 0 2px 6px rgb(47 107 76 / 0.12);
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -532,3 +593,5 @@ html[data-page="arcade"],
 html[data-page="arcade"] body { background: #ece9fb; }
 html[data-page="carnival"],
 html[data-page="carnival"] body { background: #fff0e4; }
+html[data-page="sticker"],
+html[data-page="sticker"] body { background: #eaf7ef; }

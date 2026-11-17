@@ -30,6 +30,7 @@ function previewText(game, tile) {
   if (game.preview.style === "ice") return tile || null;
   if (game.preview.style === "marks") return tile ? tile.split(":")[0] : null;
   if (game.preview.style === "swipe") return tile;
+  if (game.preview.style === "emoji") return tile || "?";
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
 
@@ -81,6 +82,18 @@ function previewStyle(game, tile, i) {
       : {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
+        };
+  }
+  if (game.preview.style === "emoji") {
+    // Emoji stickers, tilted; an empty string is a face-down sticker.
+    return tile
+      ? { background: "#fff", border: "1.5px solid #fff", boxShadow: CLAY_NUB, rotate: `${TILT[i % TILT.length] / 2}deg`, fontSize: "clamp(0.85rem,3.6vw,1.25rem)" }
+      : {
+          background: "repeating-linear-gradient(135deg, #ffcf3f 0 5px, #ffd95f 5px 10px)",
+          color: "#6b4a00",
+          border: "1.5px solid #fff",
+          boxShadow: CLAY_NUB,
+          rotate: `${TILT[i % TILT.length] / 2}deg`,
         };
   }
   if (game.preview.style === "swipe") {
