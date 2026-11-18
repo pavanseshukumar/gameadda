@@ -627,6 +627,50 @@
   font-synthesis-weight: none;
 }
 
+/* ── Spin Pick · "Candy": bubblegum pink, grape and a sherbet-yellow button ── */
+.theme-candy {
+  color-scheme: light;
+  --background: #fdeef4;
+  --foreground: #2a1838;
+  --panel: #fffafc;
+  --well: #f6dfe9;
+  --shade: #7a3f66;
+  --fg-muted: #553d63;
+  --fg-subtle: #6b5478;
+
+  --accent: #8a2be2;
+  --accent-2: #c2185b;
+  --accent-2-ink: #fff;
+  --accent-3: #8f4f00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d6334a;
+  --miss-deep: #a3203a;
+
+  --select-bg: #8a2be2;
+  --select-fg: #fff;
+  --select-mark: #ffd23f;
+  --btn-primary-bg: #ffd23f;
+  --btn-primary-fg: #2a1838;
+  --btn-primary-depth: #e0a800;
+  --key-bg: #fffdfe;
+  --key-fg: #2a1838;
+
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #2a1838;
+  --blob-a: #ffc9de;
+  --blob-b: #dcc8ff;
+  --stage-glow: 24%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-candy), system-ui, sans-serif;
+
+  --spinner-body: #f3ecf8;
+  --spinner-body-edge: #d9cbe6;
+  --spinner-edge: #c9b6dc;
+  --spinner-cap: #fbf7fd;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -679,3 +723,5 @@ html[data-page="playroom"],
 html[data-page="playroom"] body { background: #f4efe6; }
 html[data-page="boxoffice"],
 html[data-page="boxoffice"] body { background: #e6f2ee; }
+html[data-page="candy"],
+html[data-page="candy"] body { background: #fdeef4; }
