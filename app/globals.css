@@ -1550,14 +1550,14 @@ dialog.sheet > .sheet-panel::before {
 /* Motion blur: a blurred ring of all six colours, faded in with speed by the spinner. */
 .spinner-blur {
   position: absolute;
-  inset: 5%;
+  inset: 4%;
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
   background: var(--ring);
-  -webkit-mask: radial-gradient(closest-side, transparent 38%, #000 42%, #000 92%, transparent 100%);
-  mask: radial-gradient(closest-side, transparent 38%, #000 42%, #000 92%, transparent 100%);
-  filter: blur(6px);
+  -webkit-mask: radial-gradient(closest-side, transparent 52%, #000 62%, #000 90%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 52%, #000 62%, #000 90%, transparent 100%);
+  filter: blur(5px);
   will-change: opacity;
 }
 /* The flapper at the top: a rounded teardrop that the lobes push past. */

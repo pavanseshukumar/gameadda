@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef } from "react";
+import { SpinnerArt } from "./SpinnerArt";
 
 /**
  * The fidget spinner. Six coloured lobes, a pointer at the top.
@@ -34,7 +35,6 @@ import { useEffect, useEffectEvent, useRef } from "react";
  */
 
 const LOBE_STEP = 60; // six lobes
-const LOBE_RADIUS = 58;
 /** Free-spin friction (1/s): v *= e^(−k·dt). Low, so it keeps going like a real fidget. */
 const FRICTION = 0.75;
 const MIN_FLICK = 360; // deg/s that counts as a spin
@@ -304,6 +304,9 @@ export function Spinner({ colors, grabbable, canFlick, onFlick, spinning, target
       {/* Soft floor shadow (static, cheap). */}
       <div aria-hidden="true" className="spinner-shadow" />
 
+      {/* Motion blur: a soft ring of every colour behind the body, fading in with speed, so the
+          cut-outs fill in like a real spinner turning into a disc. Static, so it's cheap. */}
+      <div aria-hidden="true" ref={blurRef} className="spinner-blur" style={{ "--ring": `conic-gradient(${colors.map((c, i) => `${c.hex} ${(i - 0.5) * (360 / count)}deg ${(i + 0.5) * (360 / count)}deg`).join(", ")})` }} />
       <div
         className={`absolute inset-0 touch-none ${grabbable ? "cursor-grab active:cursor-grabbing" : ""}`}
         onPointerDown={onPointerDown}
@@ -311,66 +314,9 @@ export function Spinner({ colors, grabbable, canFlick, onFlick, spinning, target
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <svg ref={rotorRef} viewBox="-100 -100 200 200" className="spinner-rotor h-full w-full" role="img" aria-label="Fidget spinner">
-          <defs>
-            <radialGradient id="sp-body" cx="35%" cy="30%" r="80%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="70%" stopColor="var(--spinner-body, #f3eef7)" />
-              <stop offset="100%" stopColor="var(--spinner-body-edge, #dcd2e6)" />
-            </radialGradient>
-            <radialGradient id="sp-metal" cx="38%" cy="32%" r="75%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="45%" stopColor="#cfd6df" />
-              <stop offset="100%" stopColor="#7d8794" />
-            </radialGradient>
-            <radialGradient id="sp-gloss" cx="35%" cy="28%" r="70%">
-              <stop offset="0%" stopColor="#fff" stopOpacity="0.75" />
-              <stop offset="55%" stopColor="#fff" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
-          {/* Body: hub plus a rounded arm to every lobe, all one clay colour. Drawn twice:
-              outlined, then plain on top, so only the outer edge of the shape shows. */}
-          {["edge", "fill"].map((layer) => (
-            <g
-              key={layer}
-              fill={layer === "edge" ? "var(--spinner-edge, #cbbfd8)" : "url(#sp-body)"}
-              stroke={layer === "edge" ? "var(--spinner-edge, #cbbfd8)" : "none"}
-              strokeWidth={layer === "edge" ? 3 : 0}
-            >
-              <circle r="46" />
-              {colors.map((c, i) => {
-                const a = ((i * LOBE_STEP - 90) * Math.PI) / 180;
-                return <circle key={c.id} cx={Math.cos(a) * LOBE_RADIUS} cy={Math.sin(a) * LOBE_RADIUS} r="33" />;
-              })}
-            </g>
-          ))}
-
-          {/* Coloured weights with bearings. */}
-          {colors.map((c, i) => {
-            const a = ((i * LOBE_STEP - 90) * Math.PI) / 180;
-            const x = Math.cos(a) * LOBE_RADIUS;
-            const y = Math.sin(a) * LOBE_RADIUS;
-            return (
-              <g key={c.id}>
-                <circle cx={x} cy={y} r="26" fill={c.hex} />
-                <circle cx={x} cy={y} r="26" fill="url(#sp-gloss)" />
-                <circle cx={x} cy={y} r="26" fill="none" stroke="rgb(0 0 0 / 0.12)" strokeWidth="1.5" />
-                <circle cx={x} cy={y} r="10.5" fill="url(#sp-metal)" stroke="rgb(0 0 0 / 0.18)" strokeWidth="1" />
-                <circle cx={x} cy={y} r="4" fill="rgb(255 255 255 / 0.85)" />
-              </g>
-            );
-          })}
-
-          {/* Centre cap. */}
-          <circle r="21" fill="url(#sp-metal)" stroke="rgb(0 0 0 / 0.18)" strokeWidth="1.2" />
-          <circle r="13" fill="var(--spinner-cap, #f8f5fb)" stroke="rgb(0 0 0 / 0.1)" strokeWidth="1" />
-          <circle r="13" fill="url(#sp-gloss)" />
-        </svg>
+        <SpinnerArt colors={colors} rotorRef={rotorRef} />
       </div>
 
-      {/* Motion blur: a soft ring of every colour, fading in with speed. Static, so it's cheap. */}
-      <div aria-hidden="true" ref={blurRef} className="spinner-blur" style={{ "--ring": `conic-gradient(${colors.map((c, i) => `${c.hex} ${(i - 0.5) * (360 / count)}deg ${(i + 0.5) * (360 / count)}deg`).join(", ")})` }} />
 
       {/* The pointer at the top, and the colour it's on. */}
       <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-[38%]">
