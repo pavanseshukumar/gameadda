@@ -12,14 +12,13 @@ import { ArrowRightIcon, TrophyIcon } from "@/components/ui/icons";
 import { teamInk, teamText } from "@/lib/games/core/teams";
 import {
   ACTIONS,
-  COLORS,
-  COLOR_IDS,
   PHASES,
   POT,
   colorById,
   payoutFor,
   selectCallers,
   selectPicker,
+  selectColors,
   selectSpinner,
 } from "@/lib/games/spin-pick/engine";
 import { Spinner } from "./Spinner";
@@ -54,6 +53,8 @@ export function PlayScreen({ state, dispatch }) {
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [sound, setSound] = useState(readSound);
   const solo = state.teams.length === 1;
+  const colors = selectColors(state);
+  const colorIds = colors.map((c) => c.id);
   const picker = selectPicker(state);
   const spinnerTeam = selectSpinner(state);
   const active = state.phase === PHASES.PICKING && picker ? picker : spinnerTeam;
@@ -84,7 +85,7 @@ export function PlayScreen({ state, dispatch }) {
     if (confirmEnd || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.target instanceof HTMLElement && e.target.closest("input, textarea, [contenteditable]")) return;
     const onButton = e.target instanceof HTMLButtonElement;
-    if (state.phase === PHASES.PICKING && /^[1-6]$/.test(e.key)) pick(COLOR_IDS[Number(e.key) - 1]);
+    if (state.phase === PHASES.PICKING && /^[1-9]$/.test(e.key) && Number(e.key) <= colorIds.length) pick(colorIds[Number(e.key) - 1]);
     else if (state.phase === PHASES.READY && (e.key === " " || e.key === "Enter") && !onButton) {
       e.preventDefault();
       spin();
@@ -96,8 +97,8 @@ export function PlayScreen({ state, dispatch }) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const targetIndex = state.target ? COLOR_IDS.indexOf(state.target) : null;
-  const restIndex = result ? COLOR_IDS.indexOf(result.colorId) : null;
+  const targetIndex = state.target ? colorIds.indexOf(state.target) : null;
+  const restIndex = result ? colorIds.indexOf(result.colorId) : null;
 
   return (
     <GameShell
@@ -139,7 +140,7 @@ export function PlayScreen({ state, dispatch }) {
           ) : null}
           <div className="mx-auto w-[min(82vw,40dvh,30rem)] pb-7 pt-4 sm:pt-6 lg:w-[min(100%,62dvh,34rem)]">
             <Spinner
-              colors={COLORS}
+              colors={colors}
               grabbable={state.phase === PHASES.PICKING || state.phase === PHASES.READY}
               canFlick={state.phase === PHASES.READY}
               onFlick={spin}
@@ -180,8 +181,12 @@ export function PlayScreen({ state, dispatch }) {
   );
 }
 
-/** Whose call it is, and the six colour buttons. */
+/** One row for 3–5 colours; 3 + 3 for six. */
+const CHIP_COLUMNS = { 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5", 6: "grid-cols-3" };
+
+/** Whose call it is, and a button per colour. */
 function PickPanel({ state, solo, picker, callers, onPick, onUndo }) {
+  const colors = selectColors(state);
   const order = state.picks.length;
   const lastPick = state.picks.at(-1);
   const lastTeam = lastPick ? state.teams.find((t) => t.id === lastPick.teamId) : null;
@@ -197,8 +202,8 @@ function PickPanel({ state, solo, picker, callers, onPick, onUndo }) {
         </div>
       </div>
 
-      <ul className="mt-4 grid grid-cols-3 gap-2.5 sm:gap-3" aria-label="Colours">
-        {COLORS.map((color, i) => {
+      <ul className={`mt-4 grid gap-2.5 sm:gap-3 ${CHIP_COLUMNS[colors.length] ?? "grid-cols-3"}`} aria-label="Colours">
+        {colors.map((color, i) => {
           const on = callers[color.id];
           const pays = payoutFor(on.length + 1);
           return (
@@ -290,7 +295,7 @@ function SpinPanel({ state, solo, spinnerTeam, spinning, onSpin, onUndo }) {
 /** Who called what, one row per colour that was called. */
 function CallList({ state, highlight = null }) {
   const callers = selectCallers(state);
-  const called = COLORS.filter((c) => callers[c.id].length);
+  const called = selectColors(state).filter((c) => callers[c.id].length);
   return (
     <ul className="mt-4 flex flex-col gap-1.5" aria-label="Calls this round">
       {called.map((color) => {

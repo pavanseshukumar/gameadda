@@ -24,7 +24,7 @@ export function SpinPickGame() {
     return (
       <SetupScreen
         initialTeams={state.teams}
-        initialRounds={state.settings.rounds}
+        initialSettings={state.settings}
         onStart={(teams, settings) => dispatch({ type: ACTIONS.START_GAME, teams, settings })}
       />
     );
