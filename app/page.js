@@ -31,6 +31,7 @@ function previewText(game, tile) {
   if (game.preview.style === "marks") return tile ? tile.split(":")[0] : null;
   if (game.preview.style === "swipe") return tile;
   if (game.preview.style === "emoji") return tile || "?";
+  if (game.preview.style === "spin") return null;
   if (game.preview.style === "twins") return tile ? tile.split("|")[0] : null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
@@ -84,6 +85,22 @@ function previewStyle(game, tile, i) {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
         };
+  }
+  if (game.preview.style === "spin") {
+    // Spinner weights: coloured discs with a bearing; "*" marks the one it stopped on,
+    // a blank slot is the little spinner arrow.
+    if (!tile) return { background: "transparent", boxShadow: "none" };
+    const hit = tile.startsWith("*");
+    const color = hit ? tile.slice(1) : tile;
+    return {
+      aspectRatio: "1",
+      alignSelf: "center",
+      borderRadius: "999px",
+      background: `radial-gradient(circle at 50% 50%, #eef1f5 0 18%, #9aa3ae 19% 24%, transparent 25%), radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.6), transparent 55%), ${color}`,
+      border: "2px solid #fff",
+      boxShadow: hit ? `0 0 0 2.5px ${color}, ${CLAY_NUB}` : CLAY_NUB,
+      transform: hit ? "scale(1.18)" : `translateY(${i % 2 ? 2 : -2}px)`,
+    };
   }
   if (game.preview.style === "emoji") {
     // Emoji stickers, tilted; an empty string is a face-down sticker.

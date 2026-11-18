@@ -1527,3 +1527,121 @@ dialog.sheet > .sheet-panel::before {
   text-transform: uppercase;
   color: var(--fg-subtle);
 }
+
+/* ------------------------------------------------------------------ */
+/* Spin Pick: the fidget spinner and its colour buttons                */
+/* ------------------------------------------------------------------ */
+
+.spinner-rotor {
+  will-change: transform;
+  transform-origin: 50% 50%;
+  /* The shape's own drop shadow is painted once into the layer, and turns with it. */
+  filter: drop-shadow(0 6px 6px rgb(60 20 70 / 0.18));
+}
+/* A soft floor shadow under the toy that doesn't turn. */
+.spinner-shadow {
+  position: absolute;
+  inset: 12% 8% 2%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--shade) 30%, transparent), transparent);
+  transform: translateY(6%);
+  filter: blur(10px);
+}
+/* Motion blur: a blurred ring of all six colours, faded in with speed by the spinner. */
+.spinner-blur {
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--ring);
+  -webkit-mask: radial-gradient(closest-side, transparent 38%, #000 42%, #000 92%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 38%, #000 42%, #000 92%, transparent 100%);
+  filter: blur(6px);
+  will-change: opacity;
+}
+/* The flapper at the top: a rounded teardrop that the lobes push past. */
+.spinner-pointer {
+  width: clamp(1.6rem, 6vw, 2.2rem);
+  aspect-ratio: 3 / 4;
+  transform-origin: 50% 25%;
+  background: radial-gradient(circle at 50% 28%, #fff 0 14%, transparent 15%), var(--accent-2);
+  clip-path: polygon(50% 100%, 12% 44%, 13% 24%, 28% 7%, 50% 0, 72% 7%, 87% 24%, 88% 44%);
+  filter: drop-shadow(0 3px 3px rgb(60 20 70 / 0.35));
+}
+/* The colour under the pointer, live, in a little pill under the toy. */
+.spinner-live {
+  position: absolute;
+  left: 50%;
+  bottom: -0.6rem;
+  transform: translate(-50%, 50%);
+  min-width: 5.5rem;
+  padding: 0.25rem 0.85rem;
+  border-radius: 999px;
+  background: var(--panel);
+  color: color-mix(in oklab, var(--live, var(--accent)) 70%, var(--foreground));
+  font-family: var(--font-display-face), sans-serif;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 6px 14px -8px color-mix(in oklab, var(--shade) 45%, transparent), inset 0 0 0 2px color-mix(in oklab, var(--live, var(--accent)) 55%, transparent);
+  transition: color 120ms ease, box-shadow 120ms ease;
+}
+
+/* A colour to call: a raised candy button. */
+.color-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.25rem 0.5rem;
+  border-radius: 1.25rem;
+  background: var(--panel);
+  color: var(--foreground);
+  box-shadow:
+    0 8px 16px -10px color-mix(in oklab, var(--shade) 45%, transparent),
+    inset 0 0 0 2px color-mix(in oklab, var(--chip) 22%, transparent);
+  transition: transform 140ms cubic-bezier(0.3, 0.7, 0.4, 1.4), box-shadow 140ms ease;
+  touch-action: manipulation;
+}
+.color-chip:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 20px -10px color-mix(in oklab, var(--chip) 60%, transparent),
+    inset 0 0 0 2px color-mix(in oklab, var(--chip) 55%, transparent);
+}
+.color-chip:active {
+  transform: translateY(1px) scale(0.95);
+}
+.color-chip:focus-visible {
+  outline: 3px solid var(--chip);
+  outline-offset: 2px;
+}
+.color-chip-swatch {
+  display: grid;
+  place-items: center;
+  width: clamp(2.4rem, 11vw, 3rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  color: var(--chip-ink);
+  background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.65), transparent 55%), var(--chip);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px -4px color-mix(in oklab, var(--chip) 80%, black);
+  transition: transform 160ms cubic-bezier(0.3, 0.7, 0.4, 1.4);
+}
+.color-chip:hover .color-chip-swatch {
+  transform: rotate(-12deg) scale(1.06);
+}
+/* The landing colour on the result card. */
+.result-swatch {
+  flex: none;
+  width: 4rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.65), transparent 55%), var(--chip);
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--chip) 25%, transparent), 0 10px 20px -8px color-mix(in oklab, var(--chip) 70%, black);
+}
+.call-won {
+  background: color-mix(in oklab, var(--chip) 16%, var(--panel));
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--chip) 60%, transparent);
+}
