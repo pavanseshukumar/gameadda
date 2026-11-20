@@ -671,6 +671,48 @@
   --spinner-cap: #fbf7fd;
 }
 
+/* ── Hi-Lo · "Felt": a sage card-room table, deep green ink, card red and gold ── */
+.theme-felt {
+  color-scheme: light;
+  --background: #e8f1ea;
+  --foreground: #13261b;
+  --panel: #fbfdfb;
+  --well: #d8e8dc;
+  --shade: #2c5a3f;
+  --fg-muted: #3a5545;
+  --fg-subtle: #4c6757;
+
+  --accent: #1f7a4d;
+  --accent-2: #b8102b;
+  --accent-2-ink: #fff;
+  --accent-3: #8a5a00;
+  --accent-3-ink: #fff;
+  --hit: #1f9555;
+  --hit-deep: #137a3f;
+  --miss: #d23545;
+  --miss-deep: #a11f2f;
+
+  --select-bg: #1f7a4d;
+  --select-fg: #fff;
+  --select-mark: #f2c14e;
+  --btn-primary-bg: #f2c14e;
+  --btn-primary-fg: #2a1e00;
+  --btn-primary-depth: #c99a1e;
+  --key-bg: #fffefb;
+  --key-fg: #13261b;
+
+  --tile-revealed: #ffffff;
+  --tile-revealed-fg: #13261b;
+  --blob-a: #c4e3cd;
+  --blob-b: #f6e2b0;
+  --stage-glow: 22%;
+  --team-text-mix: 60%;
+  --font-display-face: var(--font-felt), Georgia, serif;
+
+  --card-back: #1f6e48;
+  --felt-ink: #ecf7ef;
+}
+
 /* ── Pictionary Party · its colours, for its card on the hub ──────────────── */
 .theme-paper {
   color-scheme: light;
@@ -725,3 +767,5 @@ html[data-page="boxoffice"],
 html[data-page="boxoffice"] body { background: #e6f2ee; }
 html[data-page="candy"],
 html[data-page="candy"] body { background: #fdeef4; }
+html[data-page="felt"],
+html[data-page="felt"] body { background: #e8f1ea; }
