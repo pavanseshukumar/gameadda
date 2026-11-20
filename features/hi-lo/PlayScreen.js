@@ -272,7 +272,7 @@ function Controls({ state, busy, onGuess }) {
           Still in the deck: {odds.higher} higher · {odds.lower} lower · {odds.same} same
         </p>
       ) : (
-        <p className="mt-2 text-center text-xs text-subtle">Aces are high. The same rank doesn’t count.</p>
+        <p className="mt-2 text-center text-xs text-subtle">Aces are low. The same rank doesn’t count.</p>
       )}
     </div>
   );

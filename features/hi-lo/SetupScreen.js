@@ -7,7 +7,7 @@ import { DEFAULT_HAND, HAND_OPTIONS } from "@/lib/games/hi-lo/engine";
 import { PlayingCard } from "./PlayingCard";
 
 const rulesFor = (solo) => [
-  { title: "Higher or lower?", body: "A card is face up. Will the next one be higher or lower? Aces are high; the same rank doesn’t count." },
+  { title: "Higher or lower?", body: "A card is face up. Will the next one be higher or lower? Aces are low; the same rank doesn’t count." },
   { title: "Keep what you call", body: "Call it right and you keep that card. Either way it becomes the card to beat for your next call." },
   solo
     ? { title: "Beat your best", body: "Get through your hand keeping as many cards as you can. Your best is saved for each hand size." }
