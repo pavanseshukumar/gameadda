@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { TeamSetup } from "@/components/game/TeamSetup";
 import { Segmented, Toggle } from "@/components/ui/Controls";
-import { DEFAULT_HAND, HAND_OPTIONS } from "@/lib/games/hi-lo/engine";
+import { DEFAULT_HAND, HAND_OPTIONS, MAX_PLAYERS, defaultPlayerName, playerColor } from "@/lib/games/hi-lo/engine";
 import { PlayingCard } from "./PlayingCard";
 
 const rulesFor = (solo) => [
-  { title: "Higher or lower?", body: "A card is face up. Will the next one be higher or lower? Aces are low; the same rank doesn’t count." },
-  { title: "Keep what you call", body: "Call it right and you keep that card. Either way it becomes the card to beat for your next call." },
+  { title: "Get your cards", body: "Everyone is dealt the same number of cards. On your turn your hand is face up, just for you." },
+  { title: "Play one, call it", body: "Tap a card to put it on the table, then call: will the next card off the deck be higher or lower? Aces are low; the same rank never wins." },
   solo
-    ? { title: "Beat your best", body: "Get through your hand keeping as many cards as you can. Your best is saved for each hand size." }
-    : { title: "Most cards wins", body: "Everyone plays their own hand from the same deck, passing the phone. Remember what’s gone!" },
+    ? { title: "Beat your best", body: "Right, and you win the deck card. Play your whole hand; your best is saved for each hand size." }
+    : { title: "Most cards wins", body: "Right, and you win the deck card. Play your whole hand, then pass the phone. Whoever wins the most cards wins." },
 ];
+
+const PLAYER_WORDS = { one: "player", many: "players", title: "Players", full: "Eight players max. Pull up a chair!" };
 
 export function SetupScreen({ initialTeams, initialSettings, onStart }) {
   const [handSize, setHandSize] = useState(HAND_OPTIONS.includes(initialSettings.handSize) ? initialSettings.handSize : DEFAULT_HAND);
@@ -33,9 +35,14 @@ export function SetupScreen({ initialTeams, initialSettings, onStart }) {
           </span>
         </span>
       }
-      intro="Higher or lower? Call the next card right and it’s yours. Whoever keeps the most cards wins."
+      intro="Pick a card from your hand, call whether the next one off the deck is higher or lower, and win it if you’re right."
       rules={rulesFor}
       initialTeams={initialTeams}
+      words={PLAYER_WORDS}
+      max={MAX_PLAYERS}
+      nameFor={defaultPlayerName}
+      colorFor={playerColor}
+      soloNote="Just you and the deck. Win as many cards as you can."
       onStart={(drafts) => onStart(drafts, { handSize, showOdds })}
     >
       <section className="card flex flex-col gap-5 rounded-[1.75rem] p-4 sm:p-6">
@@ -44,7 +51,7 @@ export function SetupScreen({ initialTeams, initialSettings, onStart }) {
             <h2 id="hand-heading" className="font-display text-xl font-bold tracking-tight">
               Cards each
             </h2>
-            <p className="text-sm text-muted">Every player is dealt 2 to 4 cards.</p>
+            <p className="text-sm text-muted">How many cards every player is dealt.</p>
           </div>
           <Segmented
             labelledBy="hand-heading"
@@ -55,7 +62,7 @@ export function SetupScreen({ initialTeams, initialSettings, onStart }) {
           />
         </div>
         <div className="px-1">
-          <Toggle checked={showOdds} onChange={setShowOdds} label="Odds helper" description="Show how many unseen cards are higher or lower. Off for card-counting glory." />
+          <Toggle checked={showOdds} onChange={setShowOdds} label="Odds helper" description="Show how many cards left in the deck are higher or lower than yours." />
         </div>
       </section>
     </TeamSetup>

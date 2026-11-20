@@ -24,7 +24,7 @@ export function HiLoGame() {
       <SetupScreen
         initialTeams={state.teams}
         initialSettings={state.settings}
-        onStart={(teams, settings) => dispatch({ type: ACTIONS.START_GAME, teams, settings, seed: Math.random() })}
+        onStart={(players, settings) => dispatch({ type: ACTIONS.START_GAME, players, settings, seed: Math.random() })}
       />
     );
   }

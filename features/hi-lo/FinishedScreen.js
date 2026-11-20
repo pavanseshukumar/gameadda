@@ -23,14 +23,14 @@ export function FinishedScreen({ state, dispatch }) {
       ? "A perfect hand!"
       : result?.newBest && result.previousBest != null
         ? "New best!"
-        : `You kept ${kept} of ${hand}`
+        : `You won ${kept} of ${hand}`
     : champion
       ? `${champion.name} wins!`
       : leaders.length > 1
         ? `It’s a tie between ${leaders.map((t) => t.name).join(" & ")}`
-        : "Nobody kept a card";
+        : "Nobody won a card";
 
-  // The winner's (or your) kept cards, fanned out.
+  // The winner's (or your) won cards, fanned out.
   const showcaseId = solo ? state.teams[0].id : champion?.id;
   const showcase = showcaseId ? (state.won[showcaseId] ?? []) : [];
 
@@ -67,7 +67,7 @@ export function FinishedScreen({ state, dispatch }) {
       </section>
 
       {showcase.length ? (
-        <section className="anim-rise relative mt-8 flex justify-center" aria-label="Cards kept" style={{ animationDelay: "120ms" }}>
+        <section className="anim-rise relative mt-8 flex justify-center" aria-label="Cards won" style={{ animationDelay: "120ms" }}>
           <div className="flex -space-x-6 sm:-space-x-8">
             {showcase.map((card, i) => (
               <div
@@ -85,7 +85,7 @@ export function FinishedScreen({ state, dispatch }) {
       {solo ? null : (
         <section className="relative mt-8" aria-labelledby="standings-heading">
           <h2 id="standings-heading" className="mb-3 px-1 font-display text-xl font-bold tracking-tight">
-            Cards kept
+            Cards won
           </h2>
           <Scoreboard variant="ranked" teams={state.teams} />
         </section>
