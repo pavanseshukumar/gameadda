@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { TeamSetup } from "@/components/game/TeamSetup";
 import { Segmented, Toggle } from "@/components/ui/Controls";
-import { HAND_OPTIONS } from "@/lib/games/hi-lo/engine";
+import { DEFAULT_HAND, HAND_OPTIONS } from "@/lib/games/hi-lo/engine";
 import { PlayingCard } from "./PlayingCard";
 
 const rulesFor = (solo) => [
@@ -15,7 +15,7 @@ const rulesFor = (solo) => [
 ];
 
 export function SetupScreen({ initialTeams, initialSettings, onStart }) {
-  const [handSize, setHandSize] = useState(initialSettings.handSize);
+  const [handSize, setHandSize] = useState(HAND_OPTIONS.includes(initialSettings.handSize) ? initialSettings.handSize : DEFAULT_HAND);
   const [showOdds, setShowOdds] = useState(initialSettings.showOdds ?? false);
 
   return (
@@ -44,7 +44,7 @@ export function SetupScreen({ initialTeams, initialSettings, onStart }) {
             <h2 id="hand-heading" className="font-display text-xl font-bold tracking-tight">
               Cards each
             </h2>
-            <p className="text-sm text-muted">How many cards every player is dealt.</p>
+            <p className="text-sm text-muted">Every player is dealt 2 to 4 cards.</p>
           </div>
           <Segmented
             labelledBy="hand-heading"
