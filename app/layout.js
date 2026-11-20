@@ -1,4 +1,4 @@
-import { Baloo_2, Grandstander, Bricolage_Grotesque, Fraunces, Geist, Geist_Mono, Oswald, Chakra_Petch, Kalam, Lilita_One, Nunito, Righteous,Space_Grotesk, Fredoka, Rubik, Space_Mono, Unbounded, Zilla_Slab } from "next/font/google";
+import { Baloo_2, Playfair_Display, Grandstander, Bricolage_Grotesque, Fraunces, Geist, Geist_Mono, Oswald, Chakra_Petch, Kalam, Lilita_One, Nunito, Righteous,Space_Grotesk, Fredoka, Rubik, Space_Mono, Unbounded, Zilla_Slab } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,7 +33,8 @@ const sticker = Rubik({ variable: "--font-sticker", subsets: ["latin"], preload:
 const playroom = Nunito({ variable: "--font-playroom", subsets: ["latin"], preload: false });
 const boxoffice = Righteous({ variable: "--font-boxoffice", subsets: ["latin"], weight: "400", preload: false });
 const candy = Grandstander({ variable: "--font-candy", subsets: ["latin"], preload: false });
-const gameFonts = [songbook, tabletop, marquee, thermal, dial, hideout, chalkboard, listings, frost, arcade, carnival, sticker, playroom, boxoffice, candy];
+const felt = Playfair_Display({ variable: "--font-felt", subsets: ["latin"], preload: false });
+const gameFonts = [songbook, tabletop, marquee, thermal, dial, hideout, chalkboard, listings, frost, arcade, carnival, sticker, playroom, boxoffice, candy, felt];
 
 export const metadata = {
   title: {

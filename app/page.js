@@ -32,6 +32,7 @@ function previewText(game, tile) {
   if (game.preview.style === "swipe") return tile;
   if (game.preview.style === "emoji") return tile || "?";
   if (game.preview.style === "spin") return null;
+  if (game.preview.style === "cards") return tile ? `${tile.slice(0, -1)}${{ S: "♠", H: "♥", D: "♦", C: "♣" }[tile.slice(-1)]}\uFE0E` : null;
   if (game.preview.style === "twins") return tile ? tile.split("|")[0] : null;
   return game.preview.style === "hidden" || game.preview.style === "jumble" ? tile : null;
 }
@@ -85,6 +86,13 @@ function previewStyle(game, tile, i) {
           background: `radial-gradient(circle at 50% 36%, ${ink} 0 19%, transparent 20%), radial-gradient(ellipse 46% 34% at 50% 100%, ${ink} 0 98%, transparent 100%), var(--tile-hidden)`,
           boxShadow: "inset 0 0 0 1.5px var(--line-strong)",
         };
+  }
+  if (game.preview.style === "cards") {
+    // Little playing cards, fanned; a blank is a card still face down.
+    const fan = { transform: `rotate(${TILT[i % TILT.length] / 2}deg)`, borderRadius: "0.3rem", boxShadow: CLAY_NUB, border: "1.5px solid #fff" };
+    if (!tile) return { ...fan, background: "repeating-linear-gradient(45deg, #1f6e48 0 3px, #2b8a5c 3px 6px)" };
+    const red = tile.endsWith("H") || tile.endsWith("D");
+    return { ...fan, background: "#fffdf8", color: red ? "#b8102b" : "#1b1b1f", fontSize: "clamp(0.55rem,2.4vw,0.85rem)", letterSpacing: "-0.04em" };
   }
   if (game.preview.style === "spin") {
     // Spinner weights: coloured discs with a bearing; "*" marks the one it stopped on,
