@@ -16,14 +16,12 @@ export function FinishedScreen({ state, dispatch }) {
   const result = state.result;
   const best = state.bests[String(hand)];
   const kept = solo ? state.teams[0].score : 0;
-  const celebrate = solo ? result?.newBest || kept === hand : leaders.length > 0;
+  const celebrate = solo ? result?.newBest && kept > 0 : leaders.length > 0;
 
   const headline = solo
-    ? kept === hand
-      ? "A perfect hand!"
-      : result?.newBest && result.previousBest != null
-        ? "New best!"
-        : `You won ${kept} of ${hand}`
+    ? result?.newBest && result.previousBest != null
+      ? "New best!"
+      : `You won ${kept} ${kept === 1 ? "card" : "cards"}`
     : champion
       ? `${champion.name} wins!`
       : leaders.length > 1
@@ -50,7 +48,7 @@ export function FinishedScreen({ state, dispatch }) {
           <TrophyIcon size={44} />
         </div>
         <p className="anim-rise mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-subtle">
-          {hand} cards each{state.bestStreak > 1 ? ` · best streak ${state.bestStreak}` : ""}
+          {hand} cards each{state.bestStreak > 1 ? ` · longest run ${state.bestStreak}` : ""}
         </p>
         <h1 className="anim-rise mt-3 font-display text-[clamp(2.2rem,7vw,4rem)] font-extrabold leading-[1.02] tracking-[-0.03em]">{headline}</h1>
         {solo ? (

@@ -13,15 +13,15 @@ import { teamText } from "@/lib/games/core/teams";
 import { ACTIONS, PHASES, cardName, oddsFor, selectActivePlayer, selectHand } from "@/lib/games/hi-lo/engine";
 import { PlayingCard } from "./PlayingCard";
 
-/** How long a reveal takes (deal, flip, stamp); calls wait for it. */
-const REVEAL_MS = 750;
+/** How long a reveal shows (deal, flip, stamp) before the next call; a card won then becomes the top card. */
+const REVEAL_MS = 1000;
 /** Vertical drag (px) on the table that counts as a swipe. */
 const SWIPE_PX = 48;
 
 const OUTCOME = {
-  won: { mark: "✓", label: "You win it!", tone: "hit" },
-  lost: { mark: "✗", label: "Wrong way", tone: "miss" },
-  same: { mark: "=", label: "Same rank: no card", tone: "same" },
+  won: { mark: "✓", label: "You win it! Keep going", tone: "hit" },
+  lost: { mark: "✗", label: "Wrong way. Run over", tone: "miss" },
+  same: { mark: "=", label: "Same rank. Run over", tone: "same" },
 };
 
 /** @param {{ state: any, dispatch: Function }} props */
@@ -105,7 +105,7 @@ export function PlayScreen({ state, dispatch }) {
             {solo ? (
               <SoloStats state={state} />
             ) : (
-              <TurnIndicator team={player} hint={playing ? "Play a card, then call the next one" : "Turn over"} />
+              <TurnIndicator team={player} hint={playing ? "Play a card, then keep calling until you miss" : "Turn over"} />
             )}
           </div>
 
@@ -115,7 +115,7 @@ export function PlayScreen({ state, dispatch }) {
               {playing ? (
                 <>
                   <Controls state={state} busy={busy} onGuess={guess} />
-                  <Hand cards={hand} selected={state.selected} busy={busy} onSelect={select} />
+                  <Hand cards={hand} selected={state.inRun ? null : state.selected} locked={state.inRun} busy={busy} onSelect={select} />
                 </>
               ) : (
                 <TurnSummary state={state} player={player} onNext={() => dispatch({ type: ACTIONS.NEXT_TURN })} />
@@ -148,7 +148,7 @@ function SoloStats({ state }) {
     <div className="grid grid-cols-3 gap-2">
       <Stat label="Won" value={state.teams[0].score} accent />
       <Stat label="Streak" value={state.streak} />
-      <Stat label="Best" value={best == null ? "—" : `${best}/${state.settings.handSize}`} />
+      <Stat label="Best" value={best == null ? "—" : best} />
     </div>
   );
 }
@@ -174,9 +174,10 @@ function Table({ state, busy, onSwipe }) {
   const yourRef = useRef(null);
   const playing = state.phase === PHASES.PLAYING;
   const lastCall = state.calls.at(-1) ?? null;
-  // Showing the last result until the next card is picked.
-  const showingResult = !state.selected && lastCall;
-  const yours = state.selected ?? lastCall?.played ?? null;
+  // The last call's result shows while it's being revealed, and after a miss until
+  // the next card is picked. After a right call the card won then moves over as the top card.
+  const showingResult = Boolean(lastCall && (busy || !state.selected));
+  const yours = showingResult ? lastCall.played : state.selected;
   const outcome = showingResult ? OUTCOME[lastCall.outcome] : null;
 
   const onPointerDown = (e) => {
@@ -217,7 +218,7 @@ function Table({ state, busy, onSwipe }) {
       <div className="mx-auto grid max-w-md grid-cols-2 items-end gap-4 sm:gap-8">
         {/* Your card. */}
         <div className="flex flex-col items-center gap-2">
-          <p className="felt-label">Your card</p>
+          <p className="felt-label">{state.inRun || showingResult ? "Top card" : "Your card"}</p>
           <div ref={yourRef} className="relative w-full max-w-[min(38vw,22dvh,11rem)] transition-[translate] duration-150">
             {yours ? (
               <div key={yours} className="anim-pop">
@@ -259,7 +260,9 @@ function Table({ state, busy, onSwipe }) {
         {showingResult
           ? `${lastCall.guess === "higher" ? "Higher" : "Lower"} · ${outcome.label}`
           : state.selected
-            ? "Swipe up for higher · down for lower"
+            ? state.inRun
+              ? "The card you won is on top · swipe to call"
+              : "Swipe up for higher · down for lower"
             : " "}
       </p>
     </section>
@@ -294,21 +297,26 @@ function Controls({ state, busy, onGuess }) {
         </button>
       </div>
       <p className="mt-2 min-h-4 text-center text-xs font-semibold text-subtle tabular-nums">
+        {state.inRun && state.streak > 0 ? <span className="run-badge mr-1.5">Run of {state.streak}</span> : null}
         {!state.selected
           ? "Tap a card in your hand to play it"
           : odds
             ? `Left in the deck: ${odds.higher} higher · ${odds.lower} lower · ${odds.same} same`
-            : "Aces are low. The same rank doesn’t count."}
+            : state.inRun
+              ? "Keep going until you miss"
+              : "Aces are low. The same rank doesn’t count."}
       </p>
     </div>
   );
 }
 
-/** Your hand, face up: tap a card to play it (tap again to take it back). */
-function Hand({ cards, selected, busy, onSelect }) {
+/** Your hand, face up: tap a card to play it (tap again to take it back). Locked mid-run. */
+function Hand({ cards, selected, locked, busy, onSelect }) {
   return (
-    <section aria-label="Your hand" className="mt-4">
-      <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.16em] text-subtle">Your hand</p>
+    <section aria-label="Your hand" className={`mt-4 transition-opacity ${locked ? "opacity-50" : ""}`}>
+      <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.16em] text-subtle">
+        Your hand{locked ? " · waiting until you miss" : ""}
+      </p>
       <ul className="flex justify-center gap-2 sm:gap-3">
         {cards.map((card, i) => {
           const picked = card === selected;
@@ -318,7 +326,7 @@ function Hand({ cards, selected, busy, onSelect }) {
                 type="button"
                 className={`hand-card block w-full ${picked ? "is-picked" : ""}`}
                 onClick={() => onSelect(card)}
-                disabled={busy}
+                disabled={busy || locked}
                 aria-pressed={picked}
                 aria-label={`${cardName(card)}${picked ? ", on the table" : ""}`}
               >
@@ -345,8 +353,12 @@ function TurnSummary({ state, player, onNext }) {
         {solo ? "Hand played" : `${player.name}’s turn`}
       </p>
       <h2 className="mt-1 font-display text-3xl font-bold tracking-tight">
-        {solo ? "You" : player.name} won {won} of {state.settings.handSize}
+        {solo ? "You" : player.name} won {won} {won === 1 ? "card" : "cards"}
       </h2>
+      <p className="mt-1 text-sm text-muted">
+        {state.calls.length} {state.calls.length === 1 ? "call" : "calls"}
+        {state.bestStreak > 1 ? ` · longest run ${state.bestStreak}` : ""}
+      </p>
       <button type="button" autoFocus className="btn btn-primary mt-5 h-14 w-full text-lg" onClick={onNext}>
         {last ? (
           <>
