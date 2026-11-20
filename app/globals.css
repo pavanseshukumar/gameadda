@@ -1851,3 +1851,13 @@ dialog.sheet > .sheet-panel::before {
 @media (hover: hover) and (min-width: 1024px) {
   .hand-key { display: block; }
 }
+/* "Run of 3" while a run is going. */
+.run-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--hit);
+  color: #fff;
+  font-weight: 800;
+  vertical-align: 1px;
+}

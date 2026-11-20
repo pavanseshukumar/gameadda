@@ -8,10 +8,11 @@ import { PlayingCard } from "./PlayingCard";
 
 const rulesFor = (solo) => [
   { title: "Get your cards", body: "Everyone is dealt the same number of cards. On your turn your hand is face up, just for you." },
-  { title: "Play one, call it", body: "Tap a card to put it on the table, then call: will the next card off the deck be higher or lower? Aces are low; the same rank never wins." },
-  solo
-    ? { title: "Beat your best", body: "Right, and you win the deck card. Play your whole hand; your best is saved for each hand size." }
-    : { title: "Most cards wins", body: "Right, and you win the deck card. Play your whole hand, then pass the phone. Whoever wins the most cards wins." },
+  { title: "Play one, call it", body: "Tap a card to put it on top, then call: is the next card off the deck higher or lower? Aces are low; the same rank never wins." },
+  {
+    title: "Keep it going",
+    body: `Right, and you win that card and it becomes the new top card: call again! Miss, and the run is over; play your next card. ${solo ? "Your best is saved for each hand size." : "Most cards won wins."}`,
+  },
 ];
 
 const PLAYER_WORDS = { one: "player", many: "players", title: "Players", full: "Eight players max. Pull up a chair!" };
@@ -35,7 +36,7 @@ export function SetupScreen({ initialTeams, initialSettings, onStart }) {
           </span>
         </span>
       }
-      intro="Pick a card from your hand, call whether the next one off the deck is higher or lower, and win it if you’re right."
+      intro="Play a card, call higher or lower, and win every card you get right. Keep the run going until you miss."
       rules={rulesFor}
       initialTeams={initialTeams}
       words={PLAYER_WORDS}
