@@ -15,13 +15,17 @@ import { PlayingCard } from "./PlayingCard";
 
 /** How long a reveal shows (deal, flip, stamp) before the next call; a card won then becomes the top card. */
 const REVEAL_MS = 1000;
+/** After the last call of a turn, the summary waits until the card (and any BUSTED stamp) has landed. */
+const SUMMARY_DELAY_MS = 1600;
+/** When the flipped card lands, for the "busted" buzz. */
+const LAND_MS = 620;
 /** Vertical drag (px) on the table that counts as a swipe. */
 const SWIPE_PX = 48;
 
 const OUTCOME = {
   won: { mark: "✓", label: "You win it! Keep going", tone: "hit" },
-  lost: { mark: "✗", label: "Wrong way. Run over", tone: "miss" },
-  same: { mark: "=", label: "Same rank. Run over", tone: "same" },
+  lost: { mark: "✗", label: "Busted! Wrong way", tone: "miss" },
+  same: { mark: "=", label: "Busted! Same rank", tone: "same" },
 };
 
 /** @param {{ state: any, dispatch: Function }} props */
@@ -29,12 +33,29 @@ export function PlayScreen({ state, dispatch }) {
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [busy, setBusy] = useState(false);
   const busyTimer = useRef(null);
+  // Holds the turn summary back until the last card has been revealed.
+  const [holdSummary, setHoldSummary] = useState(false);
+  const holdTimer = useRef(null);
   const player = selectActivePlayer(state);
   const hand = selectHand(state);
   const solo = state.teams.length === 1;
   const playing = state.phase === PHASES.PLAYING;
 
-  useEffect(() => () => clearTimeout(busyTimer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(busyTimer.current);
+      clearTimeout(holdTimer.current);
+    },
+    [],
+  );
+
+  // Busted: a short buzz as the card lands (phones that support vibration).
+  const event = state.lastEvent;
+  useEffect(() => {
+    if (event?.type !== "lost" && event?.type !== "same") return undefined;
+    const t = setTimeout(() => navigator.vibrate?.([70, 50, 140]), LAND_MS);
+    return () => clearTimeout(t);
+  }, [event?.seq, event?.type]);
 
   const select = (card) => {
     if (!playing || busy) return;
@@ -46,6 +67,9 @@ export function PlayScreen({ state, dispatch }) {
     setBusy(true);
     clearTimeout(busyTimer.current);
     busyTimer.current = setTimeout(() => setBusy(false), REVEAL_MS);
+    setHoldSummary(true);
+    clearTimeout(holdTimer.current);
+    holdTimer.current = setTimeout(() => setHoldSummary(false), SUMMARY_DELAY_MS);
   };
 
   // Keys: 1–4 pick a card, ↑ / H higher, ↓ / L lower.
@@ -117,7 +141,8 @@ export function PlayScreen({ state, dispatch }) {
                   <Controls state={state} busy={busy} onGuess={guess} />
                   <Hand cards={hand} selected={state.inRun ? null : state.selected} locked={state.inRun} busy={busy} onSelect={select} />
                 </>
-              ) : (
+              ) : holdSummary ? null : (
+                // Only once the last card is face up: the card first, then the result.
                 <TurnSummary state={state} player={player} onNext={() => dispatch({ type: ACTIONS.NEXT_TURN })} />
               )}
               <CallStrip calls={state.calls} />
@@ -256,6 +281,12 @@ function Table({ state, busy, onSwipe }) {
           </div>
         </div>
       </div>
+      {/* A wrong call (or the same rank): BUSTED slams across the table. */}
+      {showingResult && lastCall.outcome !== "won" ? (
+        <div key={`busted-${state.calls.length}`} className="busted" aria-hidden="true">
+          Busted!
+        </div>
+      ) : null}
       <p className="felt-label mt-3 text-center opacity-80">
         {showingResult
           ? `${lastCall.guess === "higher" ? "Higher" : "Lower"} · ${outcome.label}`
