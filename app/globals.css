@@ -1894,3 +1894,9 @@ dialog.sheet > .sheet-panel::before {
 @media (prefers-reduced-motion: reduce) {
   .busted { animation: none; }
 }
+
+/* Hi-Lo result: the cards won, dealt in one by one. */
+.won-card { animation: pop 360ms cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+@media (prefers-reduced-motion: reduce) {
+  .won-card { animation: none; }
+}
