@@ -64,7 +64,7 @@ export function FinishedScreen({ state, dispatch }) {
         ) : null}
       </section>
 
-      {showcase.length ? <CardFan cards={showcase} /> : null}
+      {showcase.length ? <WonCards cards={showcase} /> : null}
 
       {solo ? null : (
         <section className="relative mt-8" aria-labelledby="standings-heading">
@@ -84,43 +84,29 @@ export function FinishedScreen({ state, dispatch }) {
   );
 }
 
-/** Most cards shown in the fan; a longer haul shows the latest ones and a count. */
-const FAN_MAX = 16;
-
 /**
- * The cards won, fanned out. The overlap tightens as the count grows so the fan
- * always fits the screen (no sideways scrolling): each card after the first is
- * pulled left by whatever it takes to fit, but always leaves at least 1rem showing.
+ * The cards won, laid out in rows like cards dealt onto a table: small upright
+ * cards that wrap onto as many rows as needed. Nothing is rotated or pulled
+ * sideways, so however many cards a long run wins, the rows never get wider
+ * than the screen (no horizontal scrolling).
  */
-function CardFan({ cards }) {
-  const shown = cards.slice(-FAN_MAX);
-  const hidden = cards.length - shown.length;
-  const n = shown.length;
-  const mid = (n - 1) / 2;
-  // Margin percentages are of the container's width, so this fits n cards of width --w into it.
-  const pull = n > 1 ? `max(calc(1rem - var(--w)), min(-1.25rem, calc((100% - ${n} * var(--w)) / ${n - 1})))` : "0";
+function WonCards({ cards }) {
   return (
-    <section className="anim-rise relative mt-8 overflow-x-clip px-2 pb-2 pt-1" aria-label={`${cards.length} cards won`} style={{ animationDelay: "120ms" }}>
-      <div className="flex w-full justify-center [--w:3.5rem] sm:[--w:5rem]">
-        {shown.map((card, i) => (
-          <div
+    <section className="anim-rise relative mt-8" aria-label={`${cards.length} cards won`} style={{ animationDelay: "120ms" }}>
+      <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.16em] text-subtle">
+        {cards.length} {cards.length === 1 ? "card" : "cards"} won
+      </p>
+      <ul className="mx-auto flex max-w-xl flex-wrap justify-center gap-1.5 sm:gap-2">
+        {cards.map((card, i) => (
+          <li
             key={`${card}-${i}`}
-            className="w-[var(--w)] shrink-0"
-            style={{
-              marginLeft: i === 0 ? 0 : pull,
-              rotate: `${(i - mid) * Math.min(6, 40 / n)}deg`,
-              translate: `0 ${Math.abs(i - mid) * Math.min(3, 24 / n)}px`,
-            }}
+            className="won-card w-[clamp(2.25rem,11vw,3.5rem)]"
+            style={{ animationDelay: `${Math.min(i, 30) * 35}ms` }}
           >
             <PlayingCard card={card} />
-          </div>
+          </li>
         ))}
-      </div>
-      {hidden > 0 ? (
-        <p className="mt-5 text-center text-sm font-semibold text-subtle">
-          The last {shown.length} of {cards.length} cards won
-        </p>
-      ) : null}
+      </ul>
     </section>
   );
 }
